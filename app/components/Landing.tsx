@@ -1,7 +1,8 @@
 "use client";
 
+import { track } from "@vercel/analytics";
 import Image from "next/image";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 // ─── Reusable Components ───────────────────────────────────────────────────────
 
@@ -19,11 +20,13 @@ function Button({
     variant = "primary",
     size = "md",
     href,
+    onClick
 }: {
     children: React.ReactNode;
     variant?: "primary" | "secondary" | "ghost";
     size?: "sm" | "md" | "lg";
     href?: string;
+    onClick?: () => void;
 }) {
     const base =
         "inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer";
@@ -52,7 +55,7 @@ function Button({
         );
     }
 
-    return <button className={className}>{children}</button>;
+    return <button onClick={onClick} className={className}>{children}</button>;
 }
 
 function ArrowRight({ className = "h-4 w-4" }: { className?: string }) {
@@ -165,7 +168,7 @@ function Hero() {
                 </p>
 
                 <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
-                    <Button variant="primary" size="lg" href="#cta">
+                    <Button variant="primary" size="lg" href="#cta" onClick={() => track("hero_cta_clicked")}>
                         Quiero el acceso completo
                         <ArrowRight className="h-4 w-4" />
                     </Button>
@@ -626,12 +629,22 @@ function ForWho() {
 }
 
 // ─── Payment config — update these when ready ─────────────────────────────────
-const STRIPE_LINK = "https://buy.stripe.com/YOUR_PAYMENT_LINK"; // 👈 reemplaza con tu link de Stripe
-const WHATSAPP_NUMBER = "+57"; // 👈 reemplaza con tu número
-const WHATSAPP_MESSAGE = encodeURIComponent(
-    "Hola Esteban! Quiero acceder al curso \"Despliega tu Primer Agente con Claude + Next.js + Vercel\". ¿Cómo procedo con el pago?"
+
+const WHATSAPP_NUMBER = "+573045500182";
+
+const WHATSAPP_MESSAGE_GENERAL = encodeURIComponent(
+  "Hola Esteban! Quiero acceder al curso \"Despliega tu Primer Agente con Claude + Next.js + Vercel\". ¿Cómo procedo con el pago?"
 );
-const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, "")}?text=${WHATSAPP_MESSAGE}`;
+
+const WHATSAPP_MESSAGE_READY = encodeURIComponent(
+  "Hola Esteban! Estoy listo para pagar el curso \"Despliega tu Primer Agente con Claude + Next.js + Vercel\". Envíame los datos para completar el pago."
+);
+
+const WHATSAPP_LINK_GENERAL = `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, "")}?text=${WHATSAPP_MESSAGE_GENERAL}`;
+
+const WHATSAPP_LINK_READY = `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, "")}?text=${WHATSAPP_MESSAGE_READY}`;
+
+
 
 function PaymentCard({
     icon,
@@ -672,10 +685,20 @@ function PaymentCard({
             <h3 className="text-white font-bold text-lg">{title}</h3>
             <p className="text-zinc-400 text-sm mt-2 leading-relaxed flex-1">{description}</p>
 
-            <a href={ctaHref} target="_blank" rel="noopener noreferrer" className={ctaClass}>
+            <a
+                href={ctaHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => {
+                    track("checkout_clicked", {
+                        method: ctaStyle,
+                        location: "final_cta",
+                    });
+                }}
+                className={ctaClass}
+            >
                 {ctaLabel}
             </a>
-
             <p className="mt-3 text-xs text-zinc-600 text-center">{footnote}</p>
         </div>
     );
@@ -741,7 +764,7 @@ function FinalCTA() {
                         title="Pagar con tarjeta"
                         description="Visa, Mastercard, débito o crédito. Procesado por Stripe con cifrado SSL. Acceso inmediato tras el pago."
                         ctaLabel="Ir a pago seguro →"
-                        ctaHref={STRIPE_LINK}
+                        ctaHref={WHATSAPP_LINK_READY}
                         ctaStyle="stripe"
                         footnote="🔒 Procesado por Stripe · Garantía 7 días"
                     />
@@ -757,7 +780,7 @@ function FinalCTA() {
                         title="Pagar por WhatsApp"
                         description="Escríbeme directo. Te explico el proceso, resuelvo tus dudas y coordinamos el acceso de forma personalizada."
                         ctaLabel="Abrir WhatsApp →"
-                        ctaHref={WHATSAPP_LINK}
+                        ctaHref={WHATSAPP_LINK_GENERAL}
                         ctaStyle="whatsapp"
                         footnote="💬 Respuesta en menos de 24h · Esteban Toro"
                     />
@@ -821,6 +844,25 @@ function Footer() {
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
+
+    // useEffect(() => {
+    //     const handleScroll = () => {
+    //         const scrollY = window.scrollY;
+    //         const height = document.body.scrollHeight - window.innerHeight;
+    //         const percent = (scrollY / height) * 100;
+
+    //         if (percent > 50) {
+    //             track("scroll_50_percent");
+    //         }
+    //         if (percent > 90) {
+    //             track("scroll_90_percent");
+    //         }
+    //     };
+
+    //     window.addEventListener("scroll", handleScroll);
+    //     return () => window.removeEventListener("scroll", handleScroll);
+    // }, []);
+
     return (
         <main className="min-h-screen bg-white font-sans antialiased">
             <style>{`
@@ -848,7 +890,6 @@ export default function LandingPage() {
         main > *:nth-child(3) { animation-delay: 160ms; }
         main > *:nth-child(4) { animation-delay: 240ms; }
       `}</style>
-
             <Navbar />
             <Hero />
             <Problem />
