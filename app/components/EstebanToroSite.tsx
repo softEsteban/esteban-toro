@@ -42,9 +42,8 @@ function Navbar() {
 
     return (
         <header
-            className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-                scrolled ? "bg-[#faf9f7]/90 backdrop-blur-md border-b border-stone-200/60 shadow-sm" : ""
-            }`}
+            className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled ? "bg-[#faf9f7]/90 backdrop-blur-md border-b border-stone-200/60 shadow-sm" : ""
+                }`}
         >
             <nav className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
                 <a href="#" className="font-display text-base font-bold tracking-tight text-stone-900">
@@ -470,21 +469,29 @@ function AncestralısTeaser() {
 
 function SupportTeaser() {
     return (
-        <section className="bg-[#faf9f7] px-6 py-16 border-t border-stone-100">
-            <div className="mx-auto max-w-5xl">
-                <div className="rounded-3xl border border-rose-100 bg-rose-50/50 px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+        <section className="relative overflow-hidden bg-stone-950 px-6 py-20">
+            {/* ambient glow */}
+            <div className="pointer-events-none absolute -top-32 -right-32 h-[500px] w-[500px] rounded-full bg-rose-600/20 blur-[120px]" />
+            <div className="pointer-events-none absolute -bottom-24 -left-24 h-[350px] w-[350px] rounded-full bg-amber-500/10 blur-[100px]" />
+
+            <div className="relative mx-auto max-w-5xl">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-8">
                     <div>
-                        <p className="font-display text-2xl font-bold text-stone-900 mb-2">
+                        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-rose-500/30 bg-rose-500/10 px-3 py-1.5 text-xs font-medium text-rose-400">
+                            <span className="h-1.5 w-1.5 rounded-full bg-rose-400 animate-pulse" />
+                            Support the work
+                        </div>
+                        <p className="font-display text-3xl font-bold text-white mb-3 leading-snug">
                             If my work means something to you
                         </p>
-                        <p className="text-sm text-stone-500 max-w-md leading-relaxed">
-                            Support the work directly via Lemon Squeezy, or gift an item from the wishlist that
+                        <p className="text-sm text-stone-400 max-w-md leading-relaxed">
+                            Support directly via Lemon Squeezy, or gift an item from the wishlist that
                             helps Ancestralis House move forward.
                         </p>
                     </div>
                     <a
                         href="/support"
-                        className="shrink-0 inline-flex h-11 items-center gap-2 rounded-xl bg-rose-500 px-6 text-sm font-semibold text-white shadow-md shadow-rose-500/20 transition-all hover:bg-rose-400 hover:shadow-lg active:scale-95"
+                        className="shrink-0 inline-flex h-12 items-center gap-2 rounded-xl bg-rose-500 px-7 text-sm font-semibold text-white shadow-lg shadow-rose-500/30 transition-all hover:bg-rose-400 hover:shadow-rose-400/40 active:scale-95"
                     >
                         Support & wishlist <IconArrow />
                     </a>
@@ -498,24 +505,24 @@ function SupportTeaser() {
 
 function ContactStrip() {
     return (
-        <section className="bg-[#faf9f7] px-6 py-16 border-t border-stone-100">
+        <section className="bg-stone-900 px-6 py-14 border-t border-stone-800">
             <div className="mx-auto max-w-5xl flex flex-col sm:flex-row items-center justify-between gap-6">
                 <div>
-                    <p className="font-display text-xl font-bold text-stone-900">Want something custom-built?</p>
-                    <p className="text-sm text-stone-500 mt-1">I&apos;m available for strategic projects, AI builds, and consulting.</p>
+                    <p className="font-display text-xl font-bold text-white">Want something custom-built?</p>
+                    <p className="text-sm text-stone-400 mt-1">I&apos;m available for strategic projects, AI builds, and consulting.</p>
                 </div>
                 <div className="flex gap-3 shrink-0">
                     <a
                         href={WHATSAPP}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex h-10 items-center gap-2 rounded-xl bg-stone-900 px-5 text-sm font-semibold text-white transition-all hover:bg-stone-700 active:scale-95"
+                        className="inline-flex h-10 items-center gap-2 rounded-xl bg-amber-500 px-5 text-sm font-semibold text-white transition-all hover:bg-amber-400 active:scale-95"
                     >
                         Talk to me
                     </a>
                     <a
                         href={EMAIL}
-                        className="inline-flex h-10 items-center gap-2 rounded-xl border border-stone-200 bg-white px-5 text-sm font-semibold text-stone-700 transition-all hover:bg-stone-50 active:scale-95"
+                        className="inline-flex h-10 items-center gap-2 rounded-xl border border-stone-600 bg-stone-800 px-5 text-sm font-semibold text-stone-200 transition-all hover:bg-stone-700 active:scale-95"
                     >
                         Email
                     </a>
@@ -529,17 +536,17 @@ function ContactStrip() {
 
 function Footer() {
     return (
-        <footer className="border-t border-stone-100 bg-[#faf9f7] px-6 py-8">
+        <footer className="border-t border-stone-800 bg-stone-950 px-6 py-8">
             <div className="mx-auto max-w-5xl flex flex-col sm:flex-row items-center justify-between gap-3">
-                <span className="font-display text-sm font-bold text-stone-900">
+                <span className="font-display text-sm font-bold text-white">
                     et<span className="text-amber-500">.</span>
                 </span>
-                <p className="text-xs text-stone-400">© {new Date().getFullYear()} Esteban Toro</p>
-                <div className="flex gap-4 text-xs text-stone-400">
-                    <a href={AGENT_APP} className="hover:text-stone-700 transition-colors font-medium text-amber-600">Agent Kit</a>
-                    <a href="/ancestralis" className="hover:text-stone-700 transition-colors font-medium text-emerald-600">Ancestralis</a>
-                    <a href={WHATSAPP} target="_blank" rel="noopener noreferrer" className="hover:text-stone-700 transition-colors">WhatsApp</a>
-                    <a href={EMAIL} className="hover:text-stone-700 transition-colors">Email</a>
+                <p className="text-xs text-stone-500">© {new Date().getFullYear()} Esteban Toro</p>
+                <div className="flex gap-4 text-xs text-stone-500">
+                    <a href={AGENT_APP} className="hover:text-white transition-colors font-medium text-amber-500">Agent Kit</a>
+                    <a href="/ancestralis" className="hover:text-white transition-colors font-medium text-emerald-500">Ancestralis</a>
+                    <a href={WHATSAPP} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">WhatsApp</a>
+                    <a href={EMAIL} className="hover:text-white transition-colors">Email</a>
                 </div>
             </div>
         </footer>
@@ -582,6 +589,14 @@ export default function EstebanToroSite() {
           animation: fadeUp 0.6s ease both;
         }
       `}</style>
+{/* 
+            <iframe
+                src="http://localhost:3000/embed/7637098c-e0a6-4fc1-af1a-fe6d97610be3"
+                width="400"
+                height="600"
+                style={{ border: 'none', borderRadius: '16px', boxShadow: '0 8px 40px rgba(0,0,0,0.2)' }}
+                allow="clipboard-write"
+            ></iframe> */}
 
             <Navbar />
             <Hero />
