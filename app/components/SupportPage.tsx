@@ -318,7 +318,7 @@ export default function SupportPage() {
                     </p>
 
                     <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-                        <a
+                        {/* <a
                             href={LEMON_SQUEEZY_URL}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -327,7 +327,7 @@ export default function SupportPage() {
                         >
                             <IconHeart className="h-4 w-4" />
                             Support via Lemon Squeezy
-                        </a>
+                        </a> */}
                         <a
                             href="#wishlist"
                             className="inline-flex h-12 items-center justify-center gap-2 rounded-xl px-7 text-sm font-semibold transition-all hover:-translate-y-0.5 active:scale-95"
@@ -471,7 +471,7 @@ export default function SupportPage() {
                         Whether you support financially or just follow the work — it matters.
                         Every reader, every fan, every conversation pushes this further.
                     </p>
-                    <a
+                    {/* <a
                         href={LEMON_SQUEEZY_URL}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -480,7 +480,7 @@ export default function SupportPage() {
                     >
                         <IconHeart className="h-4 w-4" />
                         Support the work
-                    </a>
+                    </a> */}
                 </div>
             </section>
 

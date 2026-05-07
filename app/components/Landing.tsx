@@ -3,8 +3,12 @@
 import { track } from "@vercel/analytics";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { GetStarted } from "./GetStarted";
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
+
+// Replace with your actual Lemon Squeezy variant URL (add ?embed=1 for overlay)
+const CHECKOUT_URL = "https://estebantoroar.lemonsqueezy.com/checkout/buy/4508ec85-41ca-452d-a545-8f8c9760e088?embed=1";
 
 const WHATSAPP_NUMBER = "573045500182";
 const WHATSAPP_MSG = encodeURIComponent(
@@ -78,7 +82,7 @@ function Navbar() {
 
 // ─── Hero ──────────────────────────────────────────────────────────────────────
 
-function Hero() {
+function Hero({ onOpenDemo }: { onOpenDemo: () => void }) {
     return (
         <section className="relative pt-32 pb-24 px-6 overflow-hidden bg-white">
             <div
@@ -126,9 +130,12 @@ function Hero() {
                         Quiero un agente para mi negocio
                         <ArrowRight className="h-4 w-4" />
                     </a>
-                    <a href="#como-funciona" className="inline-flex h-12 items-center gap-2 px-6 text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors">
-                        Ver cómo funciona
-                    </a>
+                    <button
+                        onClick={onOpenDemo}
+                        className="inline-flex h-12 items-center gap-2 px-6 text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors"
+                    >
+                        Ver demo del Studio
+                    </button>
                 </div>
 
                 <p className="mt-5 text-sm text-zinc-400">
@@ -725,6 +732,81 @@ function FinalCTA() {
     );
 }
 
+// ─── Pricing CTA ──────────────────────────────────────────────────────────────
+
+function PricingCTA() {
+    const includes = [
+        "Agente configurado a tu medida",
+        "Knowledge base con tus documentos",
+        "LLM de tu elección (Claude · GPT-4o · Gemini)",
+        "WhatsApp conectado",
+        "Funciones: leads, reservas, búsqueda web",
+        "Soporte directo durante el setup",
+    ];
+
+    return (
+        <section className="py-24 px-6 bg-white border-t border-zinc-100">
+            <div className="mx-auto max-w-3xl">
+                <div className="rounded-3xl border border-zinc-200 overflow-hidden shadow-xl shadow-zinc-900/5">
+                    {/* Header */}
+                    <div className="bg-zinc-950 px-8 pt-10 pb-8 text-center">
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-400 mb-5">
+                            <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse inline-block" />
+                            Suscripción mensual · Cancela cuando quieras
+                        </span>
+                        <div className="mt-2 flex items-end justify-center gap-2">
+                            <span className="text-6xl font-bold text-white tracking-tight">$15</span>
+                            <span className="text-zinc-400 text-base mb-2">/mes</span>
+                        </div>
+                        <p className="mt-3 text-zinc-400 text-sm max-w-xs mx-auto">
+                            Acceso continuo a AgentStudio. Tu agente siempre activo, siempre actualizable.
+                        </p>
+                    </div>
+
+                    {/* Includes */}
+                    <div className="bg-zinc-50 px-8 py-6 border-t border-zinc-200">
+                        <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-3">
+                            {includes.map((item, i) => (
+                                <li key={i} className="flex items-center gap-2.5 text-sm text-zinc-600">
+                                    <CheckIcon className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                                    {item}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="bg-white px-8 py-7 border-t border-zinc-100 flex flex-col gap-3">
+                        <a
+                            href={CHECKOUT_URL}
+                            className="lemonsqueezy-button w-full inline-flex items-center justify-center gap-2.5 h-14 rounded-2xl bg-zinc-950 text-white font-semibold text-base shadow-lg hover:bg-zinc-800 active:scale-[0.98] transition-all duration-200"
+                            onClick={() => track("pricing_cta_checkout")}
+                        >
+                            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                                <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6" />
+                            </svg>
+                            Comprar ahora
+                        </a>
+                        <a
+                            href={WHATSAPP}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => track("pricing_cta_whatsapp")}
+                            className="w-full inline-flex items-center justify-center gap-2 h-11 rounded-xl border border-zinc-200 text-zinc-600 text-sm font-medium hover:border-zinc-300 hover:bg-zinc-50 active:scale-[0.98] transition-all duration-200"
+                        >
+                            ¿Tienes preguntas? Escríbeme por WhatsApp
+                        </a>
+                        <p className="text-center text-xs text-zinc-400">
+                            Pago seguro vía Lemon Squeezy · Sin permanencia · Cancela en cualquier momento
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
 // ─── Footer ────────────────────────────────────────────────────────────────────
 
 function Footer() {
@@ -756,6 +838,16 @@ function Footer() {
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
+    const [showDemo, setShowDemo] = useState(false);
+
+    useEffect(() => {
+        if (document.querySelector('script[src*="lemonsqueezy"]')) return;
+        const script = document.createElement("script");
+        script.src = "https://app.lemonsqueezy.com/js/lemon.js";
+        script.defer = true;
+        document.head.appendChild(script);
+    }, []);
+
     return (
         <main className="min-h-screen bg-white font-sans antialiased">
             <style>{`
@@ -772,8 +864,23 @@ export default function LandingPage() {
         main > *:nth-child(3) { animation-delay: 160ms; }
         main > *:nth-child(4) { animation-delay: 240ms; }
       `}</style>
+
+            {showDemo && (
+                <div
+                    style={{
+                        position: "fixed", inset: 0, zIndex: 9999,
+                        background: "rgba(0,0,0,0.72)",
+                        backdropFilter: "blur(6px)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                    }}
+                    onClick={(e) => { if (e.target === e.currentTarget) setShowDemo(false); }}
+                >
+                    <GetStarted onDismiss={() => setShowDemo(false)} />
+                </div>
+            )}
+
             <Navbar />
-            <Hero />
+            <Hero onOpenDemo={() => { track("hero_demo_stepper"); setShowDemo(true); }} />
             <Problem />
             <UseCases />
             <HowItWorks />
@@ -782,6 +889,7 @@ export default function LandingPage() {
             <ForWho />
             <Author />
             <FinalCTA />
+            <PricingCTA />
             <Footer />
         </main>
     );

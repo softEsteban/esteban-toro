@@ -20,6 +20,54 @@ function IconArrow({ className = "h-4 w-4" }: { className?: string }) {
     );
 }
 
+// ─── Nav Icons ────────────────────────────────────────────────────────────────
+
+function NavIconBulb() {
+    return (
+        <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={1.75} viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21h6M10 17h4M12 3a6 6 0 00-4.243 10.243A4 4 0 009 15v2h6v-2a4 4 0 001.243-1.757A6 6 0 0012 3z" />
+        </svg>
+    );
+}
+
+function NavIconWrench() {
+    return (
+        <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={1.75} viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
+        </svg>
+    );
+}
+
+function NavIconGrid() {
+    return (
+        <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={1.75} viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+        </svg>
+    );
+}
+
+function NavIconHome() {
+    return (
+        <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={1.75} viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+        </svg>
+    );
+}
+
+function NavIconChip() {
+    return (
+        <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={1.75} viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="3" />
+            <rect x="9" y="9" width="6" height="6" rx="1" />
+            <path d="M9 3v2M15 3v2M9 19v2M15 19v2M3 9h2M3 15h2M19 9h2M19 15h2" />
+        </svg>
+    );
+}
+
 // ─── Navbar ────────────────────────────────────────────────────────────────────
 
 function Navbar() {
@@ -33,26 +81,66 @@ function Navbar() {
     }, []);
 
     const links = [
-        { label: "How I think", href: "#pillars" },
-        { label: "What I build", href: "#builds" },
-        { label: "Products", href: "/products" },
-        { label: "Ancestralis", href: "/ancestralis" },
-        { label: "Agent Kit", href: AGENT_APP },
+        {
+            label: "How I think",
+            href: "#pillars",
+            icon: <NavIconBulb />,
+            hover: "hover:bg-white/10 hover:text-stone-100",
+            mobileHover: "hover:bg-stone-800",
+        },
+        {
+            label: "What I build",
+            href: "#builds",
+            icon: <NavIconWrench />,
+            hover: "hover:bg-white/10 hover:text-amber-300",
+            mobileHover: "hover:bg-stone-800",
+        },
+        {
+            label: "Products",
+            href: "/products",
+            icon: <NavIconGrid />,
+            hover: "hover:bg-white/10 hover:text-stone-100",
+            mobileHover: "hover:bg-stone-800",
+        },
+        {
+            label: "Ancestralis",
+            href: "/ancestralis",
+            icon: <NavIconHome />,
+            hover: "hover:bg-white/10 hover:text-emerald-300",
+            mobileHover: "hover:bg-stone-800",
+        },
+        {
+            label: "Agent Kit",
+            href: AGENT_APP,
+            icon: <NavIconChip />,
+            hover: "hover:bg-white/10 hover:text-orange-300",
+            mobileHover: "hover:bg-stone-800",
+        },
     ];
 
     return (
         <header
-            className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled ? "bg-[#faf9f7]/90 backdrop-blur-md border-b border-stone-200/60 shadow-sm" : ""
-                }`}
+            className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+                scrolled ? "bg-stone-950/95 backdrop-blur-md border-b border-stone-800/60 shadow-sm" : ""
+            }`}
         >
             <nav className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
-                <a href="#" className="font-display text-base font-bold tracking-tight text-stone-900">
+                <a href="#" className="font-display text-base font-bold tracking-tight text-white">
                     et<span className="text-amber-500">.</span>
                 </a>
 
-                <div className="hidden items-center gap-6 md:flex">
+                <div className="hidden items-center gap-0.5 md:flex">
                     {links.map((l) => (
-                        <a key={l.href} href={l.href} className="text-sm text-stone-500 transition-colors hover:text-stone-900">
+                        <a
+                            key={l.href}
+                            href={l.href}
+                            className={`group flex items-center rounded-lg px-3 py-1.5 text-sm font-medium text-stone-300 transition-all duration-150 ${l.hover}`}
+                        >
+                            <span className="inline-flex max-w-0 overflow-hidden opacity-0 transition-all duration-200 ease-out group-hover:max-w-[1.375rem] group-hover:opacity-100">
+                                <span className="mr-1.5 shrink-0 -translate-x-2 scale-50 transition-transform duration-200 ease-out group-hover:translate-x-0 group-hover:scale-100">
+                                    {l.icon}
+                                </span>
+                            </span>
                             {l.label}
                         </a>
                     ))}
@@ -63,34 +151,35 @@ function Navbar() {
                         href={AGENT_APP}
                         className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-amber-500 px-3.5 text-xs font-semibold text-white transition-all hover:bg-amber-400 active:scale-95"
                     >
-                        Get Agent Kit <IconArrow className="h-3 w-3" />
+                        Get started <IconArrow className="h-3 w-3" />
                     </a>
                 </div>
 
                 <button onClick={() => setMenuOpen(!menuOpen)} className="flex flex-col gap-1.5 p-1 md:hidden">
-                    <span className={`block h-0.5 w-5 bg-stone-700 transition-all ${menuOpen ? "translate-y-2 rotate-45" : ""}`} />
-                    <span className={`block h-0.5 w-5 bg-stone-700 transition-all ${menuOpen ? "opacity-0" : ""}`} />
-                    <span className={`block h-0.5 w-5 bg-stone-700 transition-all ${menuOpen ? "-translate-y-2 -rotate-45" : ""}`} />
+                    <span className={`block h-0.5 w-5 bg-stone-300 transition-all ${menuOpen ? "translate-y-2 rotate-45" : ""}`} />
+                    <span className={`block h-0.5 w-5 bg-stone-300 transition-all ${menuOpen ? "opacity-0" : ""}`} />
+                    <span className={`block h-0.5 w-5 bg-stone-300 transition-all ${menuOpen ? "-translate-y-2 -rotate-45" : ""}`} />
                 </button>
             </nav>
 
             {menuOpen && (
-                <div className="border-t border-stone-100 bg-[#faf9f7] px-6 pb-5 pt-4 md:hidden">
+                <div className="border-t border-stone-800 bg-stone-950 px-4 pb-4 pt-3 md:hidden">
                     {links.map((l) => (
                         <a
                             key={l.href}
                             href={l.href}
                             onClick={() => setMenuOpen(false)}
-                            className="block py-2.5 text-sm text-stone-600 hover:text-stone-900"
+                            className={`flex items-center gap-3 rounded-lg px-2 py-2.5 text-sm text-stone-300 transition-all duration-150 hover:text-white ${l.mobileHover}`}
                         >
+                            <span className="shrink-0">{l.icon}</span>
                             {l.label}
                         </a>
                     ))}
                     <a
                         href={AGENT_APP}
-                        className="mt-3 flex h-9 w-full items-center justify-center rounded-lg bg-amber-500 text-xs font-semibold text-white"
+                        className="mt-3 flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-amber-500 text-xs font-semibold text-white"
                     >
-                        Get Agent Kit
+                        Get started <IconArrow className="h-3 w-3" />
                     </a>
                 </div>
             )}
@@ -102,70 +191,126 @@ function Navbar() {
 
 function Hero() {
     return (
-        <section className="relative min-h-screen overflow-hidden bg-[#faf9f7] px-6 pt-32 pb-24 flex items-center">
+        <section className="relative min-h-screen overflow-hidden bg-stone-950 px-6 pt-32 pb-24 flex items-center">
+            {/* Ambient glows */}
+            <div className="pointer-events-none absolute right-0 top-0 h-[600px] w-[600px] -translate-y-1/4 translate-x-1/4 rounded-full bg-amber-500/10 blur-[140px]" />
+            <div className="pointer-events-none absolute bottom-0 left-0 h-[400px] w-[400px] translate-y-1/4 -translate-x-1/4 rounded-full bg-amber-900/15 blur-[100px]" />
             {/* Grain */}
             <div
-                className="pointer-events-none absolute inset-0 opacity-[0.025]"
+                className="pointer-events-none absolute inset-0 opacity-[0.035]"
                 style={{
                     backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")",
                     backgroundSize: "180px",
                 }}
             />
-            <div className="pointer-events-none absolute right-0 top-0 h-[700px] w-[700px] -translate-y-1/4 translate-x-1/4 rounded-full bg-amber-100/70 blur-[140px]" />
-            <div className="pointer-events-none absolute bottom-0 left-0 h-[400px] w-[400px] translate-y-1/4 -translate-x-1/4 rounded-full bg-stone-200/80 blur-[100px]" />
+            {/* Sketch wave art */}
+            <svg
+                className="pointer-events-none absolute bottom-0 left-0 w-full opacity-[0.09] text-stone-400"
+                viewBox="0 0 1200 420"
+                fill="none"
+                preserveAspectRatio="xMidYMax slice"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <defs>
+                    <filter id="sketchy-waves">
+                        <feTurbulence type="fractalNoise" baseFrequency="0.028" numOctaves="2" seed="5" result="noise" />
+                        <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G" />
+                    </filter>
+                </defs>
+                <g filter="url(#sketchy-waves)" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M-20,360 C60,330 140,375 230,355 C320,335 410,310 510,328 C610,346 690,372 780,358 C870,344 950,318 1040,332 C1130,346 1180,362 1240,350" strokeWidth="1.6" />
+                    <path d="M-20,385 C80,360 170,392 270,374 C360,356 450,338 550,352 C650,366 730,388 820,376 C910,364 990,342 1080,354 C1160,364 1200,378 1240,372" strokeWidth="1.1" />
+                    <path d="M-20,408 C100,388 190,415 290,398 C380,381 470,368 570,378 C670,388 750,408 840,398 C930,388 1010,370 1100,380 C1170,388 1210,400 1240,393" strokeWidth="0.8" />
+                    <path d="M-20,330 C50,298 145,342 240,322 C335,302 420,280 515,296 C610,312 700,340 795,328 C890,316 975,290 1065,304 C1150,318 1195,334 1240,326" strokeWidth="1.3" />
+                    <path d="M-20,300 C70,270 165,308 255,290 C345,272 435,252 530,266 C625,280 710,306 805,295 C900,284 985,260 1075,272 C1155,282 1200,298 1240,290" strokeWidth="0.9" />
+                    <path d="M-20,268 C90,242 180,275 275,258 C365,241 450,224 548,237 C646,250 730,272 824,263 C918,254 1000,233 1090,244 C1168,253 1205,266 1240,260" strokeWidth="0.6" />
+                </g>
+            </svg>
 
             <div className="relative mx-auto max-w-5xl w-full">
-                <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white/80 px-3 py-1.5 text-xs font-medium text-stone-500 shadow-sm">
-                    <Dot color="bg-amber-400" />
-                    Philosophy · Software · Strategy
-                </div>
+                <div className="grid lg:grid-cols-[1fr_360px] gap-14 items-center">
 
-                <h1 className="font-display text-[clamp(3rem,7vw,5.5rem)] font-bold leading-[1.0] tracking-tight text-stone-900 max-w-3xl">
-                    Most people have goals.
-                    <br />
-                    <span className="text-stone-400">Few have systems.</span>
-                </h1>
-
-                <p className="mt-8 max-w-xl text-[1.1rem] leading-relaxed text-stone-500">
-                    I help you find your purpose, design your architecture, and build the tools to make it all work —
-                    combining{" "}
-                    <span className="font-semibold text-stone-700">philosophical clarity</span>,{" "}
-                    <span className="font-semibold text-stone-700">software craft</span>, and{" "}
-                    <span className="font-semibold text-stone-700">strategic execution</span>.
-                </p>
-
-                <div className="mt-10 flex flex-wrap gap-4">
-                    <a
-                        href={AGENT_APP}
-                        className="inline-flex h-12 items-center gap-2 rounded-xl bg-amber-500 px-6 text-sm font-semibold text-white shadow-lg shadow-amber-500/20 transition-all hover:bg-amber-400 hover:shadow-xl active:scale-95"
-                    >
-                        Get Agent Kit <IconArrow />
-                    </a>
-                    <a
-                        href={WHATSAPP}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex h-12 items-center gap-2 rounded-xl border border-stone-200 bg-white px-6 text-sm font-semibold text-stone-700 shadow-sm transition-all hover:bg-stone-50 hover:border-stone-300 active:scale-95"
-                    >
-                        Talk to me
-                    </a>
-                </div>
-
-                {/* Three quick pills */}
-                <div className="mt-16 flex flex-wrap gap-3">
-                    {[
-                        { icon: "🧭", text: "Find your direction" },
-                        { icon: "⚙️", text: "Build your system" },
-                        { icon: "🤖", text: "Automate the rest" },
-                    ].map((p) => (
-                        <div
-                            key={p.text}
-                            className="flex items-center gap-2 rounded-full border border-stone-200 bg-white/80 px-4 py-2 text-sm text-stone-600 shadow-sm"
-                        >
-                            <span>{p.icon}</span>
-                            {p.text}
+                    {/* Left: text */}
+                    <div>
+                        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-stone-700 bg-stone-800/80 px-3 py-1.5 text-xs font-medium text-stone-400">
+                            <Dot color="bg-amber-400" />
+                            Philosophy · Software · Strategy
                         </div>
-                    ))}
+
+                        <h1 className="font-display text-[clamp(2.75rem,6vw,5rem)] font-bold leading-[1.0] tracking-tight text-white">
+                            Most people have goals.
+                            <br />
+                            <span className="text-stone-500">Few have systems.</span>
+                        </h1>
+
+                        <p className="mt-7 max-w-lg text-[1.05rem] leading-relaxed text-stone-400">
+                            I help you find your purpose, design your architecture, and build the tools to make it all work —
+                            combining{" "}
+                            <span className="font-semibold text-stone-200">philosophical clarity</span>,{" "}
+                            <span className="font-semibold text-stone-200">software craft</span>, and{" "}
+                            <span className="font-semibold text-stone-200">strategic execution</span>.
+                        </p>
+
+                        <div className="mt-9 flex flex-wrap gap-3">
+                            <a
+                                href={AGENT_APP}
+                                className="inline-flex h-12 items-center gap-2 rounded-xl bg-amber-500 px-6 text-sm font-semibold text-white shadow-lg shadow-amber-500/20 transition-all hover:bg-amber-400 hover:shadow-xl active:scale-95"
+                            >
+                                Get Agent Kit <IconArrow />
+                            </a>
+                            <a
+                                href={WHATSAPP}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex h-12 items-center gap-2 rounded-xl border border-stone-700 bg-stone-800 px-6 text-sm font-semibold text-stone-200 transition-all hover:bg-stone-700 hover:border-stone-600 active:scale-95"
+                            >
+                                Talk to me
+                            </a>
+                        </div>
+
+                        <div className="mt-12 flex flex-wrap gap-3">
+                            {[
+                                { icon: "🧭", text: "Find your direction" },
+                                { icon: "⚙️", text: "Build your system" },
+                                { icon: "🤖", text: "Automate the rest" },
+                            ].map((p) => (
+                                <div
+                                    key={p.text}
+                                    className="flex items-center gap-2 rounded-full border border-stone-700 bg-stone-800/60 px-4 py-2 text-sm text-stone-400"
+                                >
+                                    <span>{p.icon}</span>
+                                    {p.text}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Right: small image card */}
+                    <div className="hidden lg:block group cursor-pointer">
+                        <div className="overflow-hidden rounded-2xl border border-stone-700/60 shadow-xl transition-all duration-500 ease-out group-hover:-translate-y-3 group-hover:shadow-2xl group-hover:shadow-amber-500/15 group-hover:border-stone-500/50 relative">
+                            {/* Complete image at natural proportions */}
+                            <div className="overflow-hidden">
+                                <img
+                                    src="/esteban_toro_linkedin_header.png"
+                                    alt="Esteban Toro"
+                                    className="w-full h-auto block transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                                />
+                            </div>
+                            {/* Profile text section */}
+                            <div className="bg-stone-900 border-t border-stone-700/60 px-4 py-4">
+                                <p className="font-display text-sm font-bold text-white leading-none">Esteban Toro</p>
+                                <p className="mt-2.5 text-[11px] leading-relaxed text-stone-400">
+                                    Building{" "}<span className="text-amber-400">@Ancestralis House</span>{" "}|{" "}
+                                    Building{" "}<span className="text-amber-400">@AgentKit</span> &{" "}
+                                    <span className="text-amber-400">@DailiApp</span>{" "}|{" "}
+                                    Software Engineer | Maker | Designer of a sustainable, meaningful and fun life-style | I Prefer Going Fastlane 🏝️ 🏠 💻🩴
+                                </p>
+                            </div>
+                            {/* Shimmer sweep on hover */}
+                            <div className="pointer-events-none absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -182,8 +327,9 @@ function Pillars() {
             title: "Think clearly",
             subtitle: "Philosophy",
             desc: "Before building anything, you need the right question. I draw from philosophy, stoicism, and first-principles thinking to cut through noise and find what actually matters — for your life, your work, your next move.",
-            accent: "bg-blue-50 border-blue-100",
-            numberColor: "text-blue-200",
+            accent: "bg-blue-100 border-blue-200",
+            numberColor: "text-blue-300",
+            image: "/descartes.png",
         },
         {
             number: "02",
@@ -191,8 +337,8 @@ function Pillars() {
             title: "Build deliberately",
             subtitle: "Software",
             desc: "Ideas need infrastructure. I design and build the tools, agents, and automations that turn your clarity into working systems — not just plans that live in a notebook, but products that ship and run.",
-            accent: "bg-amber-50 border-amber-100",
-            numberColor: "text-amber-200",
+            accent: "bg-amber-100 border-amber-200",
+            numberColor: "text-amber-300",
         },
         {
             number: "03",
@@ -200,13 +346,13 @@ function Pillars() {
             title: "Execute strategically",
             subtitle: "Strategy",
             desc: "Clarity and tools mean nothing without a game plan. I help you design the roadmap — what to do, in what order, with what resources — so momentum compounds instead of scattering.",
-            accent: "bg-emerald-50 border-emerald-100",
-            numberColor: "text-emerald-200",
+            accent: "bg-emerald-100 border-emerald-200",
+            numberColor: "text-emerald-300",
         },
     ];
 
     return (
-        <section id="pillars" className="bg-white px-6 py-24">
+        <section id="pillars" className="bg-stone-50 px-6 py-24">
             <div className="mx-auto max-w-5xl">
                 <div className="mb-14">
                     <p className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.15em] text-stone-400">
@@ -226,15 +372,32 @@ function Pillars() {
                     {pillars.map((p) => (
                         <div
                             key={p.number}
-                            className={`group relative overflow-hidden rounded-3xl border p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${p.accent}`}
+                            className={`group relative overflow-hidden rounded-3xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${p.accent}`}
                         >
-                            <p className={`font-display text-7xl font-bold absolute right-5 top-3 select-none ${p.numberColor}`}>
+                            {/* Number always floats top-right */}
+                            <p className={`font-display text-7xl font-bold absolute right-5 top-3 select-none z-10 ${p.numberColor}`}>
                                 {p.number}
                             </p>
-                            <span className="mb-5 block text-3xl">{p.icon}</span>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-1">{p.subtitle}</p>
-                            <h3 className="font-display text-2xl font-bold text-stone-900 mb-3">{p.title}</h3>
-                            <p className="text-sm leading-relaxed text-stone-500">{p.desc}</p>
+
+                            <div className="p-8">
+                                <span className="mb-5 block text-3xl">{p.icon}</span>
+
+                                <div className="overflow-hidden">
+                                    {/* Portrait floats right, text wraps around it */}
+                                    {"image" in p && p.image && (
+                                        <div className="float-right ml-3 mb-2 w-20 h-24 shrink-0 overflow-hidden rounded-xl border border-blue-200 shadow-md -rotate-3 transition-all duration-500 ease-out group-hover:rotate-1 group-hover:scale-110 group-hover:shadow-lg">
+                                            <img
+                                                src={p.image}
+                                                alt="Descartes"
+                                                className="w-full h-full object-cover object-top"
+                                            />
+                                        </div>
+                                    )}
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-1">{p.subtitle}</p>
+                                    <h3 className="font-display text-2xl font-bold text-stone-900 mb-3">{p.title}</h3>
+                                    <p className="text-sm leading-relaxed text-stone-600">{p.desc}</p>
+                                </div>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -270,7 +433,7 @@ function WhatIBuild() {
     ];
 
     return (
-        <section id="builds" className="bg-[#faf9f7] px-6 py-24">
+        <section id="builds" className="bg-stone-100 px-6 py-24">
             <div className="mx-auto max-w-5xl">
                 <div className="mb-14">
                     <p className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.15em] text-stone-400">
@@ -416,7 +579,7 @@ function AgentKitCTA() {
 
 function AncestralısTeaser() {
     return (
-        <section className="bg-white px-6 py-24 border-t border-stone-100">
+        <section className="bg-white px-6 py-24 border-t border-stone-200">
             <div className="mx-auto max-w-5xl">
                 <div className="grid lg:grid-cols-2 gap-12 items-center">
                     <div>
@@ -452,7 +615,7 @@ function AncestralısTeaser() {
                             { icon: "🌴", title: "Jungle trails", desc: "Forest walks that reset your nervous system." },
                             { icon: "🌅", title: "Slow rhythm", desc: "Real rest between deep work sessions." },
                         ].map((item) => (
-                            <div key={item.title} className="rounded-2xl border border-stone-100 bg-[#faf9f7] p-5">
+                            <div key={item.title} className="rounded-2xl border border-stone-200 bg-stone-50 p-5">
                                 <span className="text-2xl">{item.icon}</span>
                                 <h3 className="font-display font-bold text-stone-900 mt-3 mb-1 text-sm">{item.title}</h3>
                                 <p className="text-xs text-stone-500 leading-relaxed">{item.desc}</p>
@@ -565,7 +728,7 @@ export default function EstebanToroSite() {
 
         body {
           font-family: 'DM Sans', system-ui, sans-serif;
-          background-color: #faf9f7;
+          background-color: #0c0a09;
         }
 
         .font-display {
@@ -589,14 +752,6 @@ export default function EstebanToroSite() {
           animation: fadeUp 0.6s ease both;
         }
       `}</style>
-{/* 
-            <iframe
-                src="http://localhost:3000/embed/7637098c-e0a6-4fc1-af1a-fe6d97610be3"
-                width="400"
-                height="600"
-                style={{ border: 'none', borderRadius: '16px', boxShadow: '0 8px 40px rgba(0,0,0,0.2)' }}
-                allow="clipboard-write"
-            ></iframe> */}
 
             <Navbar />
             <Hero />
