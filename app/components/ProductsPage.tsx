@@ -120,7 +120,114 @@ function Hero() {
     );
 }
 
-// ─── Daili App ─────────────────────────────────────────────────────────────────
+// ─── Daili App — interactive demo card ────────────────────────────────────────
+
+const INITIAL_TODOS = [
+    { id: 1, text: "Review Q2 strategy doc", done: true },
+    { id: 2, text: "Ship agent app landing update", done: true },
+    { id: 3, text: "Block focus time for deep work", done: false },
+    { id: 4, text: "Weekly review — 30 min", done: false },
+];
+
+function DailiDemoCard() {
+    const [todos, setTodos] = useState(INITIAL_TODOS);
+    const [focusMode, setFocusMode] = useState(false);
+    const [note, setNote] = useState("The key is not to prioritize what's on your schedule, but to schedule your priorities...");
+    const [newTodo, setNewTodo] = useState("");
+
+    function toggleTodo(id: number) {
+        setTodos(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
+    }
+
+    function addTodo(e: React.FormEvent) {
+        e.preventDefault();
+        const text = newTodo.trim();
+        if (!text) return;
+        setTodos(prev => [...prev, { id: Date.now(), text, done: false }]);
+        setNewTodo("");
+    }
+
+    const done = todos.filter(t => t.done).length;
+
+    return (
+        <div className="rounded-3xl border border-stone-200 bg-[#faf9f7] p-6 shadow-xl shadow-stone-900/5">
+            {/* Window chrome */}
+            <div className="flex items-center gap-2 mb-5">
+                <div className="h-3 w-3 rounded-full bg-red-300" />
+                <div className="h-3 w-3 rounded-full bg-amber-300" />
+                <div className="h-3 w-3 rounded-full bg-emerald-300" />
+                <div className="ml-3 flex-1 rounded-md bg-stone-200/60 h-5 flex items-center px-2">
+                    <span className="text-[10px] text-stone-400">daili.app — Today</span>
+                </div>
+            </div>
+
+            {/* Focus mode toggle */}
+            <div className="flex items-center justify-between mb-5 rounded-xl bg-white border border-stone-200 px-4 py-3">
+                <div>
+                    <p className="text-xs font-semibold text-stone-700">Focus mode</p>
+                    <p className="text-[10px] text-stone-400">{focusMode ? "Notifications paused" : "All notifications on"}</p>
+                </div>
+                <button
+                    onClick={() => setFocusMode(p => !p)}
+                    className={`relative h-6 w-11 rounded-full transition-colors duration-200 ${focusMode ? "bg-stone-900" : "bg-stone-200"}`}
+                    aria-label="Toggle focus mode"
+                >
+                    <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 ${focusMode ? "translate-x-5" : "translate-x-0"}`} />
+                </button>
+            </div>
+
+            {/* Todos */}
+            <div className="mb-4">
+                <div className="flex items-center justify-between mb-3">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Today</p>
+                    <p className="text-[10px] text-stone-400">{done}/{todos.length} done</p>
+                </div>
+                <div className="space-y-2">
+                    {todos.map((t) => (
+                        <button
+                            key={t.id}
+                            onClick={() => toggleTodo(t.id)}
+                            className="flex items-center gap-3 w-full text-left group"
+                        >
+                            <div className={`h-4 w-4 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${t.done ? "bg-stone-900 border-stone-900" : "border-stone-300 group-hover:border-stone-400"}`}>
+                                {t.done && <IconCheck className="h-2.5 w-2.5 text-white" />}
+                            </div>
+                            <span className={`text-sm transition-colors ${t.done ? "line-through text-stone-400" : "text-stone-700"}`}>{t.text}</span>
+                        </button>
+                    ))}
+                </div>
+
+                {/* Add todo */}
+                <form onSubmit={addTodo} className="mt-3 flex gap-2">
+                    <input
+                        value={newTodo}
+                        onChange={e => setNewTodo(e.target.value)}
+                        placeholder="Add a task..."
+                        className="flex-1 rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-xs text-stone-700 placeholder-stone-300 outline-none focus:border-stone-400"
+                    />
+                    <button
+                        type="submit"
+                        className="rounded-lg bg-stone-900 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-stone-700"
+                    >+</button>
+                </form>
+            </div>
+
+            {/* Notes */}
+            <div className="rounded-xl bg-white border border-stone-200 p-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-1.5">Quick note</p>
+                <textarea
+                    value={note}
+                    onChange={e => setNote(e.target.value)}
+                    rows={3}
+                    className="w-full resize-none text-xs text-stone-600 leading-relaxed bg-transparent outline-none placeholder-stone-300"
+                    placeholder="Capture a thought..."
+                />
+            </div>
+        </div>
+    );
+}
+
+// ─── Daili App section ─────────────────────────────────────────────────────────
 
 function DailiAppSection() {
     const features = [
@@ -179,57 +286,11 @@ function DailiAppSection() {
                         </div>
                     </div>
 
-                    {/* Right — visual card */}
+                    {/* Right — interactive demo */}
                     <div className="relative">
-                        <div className="rounded-3xl border border-stone-200 bg-[#faf9f7] p-6 shadow-xl shadow-stone-900/5">
-                            {/* Mock header */}
-                            <div className="flex items-center gap-2 mb-5">
-                                <div className="h-3 w-3 rounded-full bg-red-300" />
-                                <div className="h-3 w-3 rounded-full bg-amber-300" />
-                                <div className="h-3 w-3 rounded-full bg-emerald-300" />
-                                <div className="ml-3 flex-1 rounded-md bg-stone-200/60 h-5" />
-                            </div>
-
-                            {/* Mock todos */}
-                            <div className="space-y-2.5 mb-5">
-                                <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-3">Today</p>
-                                {[
-                                    { done: true, text: "Review Q2 strategy doc" },
-                                    { done: true, text: "Ship agent app landing update" },
-                                    { done: false, text: "Block focus time for deep work" },
-                                    { done: false, text: "Weekly review — 30 min" },
-                                ].map((t) => (
-                                    <div key={t.text} className="flex items-center gap-3">
-                                        <div className={`h-4 w-4 rounded-md border-2 flex items-center justify-center shrink-0 ${t.done ? "bg-stone-900 border-stone-900" : "border-stone-300"}`}>
-                                            {t.done && <IconCheck className="h-2.5 w-2.5 text-white" />}
-                                        </div>
-                                        <span className={`text-sm ${t.done ? "line-through text-stone-400" : "text-stone-700"}`}>{t.text}</span>
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* Mock calendar row */}
-                            <div className="border-t border-stone-200 pt-4">
-                                <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-3">This week</p>
-                                <div className="flex gap-1.5">
-                                    {["M", "T", "W", "T", "F", "S", "S"].map((d, i) => (
-                                        <div key={i} className={`flex-1 rounded-lg py-2 text-center text-[11px] font-semibold ${i === 2 ? "bg-stone-900 text-white" : "bg-stone-100 text-stone-500"}`}>
-                                            {d}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Mock note */}
-                            <div className="mt-4 rounded-xl bg-white border border-stone-200 p-4">
-                                <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-1.5">Quick note</p>
-                                <p className="text-xs text-stone-600 leading-relaxed">The key is not to prioritize what's on your schedule, but to schedule your priorities...</p>
-                            </div>
-                        </div>
-
-                        {/* Floating badge */}
+                        <DailiDemoCard />
                         <div className="absolute -top-3 -right-3 rounded-2xl border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-700 shadow-md">
-                            Sync across devices
+                            Try it live ↓
                         </div>
                     </div>
                 </div>

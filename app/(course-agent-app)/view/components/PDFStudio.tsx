@@ -3,8 +3,6 @@
 // import { PDFDownloadLink } from "@react-pdf/renderer";
 import { useState, ReactNode, CSSProperties, useEffect } from "react";
 import { PDFDocument } from "./PDFDocument";
-import { supabase } from "@/lib/supabase";
-
 import dynamic from "next/dynamic";
 
 const PDFDownloadLink = dynamic(
@@ -14,17 +12,6 @@ const PDFDownloadLink = dynamic(
         ),
     { ssr: false }
 );
-
-type NodeType = "course" | "folder" | "document";
-
-interface TreeNode {
-    id: string;
-    name: string;
-    type: NodeType;
-    parent_id: string | null;
-    children?: TreeNode[];
-}
-
 
 // ─── TYPES ────────────────────────────────────────────────────────────────────
 
@@ -107,74 +94,50 @@ interface CalloutStyle {
     label: string;
 }
 
-async function createNode(
-    name: string,
-    type: NodeType,
-    parent_id: string | null
-) {
-    const { data } = await supabase
-        .from("nodes")
-        .insert({ name, type, parent_id })
-        .select()
-        .single();
-
-    if (!data) return;
-
-    if (type === "document") {
-        await supabase.from("documents").insert({
-            title: name,
-            blocks: [],
-            node_id: data.id,
-        });
-    }
-
-    location.reload(); // or re-fetch tree properly
-}
-
 // ─── MOCK DATA ────────────────────────────────────────────────────────────────
 
-// const INITIAL_BLOCKS: Block[] = [
-//     {
-//         id: "b1", type: "cover", order: 0,
-//         data: { title: "AI SaaS Starter Kit - Construye y Despliega tu Primer Agente con\nNext.js + Claude API", subtitle: "Tu sistema listo para monetizar en 48h", version: "v1.0", author: "Tu Nombre", accentColor: "#818cf8", theme: "dark" } as CoverData
-//     },
-//     {
-//         id: "b2", type: "callout", order: 1,
-//         data: { variant: "tip", title: "Antes de empezar", body: "Asegúrate de tener Node 18+, cuenta Vercel y Namecheap configurados.", icon: "💡" } as CalloutData
-//     },
-//     {
-//         id: "b3", type: "text", order: 2,
-//         data: { heading: "Módulo 1: Arquitectura Base", headingLevel: 1, body: "El proyecto usa Next.js App Router con TypeScript. La estructura está optimizada para escalar desde MVP a producto completo sin refactors dolorosos." } as TextData
-//     },
-//     {
-//         id: "b4", type: "code", order: 3,
-//         data: { language: "bash", code: "npx create-next-app@latest mi-ai-saas --typescript\ncd mi-ai-saas\nnpm install @react-pdf/renderer zod", caption: "Setup inicial del proyecto" } as CodeData
-//     },
-//     {
-//         id: "b5", type: "checklist", order: 4,
-//         data: {
-//             title: "Deploy Checklist", items: [
-//                 { id: "c1", label: "Conectar repo a Vercel", description: "Importar desde GitHub en vercel.com/new", done: true },
-//                 { id: "c2", label: "Configurar variables de entorno", description: "STUDIO_ACCESS_TOKEN + claves de API", done: true },
-//                 { id: "c3", label: "Apuntar dominio Namecheap", description: "CNAME → cname.vercel-dns.com", done: false },
-//             ]
-//         } as ChecklistData
-//     },
-//     {
-//         id: "b6", type: "table", order: 5,
-//         data: {
-//             caption: "Comparativa de planes", headers: ["Plan", "Precio", "Guías", "Usuarios"], rows: [
-//                 ["Starter", "$0", "1", "1"],
-//                 ["Pro", "$29/mo", "Ilimitadas", "5"],
-//                 ["Enterprise", "$99/mo", "Ilimitadas", "Ilimitados"],
-//             ], highlightFirstColumn: true
-//         } as TableData
-//     },
-//     {
-//         id: "b7", type: "cta", order: 6,
-//         data: { headline: "¿Listo para lanzar?", subtext: "Descarga el repo, configura en 30 min, empieza a cobrar.", buttonText: "Obtener Acceso →", buttonUrl: "#", variant: "dark" } as CTAData
-//     },
-// ];
+const INITIAL_BLOCKS: Block[] = [
+    {
+        id: "b1", type: "cover", order: 0,
+        data: { title: "AI SaaS Starter Kit — Construye y Despliega tu Primer Agente con Next.js + Claude API", subtitle: "Tu sistema listo para monetizar en 48h", version: "v1.0", author: "Esteban Toro", accentColor: "#818cf8", theme: "dark" } as CoverData
+    },
+    {
+        id: "b2", type: "callout", order: 1,
+        data: { variant: "tip", title: "Antes de empezar", body: "Asegúrate de tener Node 18+, cuenta Vercel y Namecheap configurados.", icon: "💡" } as CalloutData
+    },
+    {
+        id: "b3", type: "text", order: 2,
+        data: { heading: "Módulo 1: Arquitectura Base", headingLevel: 1, body: "El proyecto usa Next.js App Router con TypeScript. La estructura está optimizada para escalar desde MVP a producto completo sin refactors dolorosos." } as TextData
+    },
+    {
+        id: "b4", type: "code", order: 3,
+        data: { language: "bash", code: "npx create-next-app@latest mi-ai-saas --typescript\ncd mi-ai-saas\nnpm install @react-pdf/renderer zod", caption: "Setup inicial del proyecto" } as CodeData
+    },
+    {
+        id: "b5", type: "checklist", order: 4,
+        data: {
+            title: "Deploy Checklist", items: [
+                { id: "c1", label: "Conectar repo a Vercel", description: "Importar desde GitHub en vercel.com/new", done: true },
+                { id: "c2", label: "Configurar variables de entorno", description: "STUDIO_ACCESS_TOKEN + claves de API", done: true },
+                { id: "c3", label: "Apuntar dominio Namecheap", description: "CNAME → cname.vercel-dns.com", done: false },
+            ]
+        } as ChecklistData
+    },
+    {
+        id: "b6", type: "table", order: 5,
+        data: {
+            caption: "Comparativa de planes", headers: ["Plan", "Precio", "Guías", "Usuarios"], rows: [
+                ["Starter", "$0", "1", "1"],
+                ["Pro", "$29/mo", "Ilimitadas", "5"],
+                ["Enterprise", "$99/mo", "Ilimitadas", "Ilimitados"],
+            ], highlightFirstColumn: true
+        } as TableData
+    },
+    {
+        id: "b7", type: "cta", order: 6,
+        data: { headline: "¿Listo para lanzar?", subtext: "Descarga el repo, configura en 30 min, empieza a cobrar.", buttonText: "Obtener Acceso →", buttonUrl: "#", variant: "dark" } as CTAData
+    },
+];
 
 const BLOCK_TYPES: { type: BlockType; label: string; icon: string }[] = [
     { type: "text", label: "Texto", icon: "T" },
@@ -682,117 +645,8 @@ const BLOCK_TEMPLATES: Record<BlockType, BlockData> = {
 
 export default function PDFStudio(): ReactNode {
 
-    function TreeItem({ node, level = 0 }: { node: TreeNode; level?: number }) {
-        const isExpanded = expanded[node.id];
-
-        function toggle() {
-            setExpanded(prev => ({
-                ...prev,
-                [node.id]: !prev[node.id],
-            }));
-        }
-
-        async function openDocument() {
-            if (node.type !== "document") return;
-
-            const { data } = await supabase
-                .from("documents")
-                .select("*")
-                .eq("node_id", node.id)
-                .single();
-
-            if (data) {
-                setBlocks(data.blocks);
-                setDocumentId(data.id);
-            }
-        }
-
-        return (
-            <div>
-                <div
-                    style={{
-                        padding: "6px 10px",
-                        paddingLeft: 10 + level * 16,
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 6,
-                        fontSize: 12,
-                        color: "#e2e8f0",
-                    }}
-                    onClick={node.type === "document" ? openDocument : toggle}
-                >
-                    {node.type !== "document" && (
-                        <span>{isExpanded ? "▾" : "▸"}</span>
-                    )}
-                    <span>
-                        {node.type === "course" && "📚"}
-                        {node.type === "folder" && "📁"}
-                        {node.type === "document" && "📄"}
-                    </span>
-                    {node.name}
-                </div>
-
-                {isExpanded &&
-                    node.children?.map(child => (
-                        <TreeItem key={child.id} node={child} level={level + 1} />
-                    ))}
-            </div>
-        );
-    }
-
-    const [documentId, setDocumentId] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    // const [blocks, setBlocks] = useState<Block[]>(INITIAL_BLOCKS);
-    const [blocks, setBlocks] = useState<Block[]>([]);
-    const [tree, setTree] = useState<TreeNode[]>([]);
-    const [expanded, setExpanded] = useState<Record<string, boolean>>({});
-
-    useEffect(() => {
-        async function loadDocument() {
-            const { data, error } = await supabase
-                .from("documents")
-                .select("*")
-                // .eq("id", "")
-                .single();
-
-            if (data) {
-                setBlocks(data.blocks);
-                setDocumentId(data.id);
-            }
-        }
-
-        loadDocument();
-    }, []);
-
-    useEffect(() => {
-        async function loadTree() {
-            const { data } = await supabase
-                .from("nodes")
-                .select("*");
-
-            if (!data) return;
-
-            const map: Record<string, TreeNode> = {};
-            data.forEach((n: TreeNode) => {
-                map[n.id] = { ...n, children: [] };
-            });
-
-            const roots: TreeNode[] = [];
-
-            data.forEach((n: TreeNode) => {
-                if (n.parent_id) {
-                    map[n.parent_id]?.children?.push(map[n.id]);
-                } else {
-                    roots.push(map[n.id]);
-                }
-            });
-
-            setTree(roots);
-        }
-
-        loadTree();
-    }, []);
+    const [blocks, setBlocks] = useState<Block[]>(INITIAL_BLOCKS);
 
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [tab, setTab] = useState<TabType>("preview");
@@ -854,55 +708,17 @@ export default function PDFStudio(): ReactNode {
         }));
     }
 
-    useEffect(() => {
-        if (!documentId) return;
-
-        const timeout = setTimeout(() => {
-            supabase
-                .from("documents")
-                .update({ blocks, updated_at: new Date() })
-                .eq("id", documentId);
-        }, 1500);
-
-        return () => clearTimeout(timeout);
-    }, [blocks]);
-
-    async function saveDocument() {
-        if (!documentId) return;
-
-        await supabase
-            .from("documents")
-            .update({
-                blocks,
-                updated_at: new Date()
-            })
-            .eq("id", documentId);
+    function saveDocument() {
+        try {
+            localStorage.setItem("pdfstudio_blocks", JSON.stringify(blocks));
+        } catch { /* localStorage unavailable */ }
     }
 
-    async function createNewDocument() {
-        try {
-            setLoading(true);
-
-            const { data, error } = await supabase
-                .from("documents")
-                .insert({
-                    title: "Untitled Guide",
-                    // blocks: INITIAL_BLOCKS,
-                    blocks: [],
-                })
-                .select()
-                .single();
-
-            if (error) throw error;
-
-            setBlocks(data.blocks);
-            setDocumentId(data.id);
-
-        } catch (err) {
-            console.error("Error creating document:", err);
-        } finally {
-            setLoading(false);
-        }
+    function createNewDocument() {
+        setLoading(true);
+        setBlocks([]);
+        setSelectedId(null);
+        setLoading(false);
     }
     return (
         <div style={{ display: "flex", height: "100vh", background: "#020617", color: "#e2e8f0", fontFamily: "'SF Pro Display', -apple-system, sans-serif", overflow: "hidden" }}>
@@ -941,11 +757,6 @@ export default function PDFStudio(): ReactNode {
                                 <div style={{ fontSize: 10, color: "#475569" }}>{block.type}</div>
                             </div>
                         </div>
-                    ))}
-                </div>
-                <div style={{ flex: 1, overflowY: "auto" }}>
-                    {tree.map(node => (
-                        <TreeItem key={node.id} node={node} />
                     ))}
                 </div>
 

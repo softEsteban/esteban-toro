@@ -103,6 +103,13 @@ function Navbar() {
             mobileHover: "hover:bg-stone-800",
         },
         {
+            label: "Journal",
+            href: "/blog",
+            icon: <NavIconBulb />,
+            hover: "hover:bg-white/10 hover:text-stone-100",
+            mobileHover: "hover:bg-stone-800",
+        },
+        {
             label: "Ancestralis",
             href: "/ancestralis",
             icon: <NavIconHome />,
@@ -330,6 +337,8 @@ function Pillars() {
             accent: "bg-blue-100 border-blue-200",
             numberColor: "text-blue-300",
             image: "/descartes.png",
+            imageAlt: "Descartes",
+            imageBorder: "border-blue-200",
         },
         {
             number: "02",
@@ -339,6 +348,9 @@ function Pillars() {
             desc: "Ideas need infrastructure. I design and build the tools, agents, and automations that turn your clarity into working systems — not just plans that live in a notebook, but products that ship and run.",
             accent: "bg-amber-100 border-amber-200",
             numberColor: "text-amber-300",
+            image: "/rick_sanchez.png",
+            imageAlt: "Rick Sanchez",
+            imageBorder: "border-amber-200",
         },
         {
             number: "03",
@@ -348,6 +360,9 @@ function Pillars() {
             desc: "Clarity and tools mean nothing without a game plan. I help you design the roadmap — what to do, in what order, with what resources — so momentum compounds instead of scattering.",
             accent: "bg-emerald-100 border-emerald-200",
             numberColor: "text-emerald-300",
+            image: "/profesor.png",
+            imageAlt: "Professor",
+            imageBorder: "border-emerald-200",
         },
     ];
 
@@ -372,7 +387,7 @@ function Pillars() {
                     {pillars.map((p) => (
                         <div
                             key={p.number}
-                            className={`group relative overflow-hidden rounded-3xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${p.accent}`}
+                            className={`group relative rounded-3xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${p.accent}`}
                         >
                             {/* Number always floats top-right */}
                             <p className={`font-display text-7xl font-bold absolute right-5 top-3 select-none z-10 ${p.numberColor}`}>
@@ -385,13 +400,11 @@ function Pillars() {
                                 <div className="overflow-hidden">
                                     {/* Portrait floats right, text wraps around it */}
                                     {"image" in p && p.image && (
-                                        <div className="float-right ml-3 mb-2 w-20 h-24 shrink-0 overflow-hidden rounded-xl border border-blue-200 shadow-md -rotate-3 transition-all duration-500 ease-out group-hover:rotate-1 group-hover:scale-110 group-hover:shadow-lg">
-                                            <img
-                                                src={p.image}
-                                                alt="Descartes"
-                                                className="w-full h-full object-cover object-top"
-                                            />
-                                        </div>
+                                        <img
+                                            src={p.image}
+                                            alt={"imageAlt" in p ? p.imageAlt : ""}
+                                            className="float-right ml-3 mb-2 w-24 shrink-0 -rotate-3 transition-all duration-500 ease-out group-hover:rotate-1 group-hover:scale-110 drop-shadow-md group-hover:drop-shadow-lg"
+                                        />
                                     )}
                                     <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-1">{p.subtitle}</p>
                                     <h3 className="font-display text-2xl font-bold text-stone-900 mb-3">{p.title}</h3>
@@ -433,31 +446,31 @@ function WhatIBuild() {
     ];
 
     return (
-        <section id="builds" className="bg-stone-100 px-6 py-24">
+        <section id="builds" className="bg-stone-100 px-6 py-16">
             <div className="mx-auto max-w-5xl">
-                <div className="mb-14">
-                    <p className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.15em] text-stone-400">
-                        <Dot color="bg-amber-400" /> What I build
-                    </p>
-                    <h2 className="font-display text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-                        Tools that make
-                        <br />
-                        the system real.
-                    </h2>
-                    <p className="mt-4 max-w-xl text-base text-stone-500 leading-relaxed">
-                        Strategy without execution is fiction. I build the tools that close the gap between knowing and doing.
+                <div className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                    <div>
+                        <p className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.15em] text-stone-400">
+                            <Dot color="bg-amber-400" /> What I build
+                        </p>
+                        <h2 className="font-display text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
+                            Tools that make the system real.
+                        </h2>
+                    </div>
+                    <p className="text-sm text-stone-500 leading-relaxed max-w-xs sm:text-right">
+                        Strategy without execution is fiction. I build the tools that close the gap.
                     </p>
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     {items.map((item) => (
                         <div
                             key={item.title}
-                            className="group flex gap-5 rounded-2xl border border-stone-200 bg-white p-6 transition-all duration-300 hover:shadow-md hover:border-stone-300 hover:-translate-y-0.5"
+                            className="group flex flex-col gap-3 rounded-2xl border border-stone-200 bg-white p-5 transition-all duration-300 hover:shadow-md hover:border-stone-300 hover:-translate-y-0.5"
                         >
-                            <span className="text-3xl shrink-0 mt-0.5">{item.emoji}</span>
+                            <span className="text-2xl">{item.emoji}</span>
                             <div>
-                                <h3 className="font-display font-bold text-stone-900 mb-1.5">{item.title}</h3>
+                                <h3 className="font-display font-bold text-stone-900 mb-1">{item.title}</h3>
                                 <p className="text-sm leading-relaxed text-stone-500">{item.desc}</p>
                             </div>
                         </div>
