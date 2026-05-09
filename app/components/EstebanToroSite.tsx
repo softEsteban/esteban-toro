@@ -419,6 +419,184 @@ function Pillars() {
     );
 }
 
+// ─── Monetize Kit ──────────────────────────────────────────────────────────────
+
+function MonetizeKit() {
+    const items = [
+        {
+            number: "01",
+            title: "Agent Kit",
+            tagline: "Your AI infrastructure, live on day one.",
+            desc: "Deploy specialized AI agents with knowledge bases, multi-provider LLM support, WhatsApp integration, and dynamic behavior — without months of setup.",
+            icon: (
+                <svg className="h-5 w-5 text-amber-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="3" />
+                    <rect x="9" y="9" width="6" height="6" rx="1" />
+                    <path d="M9 3v2M15 3v2M9 19v2M15 19v2M3 9h2M3 15h2M19 9h2M19 15h2" />
+                </svg>
+            ),
+            color: "text-amber-400",
+            bar: "bg-amber-500",
+        },
+        {
+            number: "02",
+            title: "Claude Code Guidelines",
+            tagline: "Customize every corner, yours to own.",
+            desc: "A personal guide walking you through Claude Code to adapt Agent Kit to your exact workflow — prompts, tools, agents, tailored to how you work.",
+            icon: (
+                <svg className="h-5 w-5 text-sky-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
+                </svg>
+            ),
+            color: "text-sky-400",
+            bar: "bg-sky-500",
+        },
+        {
+            number: "03",
+            title: "1:1 Session",
+            tagline: "One call. Real traction. No fluff.",
+            desc: "A focused private session with Esteban to map your setup, unblock the first bottleneck, and leave with a clear next step — not a plan that sits in a doc.",
+            icon: (
+                <svg className="h-5 w-5 text-emerald-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+                </svg>
+            ),
+            color: "text-emerald-400",
+            bar: "bg-emerald-500",
+        },
+    ];
+
+    return (
+        <section className="relative overflow-hidden bg-stone-950">
+            {/* SVG wave transition from white Pillars section */}
+            <svg
+                className="block w-full"
+                viewBox="0 0 1200 90"
+                preserveAspectRatio="none"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{ display: "block" }}
+            >
+                <defs>
+                    <filter id="kit-wave-sketch" x="-5%" y="-5%" width="110%" height="110%">
+                        <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="9" result="noise" />
+                        <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" />
+                    </filter>
+                </defs>
+                <rect x="-20" y="0" width="1240" height="35" fill="#fafaf9" />
+                <path
+                    d="M-20,0 L1220,0 L1220,48 C1000,82 800,22 600,60 C400,98 200,28 -20,65 Z"
+                    fill="#fafaf9"
+                    filter="url(#kit-wave-sketch)"
+                />
+            </svg>
+
+            {/* Ambient glows */}
+            <div className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 h-[700px] w-[900px] rounded-full bg-amber-600/6 blur-[180px]" />
+            <div className="pointer-events-none absolute bottom-0 right-0 h-[400px] w-[400px] translate-x-1/3 translate-y-1/3 rounded-full bg-amber-900/10 blur-[120px]" />
+
+            {/* Grain */}
+            <div
+                className="pointer-events-none absolute inset-0 opacity-[0.03]"
+                style={{
+                    backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")",
+                    backgroundSize: "180px",
+                }}
+            />
+
+            <div className="relative mx-auto max-w-5xl px-6 pb-28 pt-4">
+
+                {/* Section label */}
+                <div className="mb-10 text-center">
+                    <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-medium text-amber-400">
+                        <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
+                        The Kit
+                    </div>
+                    <h2 className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">
+                        Monetize your time
+                        <br />
+                        <span className="text-amber-400">and knowledge.</span>
+                    </h2>
+                    <p className="mt-4 text-stone-400 max-w-md mx-auto leading-relaxed text-sm">
+                        One subscription. Three tools that work together from day one.
+                    </p>
+                </div>
+
+                {/* ── Pack container ── */}
+                <div className="rounded-3xl border border-stone-700/70 bg-stone-900/60 overflow-hidden shadow-2xl shadow-black/40"
+                    style={{ boxShadow: "0 0 0 1px rgba(245,158,11,0.08), 0 32px 80px rgba(0,0,0,0.5)" }}
+                >
+                    {/* Pack header */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 border-b border-stone-800 px-8 py-6"
+                        style={{ background: "linear-gradient(135deg, rgba(245,158,11,0.06) 0%, transparent 60%)" }}
+                    >
+                        <div>
+                            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 mb-1">Complete pack · 3 items</p>
+                            <p className="font-display text-xl font-bold text-white">Monetize your time and knowledge kit</p>
+                        </div>
+                        <div className="flex items-center gap-4 shrink-0">
+                            <div className="text-right">
+                                <p className="font-display text-3xl font-bold text-white leading-none">$100</p>
+                                <p className="text-[10px] text-stone-500 uppercase tracking-widest mt-0.5">per month</p>
+                            </div>
+                            <a
+                                href={AGENT_APP}
+                                className="inline-flex h-11 items-center gap-2 rounded-xl bg-amber-500 px-5 text-sm font-semibold text-white shadow-lg shadow-amber-500/20 transition-all hover:bg-amber-400 active:scale-95 shrink-0"
+                            >
+                                Get the kit <IconArrow className="h-3.5 w-3.5" />
+                            </a>
+                        </div>
+                    </div>
+
+                    {/* Three items — no gap, divided by internal lines */}
+                    <div className="divide-y divide-stone-800 lg:divide-y-0 lg:grid lg:grid-cols-3 lg:divide-x lg:divide-stone-800">
+                        {items.map((item) => (
+                            <div key={item.number} className="group relative flex flex-col gap-4 p-7 transition-colors duration-200 hover:bg-stone-800/30">
+                                {/* Subtle top accent bar */}
+                                <div className={`absolute inset-x-0 top-0 h-[2px] ${item.bar} opacity-0 group-hover:opacity-60 transition-opacity duration-300`} />
+
+                                {/* Number + icon */}
+                                <div className="flex items-center gap-3">
+                                    <span className="font-display text-4xl font-bold text-stone-800 leading-none select-none">
+                                        {item.number}
+                                    </span>
+                                    <div className={`ml-auto flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-stone-800/80 border border-stone-700/60 ${item.color}`}>
+                                        {item.icon}
+                                    </div>
+                                </div>
+
+                                {/* Text */}
+                                <div>
+                                    <h3 className="font-display text-base font-bold text-white mb-0.5">{item.title}</h3>
+                                    <p className={`text-[11px] font-semibold mb-3 italic ${item.color}`}>{item.tagline}</p>
+                                    <p className="text-sm leading-relaxed text-stone-400">{item.desc}</p>
+                                </div>
+
+                                {/* Included pill */}
+                                <div className="mt-auto pt-2">
+                                    <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-stone-500">
+                                        <svg className="h-3 w-3 text-amber-500" viewBox="0 0 12 12" fill="currentColor">
+                                            <path d="M10 3L5 8.5 2 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                                        </svg>
+                                        Included in pack
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Bottom note */}
+                <p className="mt-8 text-center text-xs text-stone-600 tracking-wide">
+                    Cancel anytime &nbsp;·&nbsp; No lock-in &nbsp;·&nbsp; Spots limited each month
+                </p>
+            </div>
+        </section>
+    );
+}
+
 // ─── What I Build ──────────────────────────────────────────────────────────────
 
 function WhatIBuild() {
@@ -769,6 +947,7 @@ export default function EstebanToroSite() {
             <Navbar />
             <Hero />
             <Pillars />
+            <MonetizeKit />
             <WhatIBuild />
             <AgentKitCTA />
             <AncestralısTeaser />
