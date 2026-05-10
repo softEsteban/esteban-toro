@@ -6,6 +6,49 @@ const AGENT_APP = "/agent-app";
 const WHATSAPP = "https://wa.me/573045500182?text=Hola%20Esteban%2C%20quiero%20hablar%20sobre%20un%20proyecto";
 const EMAIL = "mailto:hola@estebantoro.dev";
 
+// ─── Environment data ──────────────────────────────────────────────────────────
+
+const ENV = {
+    island: {
+        label: "Island Mode",
+        grad: ["#fdf9f0", "#fef3e2", "#fde8cc"],
+        accent: "#f59e0b",
+        text: "#92400e",
+        desc: "Disconnected. Present. Just the work and the water.",
+        particles: ["#f59e0b", "#fb923c", "#fbbf24", "#f97316"],
+        speed: 9,
+    },
+    builder: {
+        label: "Builder Mode",
+        grad: ["#0c0a09", "#141211", "#1c1917"],
+        accent: "#22c55e",
+        text: "#4ade80",
+        desc: "Terminal open. Music on. Building something that didn't exist.",
+        particles: ["#22c55e", "#34d399", "#4ade80", "#6ee7b7"],
+        speed: 4,
+    },
+    reflect: {
+        label: "Reflect Mode",
+        grad: ["#f5f3ff", "#ede9fe", "#e0e7ff"],
+        accent: "#818cf8",
+        text: "#4338ca",
+        desc: "Quiet. Rereading. Connecting dots that took a year to appear.",
+        particles: ["#818cf8", "#a5b4fc", "#c4b5fd", "#93c5fd"],
+        speed: 14,
+    },
+};
+
+const ENV_PARTICLES = [
+    { x: 12, y: 28, size: 4,  idx: 0, delay: 0   },
+    { x: 35, y: 55, size: 6,  idx: 1, delay: 1.2 },
+    { x: 60, y: 20, size: 3,  idx: 2, delay: 2.1 },
+    { x: 78, y: 65, size: 5,  idx: 3, delay: 0.7 },
+    { x: 88, y: 35, size: 4,  idx: 0, delay: 3.0 },
+    { x: 22, y: 75, size: 3,  idx: 1, delay: 1.8 },
+    { x: 50, y: 82, size: 6,  idx: 2, delay: 0.4 },
+    { x: 70, y: 10, size: 3,  idx: 3, delay: 2.5 },
+];
+
 // ─── Atoms ─────────────────────────────────────────────────────────────────────
 
 function Dot({ color = "bg-emerald-400" }: { color?: string }) {
@@ -597,6 +640,153 @@ function MonetizeKit() {
     );
 }
 
+// ─── Environment Switcher ──────────────────────────────────────────────────────
+
+function EnvironmentSwitcher({
+    mode, setMode,
+}: {
+    mode: "island" | "builder" | "reflect";
+    setMode: (m: "island" | "builder" | "reflect") => void;
+}) {
+    const env = ENV[mode];
+    return (
+        <div
+            className="rounded-2xl p-8 relative overflow-hidden"
+            style={{
+                background: `linear-gradient(135deg, ${env.grad[0]} 0%, ${env.grad[1]} 50%, ${env.grad[2]} 100%)`,
+                border: `1px solid ${env.accent}28`,
+                transition: "border-color 0.5s ease",
+            }}
+        >
+            {/* Floating particles */}
+            {ENV_PARTICLES.map((p, i) => (
+                <div
+                    key={i}
+                    className="absolute rounded-full pointer-events-none"
+                    style={{
+                        left: `${p.x}%`,
+                        top: `${p.y}%`,
+                        width: p.size,
+                        height: p.size,
+                        background: env.particles[p.idx],
+                        opacity: 0.35,
+                        animation: `envParticle ${env.speed + p.delay}s ease-in-out ${p.delay}s infinite`,
+                        transition: "background 0.7s ease",
+                        filter: "blur(1px)",
+                    }}
+                />
+            ))}
+
+            {/* Mode buttons */}
+            <div className="relative flex flex-wrap gap-2 mb-6">
+                {(["island", "builder", "reflect"] as const).map(k => (
+                    <button
+                        key={k}
+                        onClick={() => setMode(k)}
+                        className="px-4 py-1.5 rounded-full text-xs font-medium"
+                        style={{
+                            background: mode === k ? env.accent : "rgba(255,255,255,0.4)",
+                            color: mode === k ? "white" : env.text,
+                            border: `1px solid ${mode === k ? "transparent" : env.accent + "30"}`,
+                            transition: "all 0.35s ease",
+                            backdropFilter: "blur(4px)",
+                        }}
+                    >
+                        {k === "island" ? "🏝️ " : k === "builder" ? "⚡ " : "🌫️ "}
+                        {ENV[k].label}
+                    </button>
+                ))}
+            </div>
+
+            <p
+                className="relative text-sm font-light leading-relaxed max-w-md"
+                style={{ color: env.text, transition: "color 0.5s ease" }}
+            >
+                {env.desc}
+            </p>
+
+            {/* Status */}
+            <div className="relative mt-6 flex items-center gap-2">
+                <div
+                    className="w-1.5 h-1.5 rounded-full"
+                    style={{
+                        background: env.accent,
+                        transition: "background 0.5s ease",
+                        animation: "statusBlink 2.5s ease-in-out infinite",
+                    }}
+                />
+                <span
+                    className="text-xs font-mono"
+                    style={{ color: env.text, opacity: 0.5, transition: "color 0.5s ease" }}
+                >
+                    mode: {mode}
+                </span>
+            </div>
+        </div>
+    );
+}
+
+// ─── Environment Section ───────────────────────────────────────────────────────
+
+function EnvironmentSection() {
+    const [envMode, setEnvMode] = useState<"island" | "builder" | "reflect">("island");
+    const env = ENV[envMode];
+
+    return (
+        <section
+            className="relative overflow-hidden py-28 px-6"
+            style={{
+                background: `linear-gradient(160deg, ${env.grad[0]} 0%, ${env.grad[1]} 55%, ${env.grad[2]} 100%)`,
+            }}
+        >
+            {/* Immersive background particles */}
+            {ENV_PARTICLES.map((p, i) => (
+                <div
+                    key={i}
+                    className="absolute rounded-full pointer-events-none"
+                    style={{
+                        left: `${p.x}%`,
+                        top: `${p.y}%`,
+                        width: p.size * 5,
+                        height: p.size * 5,
+                        background: env.particles[p.idx],
+                        opacity: 0.15,
+                        animation: `envParticle ${env.speed + p.delay}s ease-in-out ${p.delay}s infinite`,
+                        filter: "blur(3px)",
+                    }}
+                />
+            ))}
+
+            <div className="relative mx-auto max-w-3xl">
+                <div className="mb-14 text-center">
+                    <p
+                        className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em]"
+                        style={{ color: env.text, opacity: 0.55 }}
+                    >
+                        Environment
+                    </p>
+                    <h2
+                        className="font-display text-4xl font-bold sm:text-5xl"
+                        style={{ color: env.text }}
+                    >
+                        Same person.
+                        <br />
+                        Different energy.
+                    </h2>
+                    <p
+                        className="mt-4 text-sm leading-relaxed max-w-sm mx-auto"
+                        style={{ color: env.text, opacity: 0.6 }}
+                    >
+                        Context changes everything. Island, terminal, or notebook — each mode unlocks something different.
+                    </p>
+                </div>
+
+                <EnvironmentSwitcher mode={envMode} setMode={setEnvMode} />
+            </div>
+        </section>
+    );
+}
+
 // ─── What I Build ──────────────────────────────────────────────────────────────
 
 function WhatIBuild() {
@@ -768,51 +958,348 @@ function AgentKitCTA() {
 
 // ─── Ancestralis Teaser ────────────────────────────────────────────────────────
 
+const JUNGLE_FIREFLIES = [
+    { x: 17, y: 55, dur: 3.2, delay: 0    },
+    { x: 27, y: 42, dur: 4.1, delay: 0.8  },
+    { x: 73, y: 52, dur: 3.7, delay: 1.5  },
+    { x: 81, y: 38, dur: 5.0, delay: 0.3  },
+    { x: 38, y: 68, dur: 4.5, delay: 2.1  },
+    { x: 62, y: 63, dur: 3.3, delay: 1.0  },
+    { x: 47, y: 28, dur: 6.0, delay: 2.8  },
+    { x: 89, y: 66, dur: 4.8, delay: 0.5  },
+    { x: 9,  y: 72, dur: 3.9, delay: 1.7  },
+    { x: 56, y: 48, dur: 5.2, delay: 3.2  },
+    { x: 43, y: 80, dur: 4.0, delay: 0.9  },
+    { x: 66, y: 34, dur: 5.5, delay: 2.4  },
+    { x: 32, y: 76, dur: 3.6, delay: 1.2  },
+    { x: 74, y: 79, dur: 4.4, delay: 3.5  },
+];
+
+const JUNGLE_STARS = [
+    { cx: 118, cy: 38, r: 1.2, d: 0    },
+    { cx: 198, cy: 24, r: 0.8, d: 0.5  },
+    { cx: 318, cy: 58, r: 1.0, d: 1.0  },
+    { cx: 378, cy: 28, r: 0.6, d: 1.5  },
+    { cx: 458, cy: 14, r: 1.1, d: 2.0  },
+    { cx: 528, cy: 43, r: 0.7, d: 0.3  },
+    { cx: 608, cy: 18, r: 1.0, d: 0.8  },
+    { cx: 698, cy: 52, r: 0.8, d: 1.3  },
+    { cx: 758, cy: 28, r: 1.3, d: 1.8  },
+    { cx: 828, cy: 13, r: 0.9, d: 0.6  },
+    { cx: 868, cy: 43, r: 0.6, d: 2.2  },
+    { cx: 52,  cy: 63, r: 0.8, d: 1.1  },
+    { cx: 152, cy: 83, r: 0.7, d: 2.5  },
+    { cx: 238, cy: 68, r: 1.0, d: 0.4  },
+    { cx: 648, cy: 78, r: 0.9, d: 1.9  },
+    { cx: 788, cy: 68, r: 0.7, d: 0.7  },
+    { cx: 420, cy: 35, r: 0.8, d: 2.7  },
+    { cx: 560, cy: 65, r: 0.6, d: 1.4  },
+];
+
+const JUNGLE_GRASS: [number, number, number, number, number][] = [
+    [162, 395, 155, 342, 4], [178, 395, 185, 335, 3  ],
+    [192, 395, 188, 350, 3], [148, 395, 140, 360, 2.5],
+    [720, 395, 726, 345, 4], [736, 395, 730, 338, 3  ],
+    [752, 395, 756, 352, 3], [765, 395, 770, 362, 2.5],
+    [305, 395, 300, 365, 2], [318, 395, 322, 358, 2  ],
+    [580, 395, 576, 368, 2], [595, 395, 599, 360, 2  ],
+];
+
 function AncestralısTeaser() {
     return (
-        <section className="bg-white px-6 py-24 border-t border-stone-200">
-            <div className="mx-auto max-w-5xl">
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
-                    <div>
-                        <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700">
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                            In progress · Isla Fuerte, Colombia
-                        </div>
-                        <h2 className="font-display text-4xl font-bold tracking-tight text-stone-900 mb-4">
-                            Ancestralis House
-                        </h2>
-                        <p className="text-stone-500 leading-relaxed mb-6">
-                            A digital nomads village in Isla Fuerte — where builders and thinkers come to do their
-                            best work surrounded by jungle, sea, real food, and people who get it.
-                        </p>
-                        <div className="flex flex-wrap gap-2 mb-8">
-                            {["🌿 Nature", "🍽️ Real food", "💻 Deep work", "🌊 Island life", "🤝 Community"].map((tag) => (
-                                <span key={tag} className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
-                                    {tag}
-                                </span>
-                            ))}
-                        </div>
-                        <a
-                            href="/ancestralis"
-                            className="inline-flex h-11 items-center gap-2 rounded-xl bg-emerald-600 px-6 text-sm font-semibold text-white shadow-md shadow-emerald-600/20 transition-all hover:bg-emerald-500 hover:shadow-lg active:scale-95"
-                        >
-                            Discover Ancestralis <IconArrow />
-                        </a>
+        <section
+            className="relative overflow-hidden"
+            style={{ background: "#020805", minHeight: "92vh" }}
+        >
+            <style>{`
+                @keyframes fireflyGlow {
+                    0%, 100% { opacity: 0; transform: scale(0.6); }
+                    40%, 60% { opacity: 1; transform: scale(1.5); }
+                }
+                @keyframes winFlicker {
+                    0%, 100% { opacity: 0.88; }
+                    45%      { opacity: 1; }
+                    50%      { opacity: 0.9; }
+                    55%      { opacity: 1; }
+                }
+                @keyframes jungleStar {
+                    0%, 100% { opacity: 0.35; }
+                    50%      { opacity: 1; }
+                }
+                @keyframes houseBreath {
+                    0%, 100% { opacity: 0.35; }
+                    50%      { opacity: 0.55; }
+                }
+                @keyframes jungleMist {
+                    0%, 100% { opacity: 0.6; transform: translateX(0); }
+                    50%      { opacity: 0.75; transform: translateX(14px); }
+                }
+            `}</style>
+
+            {/* ── Scene SVG ── */}
+            <svg
+                className="absolute inset-0 w-full h-full"
+                viewBox="0 0 900 520"
+                preserveAspectRatio="xMidYMid slice"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <defs>
+                    <linearGradient id="jSky" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%"   stopColor="#030e07"/>
+                        <stop offset="100%" stopColor="#010604"/>
+                    </linearGradient>
+                    <radialGradient id="jHouseAura" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%"   stopColor="#f59e0b" stopOpacity="0.55"/>
+                        <stop offset="45%"  stopColor="#92400e" stopOpacity="0.18"/>
+                        <stop offset="100%" stopColor="#000000" stopOpacity="0"/>
+                    </radialGradient>
+                    <radialGradient id="jMoon" cx="38%" cy="35%" r="60%">
+                        <stop offset="0%"   stopColor="#fefce8"/>
+                        <stop offset="100%" stopColor="#fef3c7"/>
+                    </radialGradient>
+                    <filter id="jWinGlow" x="-80%" y="-80%" width="260%" height="260%">
+                        <feGaussianBlur stdDeviation="5" result="blur"/>
+                        <feMerge>
+                            <feMergeNode in="blur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                    <filter id="jSoftGlow" x="-40%" y="-40%" width="180%" height="180%">
+                        <feGaussianBlur stdDeviation="3" result="blur"/>
+                        <feMerge>
+                            <feMergeNode in="blur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+
+                {/* Sky */}
+                <rect width="900" height="520" fill="url(#jSky)"/>
+
+                {/* Moon */}
+                <circle cx="738" cy="68" r="25" fill="url(#jMoon)" opacity="0.72"/>
+                <circle cx="738" cy="68" r="46" fill="#fefce8" opacity="0.05"/>
+                <circle cx="738" cy="68" r="72" fill="#fefce8" opacity="0.022"/>
+
+                {/* Stars */}
+                {JUNGLE_STARS.map((s, i) => (
+                    <circle
+                        key={i} cx={s.cx} cy={s.cy} r={s.r} fill="white"
+                        style={{ animation: `jungleStar ${2.6 + i * 0.35}s ease-in-out ${s.d}s infinite` }}
+                    />
+                ))}
+
+                {/* Wide house aura — the glow that fills the scene */}
+                <ellipse
+                    cx="450" cy="312" rx="235" ry="155"
+                    fill="url(#jHouseAura)"
+                    style={{ animation: "houseBreath 5.5s ease-in-out infinite" }}
+                />
+
+                {/* ── Far background tree silhouettes ── */}
+                <path d="M260 442 L262 345 L255 345 L262 312 L269 345 L262 345" fill="#050f07" opacity="0.65"/>
+                <path d="M640 442 L638 355 L631 355 L638 320 L645 355 L638 355" fill="#050f07" opacity="0.65"/>
+                <path d="M356 442 L357 368 L350 368 L357 340 L363 368 L357 368" fill="#060f08" opacity="0.5"/>
+                <path d="M546 442 L545 360 L538 360 L545 332 L552 360 L545 360" fill="#060f08" opacity="0.5"/>
+
+                {/* ════ LEFT PALMS ════ */}
+
+                {/* L-Palm 1 — tallest, anchored far left */}
+                <path d="M 82 522 C 76 418, 72 302, 98 90"
+                    stroke="#0a1d0d" strokeWidth="17" fill="none" strokeLinecap="round"/>
+                <path d="M98 90 C 66 72, 30 58, -4 44"   stroke="#0d2612" strokeWidth="7" fill="none" strokeLinecap="round"/>
+                <path d="M98 90 C 78 76, 50 78, 26 93"   stroke="#0d2612" strokeWidth="6" fill="none" strokeLinecap="round"/>
+                <path d="M98 90 C 120 72, 156 57, 192 43" stroke="#0d2612" strokeWidth="7" fill="none" strokeLinecap="round"/>
+                <path d="M98 90 C 126 76, 156 78, 178 94" stroke="#0d2612" strokeWidth="5" fill="none" strokeLinecap="round"/>
+                <path d="M98 90 C 91 67, 87 44, 84 24"   stroke="#0d2612" strokeWidth="5" fill="none" strokeLinecap="round"/>
+                <path d="M98 90 C 108 70, 118 50, 124 32" stroke="#0d2612" strokeWidth="4" fill="none" strokeLinecap="round"/>
+
+                {/* L-Palm 2 — medium, set back slightly */}
+                <path d="M 205 522 C 196 434, 182 352, 204 162"
+                    stroke="#091b0c" strokeWidth="13" fill="none" strokeLinecap="round"/>
+                <path d="M204 162 C 176 144, 142 134, 108 125" stroke="#0b2010" strokeWidth="6" fill="none" strokeLinecap="round"/>
+                <path d="M204 162 C 186 150, 163 154, 142 168" stroke="#0b2010" strokeWidth="5" fill="none" strokeLinecap="round"/>
+                <path d="M204 162 C 228 142, 262 129, 296 118" stroke="#0b2010" strokeWidth="6" fill="none" strokeLinecap="round"/>
+                <path d="M204 162 C 218 148, 232 142, 246 148" stroke="#0b2010" strokeWidth="4" fill="none" strokeLinecap="round"/>
+                <path d="M204 162 C 196 140, 190 116, 186 98" stroke="#0b2010" strokeWidth="4" fill="none" strokeLinecap="round"/>
+
+                {/* L-Palm 3 — shorter, hugging left edge */}
+                <path d="M 34 522 C 31 456, 36 384, 60 212"
+                    stroke="#091b0c" strokeWidth="11" fill="none" strokeLinecap="round"/>
+                <path d="M60 212 C 38 195, 10 190, -18 188" stroke="#0b2010" strokeWidth="5" fill="none" strokeLinecap="round"/>
+                <path d="M60 212 C 84 193, 110 186, 136 190" stroke="#0b2010" strokeWidth="5" fill="none" strokeLinecap="round"/>
+                <path d="M60 212 C 53 189, 46 166, 42 148"  stroke="#0b2010" strokeWidth="4" fill="none" strokeLinecap="round"/>
+                <path d="M60 212 C 70 190, 78 168, 84 150"  stroke="#0b2010" strokeWidth="4" fill="none" strokeLinecap="round"/>
+
+                {/* ════ RIGHT PALMS (mirror) ════ */}
+
+                {/* R-Palm 1 — tallest */}
+                <path d="M 818 522 C 824 418, 828 302, 802 90"
+                    stroke="#0a1d0d" strokeWidth="17" fill="none" strokeLinecap="round"/>
+                <path d="M802 90 C 834 72, 870 58, 904 44"   stroke="#0d2612" strokeWidth="7" fill="none" strokeLinecap="round"/>
+                <path d="M802 90 C 822 76, 850 78, 874 93"   stroke="#0d2612" strokeWidth="6" fill="none" strokeLinecap="round"/>
+                <path d="M802 90 C 780 72, 744 57, 708 43"   stroke="#0d2612" strokeWidth="7" fill="none" strokeLinecap="round"/>
+                <path d="M802 90 C 774 76, 744 78, 722 94"   stroke="#0d2612" strokeWidth="5" fill="none" strokeLinecap="round"/>
+                <path d="M802 90 C 809 67, 813 44, 816 24"   stroke="#0d2612" strokeWidth="5" fill="none" strokeLinecap="round"/>
+                <path d="M802 90 C 792 70, 782 50, 776 32"   stroke="#0d2612" strokeWidth="4" fill="none" strokeLinecap="round"/>
+
+                {/* R-Palm 2 — medium */}
+                <path d="M 695 522 C 704 434, 718 352, 696 162"
+                    stroke="#091b0c" strokeWidth="13" fill="none" strokeLinecap="round"/>
+                <path d="M696 162 C 724 144, 758 134, 792 125" stroke="#0b2010" strokeWidth="6" fill="none" strokeLinecap="round"/>
+                <path d="M696 162 C 714 150, 737 154, 758 168" stroke="#0b2010" strokeWidth="5" fill="none" strokeLinecap="round"/>
+                <path d="M696 162 C 672 142, 638 129, 604 118" stroke="#0b2010" strokeWidth="6" fill="none" strokeLinecap="round"/>
+                <path d="M696 162 C 682 148, 668 142, 654 148" stroke="#0b2010" strokeWidth="4" fill="none" strokeLinecap="round"/>
+                <path d="M696 162 C 704 140, 710 116, 714 98" stroke="#0b2010" strokeWidth="4" fill="none" strokeLinecap="round"/>
+
+                {/* R-Palm 3 — shorter, right edge */}
+                <path d="M 866 522 C 869 456, 864 384, 840 212"
+                    stroke="#091b0c" strokeWidth="11" fill="none" strokeLinecap="round"/>
+                <path d="M840 212 C 862 195, 890 190, 918 188" stroke="#0b2010" strokeWidth="5" fill="none" strokeLinecap="round"/>
+                <path d="M840 212 C 816 193, 790 186, 764 190" stroke="#0b2010" strokeWidth="5" fill="none" strokeLinecap="round"/>
+                <path d="M840 212 C 847 189, 854 166, 858 148" stroke="#0b2010" strokeWidth="4" fill="none" strokeLinecap="round"/>
+                <path d="M840 212 C 830 190, 822 168, 816 150" stroke="#0b2010" strokeWidth="4" fill="none" strokeLinecap="round"/>
+
+                {/* ════ HOUSE ════ */}
+
+                {/* Ground glow beneath door */}
+                <ellipse cx="450" cy="400" rx="112" ry="17" fill="#f59e0b" opacity="0.07"/>
+
+                {/* Chimney */}
+                <rect x="500" y="220" width="20" height="50" rx="2" fill="#0d2212"/>
+
+                {/* Roof */}
+                <polygon points="362,288 450,214 538,288" fill="#0e2312"/>
+                <line x1="362" y1="288" x2="538" y2="288" stroke="#0a1a09" strokeWidth="2"/>
+
+                {/* House body */}
+                <rect x="374" y="288" width="152" height="112" rx="1" fill="#0c1f10"/>
+
+                {/* Door (warm amber glow) */}
+                <rect x="432" y="338" width="36" height="62" rx="4"
+                    fill="#92400e" opacity="0.65" filter="url(#jSoftGlow)"/>
+                <ellipse cx="450" cy="401" rx="22" ry="8" fill="#f59e0b" opacity="0.13"/>
+
+                {/* Left window */}
+                <rect x="386" y="303" width="34" height="26" rx="3"
+                    fill="#fbbf24"
+                    filter="url(#jWinGlow)"
+                    style={{ animation: "winFlicker 5s ease-in-out infinite" }}
+                />
+                <line x1="403" y1="303" x2="403" y2="329" stroke="#92400e" strokeWidth="1" opacity="0.45"/>
+                <line x1="386" y1="316" x2="420" y2="316" stroke="#92400e" strokeWidth="1" opacity="0.45"/>
+
+                {/* Right window */}
+                <rect x="480" y="303" width="34" height="26" rx="3"
+                    fill="#fbbf24"
+                    filter="url(#jWinGlow)"
+                    style={{ animation: "winFlicker 5s ease-in-out 1.8s infinite" }}
+                />
+                <line x1="497" y1="303" x2="497" y2="329" stroke="#92400e" strokeWidth="1" opacity="0.45"/>
+                <line x1="480" y1="316" x2="514" y2="316" stroke="#92400e" strokeWidth="1" opacity="0.45"/>
+
+                {/* ════ GROUND & FOREGROUND ════ */}
+
+                {/* Ground fill */}
+                <rect x="0" y="400" width="900" height="120" fill="#010604"/>
+
+                {/* Tropical leaf clusters — LEFT */}
+                <path d="M 0 432 C 82 380, 168 394, 204 448 C 142 422, 56 434, 0 432 Z"  fill="#071209" opacity="0.95"/>
+                <path d="M 0 464 C 98 404, 190 418, 230 472 C 158 444, 64 456, 0 464 Z"  fill="#071209" opacity="0.9"/>
+                <path d="M 0 496 C 114 436, 206 450, 256 504 C 170 470, 70 484, 0 496 Z" fill="#060f08" opacity="0.95"/>
+                <path d="M 0 440 C 74 394, 152 404, 190 442" stroke="#0a1d0c" strokeWidth="1.5" fill="none" opacity="0.6"/>
+                <path d="M 0 470 C 90 420, 174 430, 214 466" stroke="#0a1d0c" strokeWidth="1.5" fill="none" opacity="0.6"/>
+
+                {/* Tropical leaf clusters — RIGHT */}
+                <path d="M 900 432 C 818 380, 732 394, 696 448 C 758 422, 844 434, 900 432 Z"  fill="#071209" opacity="0.95"/>
+                <path d="M 900 464 C 802 404, 710 418, 670 472 C 742 444, 836 456, 900 464 Z"  fill="#071209" opacity="0.9"/>
+                <path d="M 900 496 C 786 436, 694 450, 644 504 C 730 470, 830 484, 900 496 Z" fill="#060f08" opacity="0.95"/>
+                <path d="M 900 440 C 826 394, 748 404, 710 442" stroke="#0a1d0c" strokeWidth="1.5" fill="none" opacity="0.6"/>
+                <path d="M 900 470 C 810 420, 726 430, 686 466" stroke="#0a1d0c" strokeWidth="1.5" fill="none" opacity="0.6"/>
+
+                {/* Reed / grass blades */}
+                {JUNGLE_GRASS.map(([x1, y1, x2, y2, w], i) => (
+                    <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
+                        stroke="#0c2010" strokeWidth={w} strokeLinecap="round"/>
+                ))}
+
+                {/* Ground mist layers */}
+                <rect x="0" y="380" width="900" height="58" fill="#030e06" opacity="0.6"
+                    style={{ animation: "jungleMist 9s ease-in-out infinite" }}/>
+                <rect x="0" y="392" width="900" height="36" fill="#020b04" opacity="0.72"
+                    style={{ animation: "jungleMist 13s ease-in-out 3.5s infinite" }}/>
+            </svg>
+
+            {/* ── Fireflies ── */}
+            {JUNGLE_FIREFLIES.map((f, i) => (
+                <div
+                    key={i}
+                    className="absolute rounded-full pointer-events-none"
+                    style={{
+                        left: `${f.x}%`,
+                        top: `${f.y}%`,
+                        width: 5,
+                        height: 5,
+                        background: "#a3e635",
+                        boxShadow: "0 0 8px 3px #84cc16",
+                        animation: `fireflyGlow ${f.dur}s ease-in-out ${f.delay}s infinite`,
+                    }}
+                />
+            ))}
+
+            {/* ── Readability gradient ── */}
+            <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background: "linear-gradient(to top, rgba(1,6,3,0.97) 0%, rgba(1,6,3,0.7) 28%, rgba(1,6,3,0.12) 58%, transparent 80%)",
+                }}
+            />
+
+            {/* ── Content ── */}
+            <div className="relative flex flex-col justify-end px-6 pb-16 pt-40" style={{ minHeight: "92vh" }}>
+                <div className="mx-auto max-w-5xl w-full">
+                    <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-400">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        In progress · Isla Fuerte, Colombia
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+
+                    <h2 className="font-display text-5xl font-bold text-white mb-5 leading-tight sm:text-6xl lg:text-7xl">
+                        Ancestralis House
+                    </h2>
+
+                    <p className="text-stone-300 leading-relaxed mb-8 max-w-lg text-base">
+                        A light in the jungle — where builders, thinkers, and wanderers come to rest,
+                        create, and share surrounded by sea, real food, and people who get it.
+                    </p>
+
+                    {/* Activity tags */}
+                    <div className="flex flex-wrap gap-2 mb-10">
                         {[
-                            { icon: "🏝️", title: "No cars", desc: "Isla Fuerte has zero vehicles — only paths, sea, and silence." },
-                            { icon: "🐠", title: "Coral reef", desc: "Crystal-clear Caribbean water at your door." },
-                            { icon: "🌴", title: "Jungle trails", desc: "Forest walks that reset your nervous system." },
-                            { icon: "🌅", title: "Slow rhythm", desc: "Real rest between deep work sessions." },
-                        ].map((item) => (
-                            <div key={item.title} className="rounded-2xl border border-stone-200 bg-stone-50 p-5">
-                                <span className="text-2xl">{item.icon}</span>
-                                <h3 className="font-display font-bold text-stone-900 mt-3 mb-1 text-sm">{item.title}</h3>
-                                <p className="text-xs text-stone-500 leading-relaxed">{item.desc}</p>
-                            </div>
+                            { icon: "🌿", label: "rest"  },
+                            { icon: "💻", label: "work"  },
+                            { icon: "✍️", label: "write" },
+                            { icon: "🎵", label: "sing"  },
+                            { icon: "🍳", label: "cook"  },
+                            { icon: "🌊", label: "swim"  },
+                            { icon: "🤝", label: "share" },
+                            { icon: "🍹", label: "drink" },
+                        ].map((tag) => (
+                            <span
+                                key={tag.label}
+                                className="flex items-center gap-1.5 rounded-full border border-emerald-800/50 bg-emerald-950/60 px-3 py-1.5 text-xs font-medium text-emerald-300 backdrop-blur-sm"
+                            >
+                                <span>{tag.icon}</span>
+                                {tag.label}
+                            </span>
                         ))}
                     </div>
+
+                    <a
+                        href="/ancestralis"
+                        className="inline-flex h-12 items-center gap-2 rounded-xl bg-emerald-600 px-7 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition-all hover:bg-emerald-500 hover:shadow-emerald-500/30 active:scale-95"
+                    >
+                        Discover Ancestralis <IconArrow />
+                    </a>
                 </div>
             </div>
         </section>
@@ -942,14 +1429,23 @@ export default function EstebanToroSite() {
         section {
           animation: fadeUp 0.6s ease both;
         }
+
+        @keyframes envParticle {
+          0%,100% { transform: translateY(0) scale(1); opacity: .35; }
+          50%      { transform: translateY(-14px) scale(1.15); opacity: .7; }
+        }
+
+        @keyframes statusBlink {
+          0%,100% { opacity: 1; }
+          50%      { opacity: .3; }
+        }
       `}</style>
 
             <Navbar />
             <Hero />
             <Pillars />
             <MonetizeKit />
-            <WhatIBuild />
-            <AgentKitCTA />
+            <EnvironmentSection />
             <AncestralısTeaser />
             <SupportTeaser />
             <ContactStrip />
