@@ -159,13 +159,6 @@ function Navbar() {
             hover: "hover:bg-white/10 hover:text-emerald-300",
             mobileHover: "hover:bg-stone-800",
         },
-        {
-            label: "Agent Kit",
-            href: AGENT_APP,
-            icon: <NavIconChip />,
-            hover: "hover:bg-white/10 hover:text-orange-300",
-            mobileHover: "hover:bg-stone-800",
-        },
     ];
 
     return (
@@ -194,6 +187,13 @@ function Navbar() {
                             {l.label}
                         </a>
                     ))}
+                    <a
+                        href={AGENT_APP}
+                        className="ml-1 inline-flex items-center gap-1.5 rounded-lg border border-amber-500/35 bg-amber-500/10 px-3 py-1.5 text-sm font-semibold text-amber-400 transition-all duration-150 hover:bg-amber-500/18 hover:border-amber-500/60 hover:text-amber-300"
+                    >
+                        <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
+                        Agent Kit
+                    </a>
                 </div>
 
                 <div className="hidden md:flex">
@@ -225,6 +225,14 @@ function Navbar() {
                             {l.label}
                         </a>
                     ))}
+                    <a
+                        href={AGENT_APP}
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-center gap-3 rounded-lg border border-amber-500/30 bg-amber-500/8 px-2 py-2.5 text-sm font-semibold text-amber-400"
+                    >
+                        <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
+                        Agent Kit
+                    </a>
                     <a
                         href={AGENT_APP}
                         className="mt-3 flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-amber-500 text-xs font-semibold text-white"
@@ -464,6 +472,130 @@ function Pillars() {
 
 // ─── Monetize Kit ──────────────────────────────────────────────────────────────
 
+function AgentKitVisual() {
+    const tools = [
+        { label: "WhatsApp",      color: "border-amber-500/30 text-amber-400",  bg: "bg-amber-500/8"  },
+        { label: "OpenAI",        color: "border-amber-500/25 text-amber-300",  bg: "bg-amber-500/5"  },
+        { label: "Anthropic",     color: "border-amber-500/25 text-amber-300",  bg: "bg-amber-500/5"  },
+        { label: "Knowledge Base",color: "border-amber-500/30 text-amber-400",  bg: "bg-amber-500/8"  },
+        { label: "Groq",          color: "border-amber-500/20 text-stone-400",  bg: "bg-stone-800/60" },
+        { label: "Webhooks",      color: "border-amber-500/20 text-stone-400",  bg: "bg-stone-800/60" },
+        { label: "Multi-agent",   color: "border-amber-500/30 text-amber-400",  bg: "bg-amber-500/8"  },
+        { label: "Dynamic tables",color: "border-amber-500/20 text-stone-400",  bg: "bg-stone-800/60" },
+    ];
+    return (
+        <div className="relative h-56 w-full rounded-2xl overflow-hidden bg-stone-950 border border-stone-800/80">
+            <div className="absolute inset-0 opacity-[0.035]" style={{
+                backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
+                backgroundSize: "20px 20px",
+            }} />
+            {/* Amber glow center */}
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                <div className="h-32 w-32 rounded-full bg-amber-500/8 blur-2xl" />
+            </div>
+            <div className="relative p-4 flex flex-col gap-3">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-600">Included tools</p>
+                <div className="flex flex-wrap gap-2">
+                    {tools.map((t) => (
+                        <span key={t.label} className={`inline-flex items-center rounded-lg border px-2.5 py-1 text-[11px] font-medium ${t.color} ${t.bg}`}>
+                            {t.label}
+                        </span>
+                    ))}
+                </div>
+            </div>
+            <div className="absolute bottom-0 inset-x-0 border-t border-stone-800/60 bg-stone-950/80 px-4 py-2 flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
+                <span className="text-[10px] font-mono text-amber-600/80 tracking-wide">deploy-ready · multi-provider</span>
+            </div>
+        </div>
+    );
+}
+
+const STEP_FLAGS = [
+    { id: "doing",   dot: "bg-amber-400",  ring: "ring-amber-400/60",  label: "In progress" },
+    { id: "done",    dot: "bg-sky-400",    ring: "ring-sky-400/60",    label: "Done"         },
+    { id: "blocked", dot: "bg-rose-400",   ring: "ring-rose-400/60",   label: "Blocked"      },
+];
+
+function FlagIcon({ color }: { color: string }) {
+    return (
+        <svg viewBox="0 0 12 14" className={`h-3 w-3 ${color}`} fill="currentColor">
+            <path d="M1 1v12M1 1h8l-2 3.5L9 8H1" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+    );
+}
+
+function GuidelinesVisual() {
+    const steps = [
+        "Set your agent's role & context",
+        "Configure CLAUDE.md base template",
+        "Wire tools, memory & behavior",
+        "Ship your first custom agent",
+    ];
+
+    const [flags, setFlags] = useState<(string | null)[]>([null, null, null, null]);
+
+    const toggle = (stepIdx: number, flagId: string) => {
+        setFlags(prev => prev.map((f, i) => i === stepIdx ? (f === flagId ? null : flagId) : f));
+    };
+
+    return (
+        <div className="relative h-56 w-full rounded-2xl overflow-hidden bg-stone-950 border border-stone-800/80">
+            <div className="absolute inset-0 opacity-[0.035]" style={{
+                backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
+                backgroundSize: "20px 20px",
+            }} />
+            <div className="absolute top-3 right-4 text-sky-400/20 text-4xl select-none pointer-events-none leading-none">✦</div>
+            <div className="relative p-4 flex flex-col gap-2.5">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-600">Guide steps</p>
+                {steps.map((text, i) => {
+                    const active = STEP_FLAGS.find(f => f.id === flags[i]);
+                    return (
+                        <div key={i} className="flex items-center gap-2.5">
+                            {/* Active flag indicator */}
+                            <span className={`shrink-0 h-1.5 w-1.5 rounded-full transition-colors duration-200 ${active ? active.dot : "bg-stone-700"}`} />
+                            {/* Step text */}
+                            <span className={`flex-1 text-[11px] font-mono truncate transition-colors duration-200 ${
+                                active?.id === "done"    ? "text-sky-400/80" :
+                                active?.id === "doing"   ? "text-amber-400/80" :
+                                active?.id === "blocked" ? "text-rose-400/60 line-through" :
+                                "text-stone-600"
+                            }`}>{text}</span>
+                            {/* Flag buttons */}
+                            <div className="flex gap-1 shrink-0">
+                                {STEP_FLAGS.map(flag => (
+                                    <button
+                                        key={flag.id}
+                                        onClick={() => toggle(i, flag.id)}
+                                        title={flag.label}
+                                        className={`flex h-5 w-5 items-center justify-center rounded transition-all duration-150 ${
+                                            flags[i] === flag.id
+                                                ? `bg-stone-800 ring-1 ${flag.ring} scale-110`
+                                                : "opacity-25 hover:opacity-60"
+                                        }`}
+                                    >
+                                        <FlagIcon color={flags[i] === flag.id
+                                            ? flag.id === "doing"   ? "text-amber-400"
+                                            : flag.id === "done"    ? "text-sky-400"
+                                            : "text-rose-400"
+                                            : "text-stone-400"
+                                        } />
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+            <div className="absolute bottom-0 inset-x-0 border-t border-stone-800/60 bg-stone-950/80 px-4 py-2 flex items-center gap-2">
+                <span className="text-sky-400/70 text-[11px] font-bold shrink-0">✦</span>
+                <span className="text-[10px] font-mono text-sky-600/80 tracking-wide">prompt guide · from scratch</span>
+            </div>
+        </div>
+    );
+}
+
+
 function MonetizeKit() {
     const items = [
         {
@@ -471,44 +603,18 @@ function MonetizeKit() {
             title: "Agent Kit",
             tagline: "Your AI infrastructure, live on day one.",
             desc: "Deploy specialized AI agents with knowledge bases, multi-provider LLM support, WhatsApp integration, and dynamic behavior — without months of setup.",
-            icon: (
-                <svg className="h-5 w-5 text-amber-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="3" />
-                    <rect x="9" y="9" width="6" height="6" rx="1" />
-                    <path d="M9 3v2M15 3v2M9 19v2M15 19v2M3 9h2M3 15h2M19 9h2M19 15h2" />
-                </svg>
-            ),
             color: "text-amber-400",
             bar: "bg-amber-500",
+            visual: <AgentKitVisual />,
         },
         {
             number: "02",
             title: "Claude Code Guidelines",
-            tagline: "Customize every corner, yours to own.",
-            desc: "A personal guide walking you through Claude Code to adapt Agent Kit to your exact workflow — prompts, tools, agents, tailored to how you work.",
-            icon: (
-                <svg className="h-5 w-5 text-sky-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 20h9" />
-                    <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
-                </svg>
-            ),
+            tagline: "From zero to your own agent setup.",
+            desc: "A personal guide walking you through Claude Code prompts and the base CLAUDE.md template — so you can start building your agent from scratch, your way.",
             color: "text-sky-400",
             bar: "bg-sky-500",
-        },
-        {
-            number: "03",
-            title: "1:1 Session",
-            tagline: "One call. Real traction. No fluff.",
-            desc: "A focused private session with Esteban to map your setup, unblock the first bottleneck, and leave with a clear next step — not a plan that sits in a doc.",
-            icon: (
-                <svg className="h-5 w-5 text-emerald-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
-                </svg>
-            ),
-            color: "text-emerald-400",
-            bar: "bg-emerald-500",
+            visual: <GuidelinesVisual />,
         },
     ];
 
@@ -576,7 +682,7 @@ function MonetizeKit() {
                         style={{ background: "linear-gradient(135deg, rgba(245,158,11,0.06) 0%, transparent 60%)" }}
                     >
                         <div>
-                            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 mb-1">Complete pack · 3 items</p>
+                            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 mb-1">Complete pack · 2 items</p>
                             <p className="font-display text-xl font-bold text-white">Monetize your time and knowledge kit</p>
                         </div>
                         <div className="flex items-center gap-4 shrink-0">
@@ -593,35 +699,31 @@ function MonetizeKit() {
                         </div>
                     </div>
 
-                    {/* Three items — no gap, divided by internal lines */}
-                    <div className="divide-y divide-stone-800 lg:divide-y-0 lg:grid lg:grid-cols-3 lg:divide-x lg:divide-stone-800">
+                    {/* Three cards */}
+                    <div className="divide-y divide-stone-800 lg:divide-y-0 lg:grid lg:grid-cols-2 lg:divide-x lg:divide-stone-800">
                         {items.map((item) => (
-                            <div key={item.number} className="group relative flex flex-col gap-4 p-7 transition-colors duration-200 hover:bg-stone-800/30">
-                                {/* Subtle top accent bar */}
-                                <div className={`absolute inset-x-0 top-0 h-[2px] ${item.bar} opacity-0 group-hover:opacity-60 transition-opacity duration-300`} />
+                            <div key={item.number} className="group relative flex flex-col gap-5 p-7 transition-colors duration-200 hover:bg-stone-800/25">
+                                {/* Top accent bar */}
+                                <div className={`absolute inset-x-0 top-0 h-[2px] ${item.bar} opacity-0 group-hover:opacity-70 transition-opacity duration-300`} />
 
-                                {/* Number + icon */}
-                                <div className="flex items-center gap-3">
-                                    <span className="font-display text-4xl font-bold text-stone-800 leading-none select-none">
-                                        {item.number}
-                                    </span>
-                                    <div className={`ml-auto flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-stone-800/80 border border-stone-700/60 ${item.color}`}>
-                                        {item.icon}
-                                    </div>
-                                </div>
+                                {/* Visual preview */}
+                                {item.visual}
 
                                 {/* Text */}
-                                <div>
-                                    <h3 className="font-display text-base font-bold text-white mb-0.5">{item.title}</h3>
-                                    <p className={`text-[11px] font-semibold mb-3 italic ${item.color}`}>{item.tagline}</p>
+                                <div className="flex flex-col gap-3">
+                                    <div className="flex items-baseline gap-2.5">
+                                        <span className="font-display text-3xl font-bold text-stone-800 leading-none select-none">{item.number}</span>
+                                        <h3 className={`font-display text-base font-bold ${item.color}`}>{item.title}</h3>
+                                    </div>
+                                    <p className="text-xs font-semibold italic text-stone-500">{item.tagline}</p>
                                     <p className="text-sm leading-relaxed text-stone-400">{item.desc}</p>
                                 </div>
 
                                 {/* Included pill */}
-                                <div className="mt-auto pt-2">
-                                    <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-stone-500">
-                                        <svg className="h-3 w-3 text-amber-500" viewBox="0 0 12 12" fill="currentColor">
-                                            <path d="M10 3L5 8.5 2 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                                <div className="mt-auto pt-1">
+                                    <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-stone-600">
+                                        <svg className="h-3 w-3 text-amber-500" viewBox="0 0 12 12" fill="none">
+                                            <path d="M10 3L5 8.5 2 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                                         </svg>
                                         Included in pack
                                     </span>
@@ -1310,64 +1412,88 @@ function AncestralısTeaser() {
 
 function SupportTeaser() {
     return (
-        <section className="relative overflow-hidden bg-stone-950 px-6 py-20">
-            {/* ambient glow */}
-            <div className="pointer-events-none absolute -top-32 -right-32 h-[500px] w-[500px] rounded-full bg-rose-600/20 blur-[120px]" />
-            <div className="pointer-events-none absolute -bottom-24 -left-24 h-[350px] w-[350px] rounded-full bg-amber-500/10 blur-[100px]" />
+        <section className="relative overflow-hidden bg-stone-950 px-6 py-36">
+            {/* Ambient glows */}
+            <div className="pointer-events-none absolute -top-48 right-0 h-[700px] w-[700px] rounded-full bg-rose-600/12 blur-[180px]" />
+            <div className="pointer-events-none absolute -bottom-40 -left-40 h-[600px] w-[600px] rounded-full bg-amber-500/8 blur-[160px]" />
+            <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[900px] w-[900px] rounded-full bg-rose-900/8 blur-[220px]" />
 
-            <div className="relative mx-auto max-w-5xl">
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-8">
-                    <div>
-                        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-rose-500/30 bg-rose-500/10 px-3 py-1.5 text-xs font-medium text-rose-400">
-                            <span className="h-1.5 w-1.5 rounded-full bg-rose-400 animate-pulse" />
-                            Support the work
+            {/* Subtle dot grid */}
+            <div
+                className="pointer-events-none absolute inset-0 opacity-[0.025]"
+                style={{
+                    backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1px)",
+                    backgroundSize: "40px 40px",
+                }}
+            />
+
+            {/* Grain */}
+            <div
+                className="pointer-events-none absolute inset-0 opacity-[0.03]"
+                style={{
+                    backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")",
+                    backgroundSize: "180px",
+                }}
+            />
+
+            <div className="relative mx-auto max-w-4xl text-center">
+                {/* Badge */}
+                <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-rose-500/30 bg-rose-500/10 px-3 py-1.5 text-xs font-medium text-rose-400">
+                    <span className="h-1.5 w-1.5 rounded-full bg-rose-400 animate-pulse" />
+                    Support the work
+                </div>
+
+                {/* Headline */}
+                <h2 className="font-display text-5xl font-bold text-white leading-tight sm:text-6xl lg:text-7xl">
+                    If my work means
+                    <br />
+                    <span className="text-rose-400">something to you</span>
+                </h2>
+
+                <p className="mt-6 text-stone-400 leading-relaxed max-w-lg mx-auto text-base">
+                    Every contribution goes directly into building Ancestralis House and keeping
+                    this work alive — tools, writing, and presence.
+                </p>
+
+                {/* Cards */}
+                <div className="mt-14 grid sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                    <div className="group rounded-3xl border border-rose-500/20 bg-rose-500/5 p-8 text-left transition-all duration-300 hover:bg-rose-500/10 hover:border-rose-500/40 hover:-translate-y-1 hover:shadow-xl hover:shadow-rose-900/20">
+                        <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-2xl bg-rose-500/15 text-xl">
+                            ❤️
                         </div>
-                        <p className="font-display text-3xl font-bold text-white mb-3 leading-snug">
-                            If my work means something to you
+                        <h3 className="font-display text-lg font-bold text-white mb-2">Support directly</h3>
+                        <p className="text-sm text-stone-400 leading-relaxed mb-7">
+                            Contribute via Lemon Squeezy — any amount, whenever you feel it.
                         </p>
-                        <p className="text-sm text-stone-400 max-w-md leading-relaxed">
-                            Support directly via Lemon Squeezy, or gift an item from the wishlist that
-                            helps Ancestralis House move forward.
-                        </p>
+                        <a
+                            href="/support"
+                            className="inline-flex items-center gap-1.5 text-sm font-semibold text-rose-400 transition-colors hover:text-rose-300"
+                        >
+                            Support now <IconArrow className="h-3.5 w-3.5" />
+                        </a>
                     </div>
-                    <a
-                        href="/support"
-                        className="shrink-0 inline-flex h-12 items-center gap-2 rounded-xl bg-rose-500 px-7 text-sm font-semibold text-white shadow-lg shadow-rose-500/30 transition-all hover:bg-rose-400 hover:shadow-rose-400/40 active:scale-95"
-                    >
-                        Support & wishlist <IconArrow />
-                    </a>
-                </div>
-            </div>
-        </section>
-    );
-}
 
-// ─── Contact strip ─────────────────────────────────────────────────────────────
+                    <div className="group rounded-3xl border border-amber-500/20 bg-amber-500/5 p-8 text-left transition-all duration-300 hover:bg-amber-500/10 hover:border-amber-500/40 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-900/20">
+                        <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-500/15 text-xl">
+                            🎁
+                        </div>
+                        <h3 className="font-display text-lg font-bold text-white mb-2">Gift from the wishlist</h3>
+                        <p className="text-sm text-stone-400 leading-relaxed mb-7">
+                            Help Ancestralis House move forward by gifting something from the list.
+                        </p>
+                        <a
+                            href="/support#wishlist"
+                            className="inline-flex items-center gap-1.5 text-sm font-semibold text-amber-400 transition-colors hover:text-amber-300"
+                        >
+                            See wishlist <IconArrow className="h-3.5 w-3.5" />
+                        </a>
+                    </div>
+                </div>
 
-function ContactStrip() {
-    return (
-        <section className="bg-stone-900 px-6 py-14 border-t border-stone-800">
-            <div className="mx-auto max-w-5xl flex flex-col sm:flex-row items-center justify-between gap-6">
-                <div>
-                    <p className="font-display text-xl font-bold text-white">Want something custom-built?</p>
-                    <p className="text-sm text-stone-400 mt-1">I&apos;m available for strategic projects, AI builds, and consulting.</p>
-                </div>
-                <div className="flex gap-3 shrink-0">
-                    <a
-                        href={WHATSAPP}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex h-10 items-center gap-2 rounded-xl bg-amber-500 px-5 text-sm font-semibold text-white transition-all hover:bg-amber-400 active:scale-95"
-                    >
-                        Talk to me
-                    </a>
-                    <a
-                        href={EMAIL}
-                        className="inline-flex h-10 items-center gap-2 rounded-xl border border-stone-600 bg-stone-800 px-5 text-sm font-semibold text-stone-200 transition-all hover:bg-stone-700 active:scale-95"
-                    >
-                        Email
-                    </a>
-                </div>
+                {/* Bottom note */}
+                <p className="mt-10 text-xs text-stone-700 tracking-wide">
+                    No obligation &nbsp;·&nbsp; Every bit helps &nbsp;·&nbsp; Thank you
+                </p>
             </div>
         </section>
     );
@@ -1448,7 +1574,6 @@ export default function EstebanToroSite() {
             <EnvironmentSection />
             <AncestralısTeaser />
             <SupportTeaser />
-            <ContactStrip />
             <Footer />
         </main>
     );

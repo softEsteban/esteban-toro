@@ -31,6 +31,11 @@ type ToolkitItem = {
     border: string;
 };
 
+type WishlistItem = ToolkitItem & {
+    priority: "essential" | "upgrade" | "nice";
+    why: string;
+};
+
 const toolkit: ToolkitItem[] = [
     {
         id: 1,
@@ -112,32 +117,51 @@ const toolkit: ToolkitItem[] = [
     },
 ];
 
-const wishlist: ToolkitItem[] = [
+const wishlist: WishlistItem[] = [
     {
         id: 10,
         emoji: "📽️",
-        tag: "Hardware · AV",
+        tag: "AV · Ancestralis",
         title: "Proyector Mini Magcubic HY320",
         subtitle: "Ultra HD 4K · WiFi · Android · 12 000 lúmenes",
-        desc: "Para montar un espacio de cine y presentaciones en Ancestralis House.",
+        desc: "Para montar un espacio de cine y presentaciones en Ancestralis House. El corazón audiovisual del espacio.",
         specs: ["4K Ultra HD", "Android built-in", "12 000 lúmenes"],
         store: "Mercado Libre",
         url: "https://www.mercadolibre.com.co/proyector-mini-magcubic-hy320-ultra-hd-4k-wifi-android-12000-lumenes/p/MCO43935877",
+        glow: "rgba(245,158,11,0.15)",
+        border: "rgba(245,158,11,0.25)",
+        priority: "essential",
+        why: "Cine, presentaciones y eventos en vivo",
+    },
+    {
+        id: 13,
+        emoji: "🎬",
+        tag: "AV · Ancestralis",
+        title: "Telón Retráctil 100\"",
+        subtitle: "100 pulgadas · 16:9 · Con trípode",
+        desc: "Pantalla de proyección para acompañar el proyector. Instala en segundos con el trípode incluido.",
+        specs: ["100 pulgadas", "Relación 16:9", "Trípode incluido"],
+        store: "Mercado Libre",
+        url: "https://www.mercadolibre.com.co/telon-retractil-manual-con-tripode-100-pulgada-relacion-169/up/MCOU3713186368",
         glow: "rgba(245,158,11,0.12)",
         border: "rgba(245,158,11,0.2)",
+        priority: "essential",
+        why: "Complemento directo del proyector",
     },
     {
         id: 11,
         emoji: "💧",
-        tag: "Infrastructure · Ancestralis",
+        tag: "Infraestructura · Ancestralis",
         title: "Bomba de Agua Periférica APM37",
         subtitle: "0.5 HP · Aquastrong",
-        desc: "Esencial para el sistema de agua del proyecto en Isla Fuerte.",
+        desc: "Esencial para el sistema de agua del proyecto en Isla Fuerte. Sin esto no hay presión estable.",
         specs: ["0.5 HP", "Periférica", "Aquastrong"],
         store: "Homecenter",
         url: "https://www.homecenter.com.co/homecenter-co/product/775525/bomba-de-agua-periferica-apm37-05hp-aquastrong/775525/",
         glow: "rgba(59,130,246,0.12)",
         border: "rgba(59,130,246,0.2)",
+        priority: "essential",
+        why: "Agua con presión para todo el campamento",
     },
     {
         id: 12,
@@ -151,6 +175,8 @@ const wishlist: ToolkitItem[] = [
         url: "https://www.homecenter.com.co/homecenter-co/product/13303/tubo-rectangular-90-x-50-x-20mm-x-6m-estructural-hr50/13303/",
         glow: "rgba(161,161,170,0.1)",
         border: "rgba(161,161,170,0.18)",
+        priority: "upgrade",
+        why: "Estructura base de las instalaciones",
     },
 ];
 
@@ -234,6 +260,98 @@ function GearCard({ item }: { item: ToolkitItem }) {
             >
                 {item.store} <IconExternal />
             </a>
+        </div>
+    );
+}
+
+// ─── Wishlist Card ─────────────────────────────────────────────────────────────
+
+const PRIORITY_STYLES = {
+    essential: {
+        bar:    "bg-rose-500",
+        badge:  { background: "rgba(244,63,94,0.15)", color: "#fb7185", border: "1px solid rgba(244,63,94,0.25)" },
+        label:  "Essential",
+        dot:    "bg-rose-400",
+    },
+    upgrade: {
+        bar:    "bg-amber-500",
+        badge:  { background: "rgba(245,158,11,0.15)", color: "#fbbf24", border: "1px solid rgba(245,158,11,0.25)" },
+        label:  "Upgrade",
+        dot:    "bg-amber-400",
+    },
+    nice: {
+        bar:    "bg-sky-500",
+        badge:  { background: "rgba(56,189,248,0.12)", color: "#7dd3fc", border: "1px solid rgba(56,189,248,0.2)" },
+        label:  "Nice to have",
+        dot:    "bg-sky-400",
+    },
+};
+
+function WishlistCard({ item }: { item: WishlistItem }) {
+    const p = PRIORITY_STYLES[item.priority];
+    return (
+        <div
+            className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5"
+            style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${item.border}` }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 40px 6px ${item.glow}`; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.boxShadow = "none"; }}
+        >
+            {/* Priority top bar */}
+            <div className={`h-1 w-full ${p.bar} opacity-70 group-hover:opacity-100 transition-opacity duration-300`} />
+
+            <div className="flex flex-col flex-1 p-5">
+                {/* Header row */}
+                <div className="flex items-start justify-between mb-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl text-3xl shrink-0"
+                        style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${item.border}` }}>
+                        {item.emoji}
+                    </div>
+                    <span className="rounded-full px-2.5 py-0.5 text-[10px] font-mono font-semibold uppercase tracking-wide flex items-center gap-1.5"
+                        style={p.badge}>
+                        <span className={`h-1 w-1 rounded-full ${p.dot} inline-block`} />
+                        {p.label}
+                    </span>
+                </div>
+
+                {/* Title */}
+                <h3 className="font-display text-base font-bold text-white mb-0.5 leading-snug">{item.title}</h3>
+                <p className="text-[11px] font-mono mb-1" style={{ color: "rgba(255,255,255,0.35)" }}>{item.subtitle}</p>
+
+                {/* Why it matters */}
+                <p className="text-[11px] font-semibold mb-3 flex items-center gap-1.5" style={{ color: "rgba(255,255,255,0.45)" }}>
+                    <span>🏝️</span> {item.why}
+                </p>
+
+                <p className="text-sm leading-relaxed flex-1 mb-4" style={{ color: "rgba(255,255,255,0.45)" }}>{item.desc}</p>
+
+                {/* Specs */}
+                <div className="flex flex-wrap gap-1.5 mb-5">
+                    {item.specs.map((s) => (
+                        <span key={s} className="rounded-lg px-2.5 py-0.5 text-[10px] font-mono"
+                            style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.35)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                            {s}
+                        </span>
+                    ))}
+                </div>
+
+                {/* CTA */}
+                <a href={item.url} target="_blank" rel="noopener noreferrer"
+                    className="mt-auto inline-flex items-center justify-center gap-2 rounded-xl py-2.5 text-xs font-semibold transition-all active:scale-95 group/btn"
+                    style={{ background: item.glow, border: `1px solid ${item.border}`, color: "rgba(255,255,255,0.75)" }}
+                    onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLAnchorElement).style.background = item.border;
+                        (e.currentTarget as HTMLAnchorElement).style.color = "#fff";
+                    }}
+                    onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLAnchorElement).style.background = item.glow;
+                        (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.75)";
+                    }}
+                >
+                    <IconHeart className="h-3.5 w-3.5" />
+                    Gift this · {item.store}
+                    <IconExternal className="h-3 w-3 opacity-60" />
+                </a>
+            </div>
         </div>
     );
 }
@@ -430,26 +548,50 @@ export default function SupportPage() {
             </section>
 
             {/* Wishlist */}
-            <section id="wishlist" className="px-6 pb-24">
-                <div className="mx-auto max-w-5xl">
-                    <div className="mb-6 flex items-center gap-3">
-                        <span
-                            className="text-[10px] font-mono font-semibold uppercase tracking-[0.15em]"
-                            style={{ color: "rgba(255,255,255,0.3)" }}
-                        >
-                            Wishlist · Ancestralis House
-                        </span>
-                        <div className="h-px flex-1" style={{ background: "rgba(255,255,255,0.06)" }} />
-                    </div>
-                    <p className="text-sm mb-8" style={{ color: "rgba(255,255,255,0.35)" }}>
-                        Physical gear that would directly accelerate Ancestralis House — you can buy any of these directly from the store link.
-                    </p>
+            <section id="wishlist" className="relative overflow-hidden px-6 pb-28 pt-16"
+                style={{ background: "rgba(255,255,255,0.015)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                {/* Warm glow */}
+                <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 h-[400px] w-[700px] rounded-full"
+                    style={{ background: "radial-gradient(ellipse, rgba(251,146,60,0.07) 0%, transparent 70%)" }} />
 
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="relative mx-auto max-w-5xl">
+                    {/* Section header */}
+                    <div className="mb-12 flex flex-col sm:flex-row sm:items-end gap-6 justify-between">
+                        <div>
+                            <div className="mb-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-mono font-medium"
+                                style={{ background: "rgba(251,146,60,0.1)", border: "1px solid rgba(251,146,60,0.2)", color: "#fb923c" }}>
+                                <span className="h-1.5 w-1.5 rounded-full bg-orange-400 animate-pulse" />
+                                Wishlist · Ancestralis House
+                            </div>
+                            <h2 className="font-display text-3xl font-bold text-white sm:text-4xl leading-tight">
+                                Help build the house.
+                            </h2>
+                            <p className="mt-3 max-w-lg text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>
+                                These are physical items that go directly into Ancestralis House on Isla Fuerte —
+                                click any card to buy it straight from the store. Every gift moves the project forward.
+                            </p>
+                        </div>
+                        {/* Stats pill */}
+                        <div className="shrink-0 rounded-2xl px-5 py-4 text-center"
+                            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                            <p className="text-[10px] font-mono uppercase tracking-widest mb-1" style={{ color: "rgba(255,255,255,0.3)" }}>Items needed</p>
+                            <p className="font-display text-3xl font-bold text-white">{wishlist.length}</p>
+                            <p className="text-[10px] font-mono mt-0.5" style={{ color: "rgba(251,146,60,0.7)" }}>
+                                {wishlist.filter(i => i.priority === "essential").length} essential
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         {wishlist.map((item) => (
-                            <GearCard key={item.id} item={item} />
+                            <WishlistCard key={item.id} item={item} />
                         ))}
                     </div>
+
+                    {/* Bottom note */}
+                    <p className="mt-8 text-center text-[11px] font-mono" style={{ color: "rgba(255,255,255,0.2)" }}>
+                        Click any card to buy directly from the store · No middleman
+                    </p>
                 </div>
             </section>
 
