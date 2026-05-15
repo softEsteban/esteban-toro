@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 const AGENT_APP = "/agent-app";
 const WHATSAPP = "https://wa.me/573045500182?text=Hola%20Esteban%2C%20quiero%20hablar%20sobre%20un%20proyecto";
@@ -472,162 +473,117 @@ function Pillars() {
 
 // ─── Monetize Kit ──────────────────────────────────────────────────────────────
 
-function AgentKitVisual() {
-    const tools = [
-        { label: "WhatsApp",      color: "border-amber-500/30 text-amber-400",  bg: "bg-amber-500/8"  },
-        { label: "OpenAI",        color: "border-amber-500/25 text-amber-300",  bg: "bg-amber-500/5"  },
-        { label: "Anthropic",     color: "border-amber-500/25 text-amber-300",  bg: "bg-amber-500/5"  },
-        { label: "Knowledge Base",color: "border-amber-500/30 text-amber-400",  bg: "bg-amber-500/8"  },
-        { label: "Groq",          color: "border-amber-500/20 text-stone-400",  bg: "bg-stone-800/60" },
-        { label: "Webhooks",      color: "border-amber-500/20 text-stone-400",  bg: "bg-stone-800/60" },
-        { label: "Multi-agent",   color: "border-amber-500/30 text-amber-400",  bg: "bg-amber-500/8"  },
-        { label: "Dynamic tables",color: "border-amber-500/20 text-stone-400",  bg: "bg-stone-800/60" },
-    ];
-    return (
-        <div className="relative h-56 w-full rounded-2xl overflow-hidden bg-stone-950 border border-stone-800/80">
-            <div className="absolute inset-0 opacity-[0.035]" style={{
-                backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
-                backgroundSize: "20px 20px",
-            }} />
-            {/* Amber glow center */}
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                <div className="h-32 w-32 rounded-full bg-amber-500/8 blur-2xl" />
-            </div>
-            <div className="relative p-4 flex flex-col gap-3">
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-600">Included tools</p>
-                <div className="flex flex-wrap gap-2">
-                    {tools.map((t) => (
-                        <span key={t.label} className={`inline-flex items-center rounded-lg border px-2.5 py-1 text-[11px] font-medium ${t.color} ${t.bg}`}>
-                            {t.label}
-                        </span>
-                    ))}
-                </div>
-            </div>
-            <div className="absolute bottom-0 inset-x-0 border-t border-stone-800/60 bg-stone-950/80 px-4 py-2 flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
-                <span className="text-[10px] font-mono text-amber-600/80 tracking-wide">deploy-ready · multi-provider</span>
-            </div>
-        </div>
-    );
-}
-
-const STEP_FLAGS = [
-    { id: "doing",   dot: "bg-amber-400",  ring: "ring-amber-400/60",  label: "In progress" },
-    { id: "done",    dot: "bg-sky-400",    ring: "ring-sky-400/60",    label: "Done"         },
-    { id: "blocked", dot: "bg-rose-400",   ring: "ring-rose-400/60",   label: "Blocked"      },
+const DUST = [
+    { ox: -38, oy: -10, size: 3, delay: 0   },
+    { ox:  22, oy: -20, size: 2, delay: 70  },
+    { ox: -14, oy:  -5, size: 4, delay: 140 },
+    { ox:  40, oy:  -8, size: 2, delay: 40  },
+    { ox: -28, oy: -15, size: 3, delay: 200 },
+    { ox:  10, oy: -25, size: 2, delay: 110 },
+    { ox: -50, oy:  -3, size: 2, delay: 250 },
+    { ox:  50, oy: -12, size: 3, delay: 80  },
+    { ox:   0, oy: -30, size: 2, delay: 170 },
+    { ox: -20, oy: -18, size: 3, delay: 300 },
 ];
 
-function FlagIcon({ color }: { color: string }) {
+function Dust({ color, glow }: { color: string; glow: string }) {
     return (
-        <svg viewBox="0 0 12 14" className={`h-3 w-3 ${color}`} fill="currentColor">
-            <path d="M1 1v12M1 1h8l-2 3.5L9 8H1" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
+        <>
+            {DUST.map((p, i) => (
+                <div key={i} className="absolute rounded-full pointer-events-none"
+                    style={{
+                        left: `calc(50% + ${p.ox}px)`, top: `${p.oy}px`,
+                        width: p.size * 2, height: p.size * 2,
+                        background: color,
+                        boxShadow: `0 0 ${p.size * 4}px ${p.size}px ${glow}`,
+                        animation: "mkDust 1.5s ease-out forwards",
+                        animationDelay: `${p.delay}ms`,
+                        opacity: 0,
+                    }}
+                />
+            ))}
+        </>
     );
 }
-
-function GuidelinesVisual() {
-    const steps = [
-        "Set your agent's role & context",
-        "Configure CLAUDE.md base template",
-        "Wire tools, memory & behavior",
-        "Ship your first custom agent",
-    ];
-
-    const [flags, setFlags] = useState<(string | null)[]>([null, null, null, null]);
-
-    const toggle = (stepIdx: number, flagId: string) => {
-        setFlags(prev => prev.map((f, i) => i === stepIdx ? (f === flagId ? null : flagId) : f));
-    };
-
-    return (
-        <div className="relative h-56 w-full rounded-2xl overflow-hidden bg-stone-950 border border-stone-800/80">
-            <div className="absolute inset-0 opacity-[0.035]" style={{
-                backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
-                backgroundSize: "20px 20px",
-            }} />
-            <div className="absolute top-3 right-4 text-sky-400/20 text-4xl select-none pointer-events-none leading-none">✦</div>
-            <div className="relative p-4 flex flex-col gap-2.5">
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-600">Guide steps</p>
-                {steps.map((text, i) => {
-                    const active = STEP_FLAGS.find(f => f.id === flags[i]);
-                    return (
-                        <div key={i} className="flex items-center gap-2.5">
-                            {/* Active flag indicator */}
-                            <span className={`shrink-0 h-1.5 w-1.5 rounded-full transition-colors duration-200 ${active ? active.dot : "bg-stone-700"}`} />
-                            {/* Step text */}
-                            <span className={`flex-1 text-[11px] font-mono truncate transition-colors duration-200 ${
-                                active?.id === "done"    ? "text-sky-400/80" :
-                                active?.id === "doing"   ? "text-amber-400/80" :
-                                active?.id === "blocked" ? "text-rose-400/60 line-through" :
-                                "text-stone-600"
-                            }`}>{text}</span>
-                            {/* Flag buttons */}
-                            <div className="flex gap-1 shrink-0">
-                                {STEP_FLAGS.map(flag => (
-                                    <button
-                                        key={flag.id}
-                                        onClick={() => toggle(i, flag.id)}
-                                        title={flag.label}
-                                        className={`flex h-5 w-5 items-center justify-center rounded transition-all duration-150 ${
-                                            flags[i] === flag.id
-                                                ? `bg-stone-800 ring-1 ${flag.ring} scale-110`
-                                                : "opacity-25 hover:opacity-60"
-                                        }`}
-                                    >
-                                        <FlagIcon color={flags[i] === flag.id
-                                            ? flag.id === "doing"   ? "text-amber-400"
-                                            : flag.id === "done"    ? "text-sky-400"
-                                            : "text-rose-400"
-                                            : "text-stone-400"
-                                        } />
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
-            <div className="absolute bottom-0 inset-x-0 border-t border-stone-800/60 bg-stone-950/80 px-4 py-2 flex items-center gap-2">
-                <span className="text-sky-400/70 text-[11px] font-bold shrink-0">✦</span>
-                <span className="text-[10px] font-mono text-sky-600/80 tracking-wide">prompt guide · from scratch</span>
-            </div>
-        </div>
-    );
-}
-
 
 function MonetizeKit() {
-    const items = [
+    const [hovered, setHovered] = useState<string | null>(null);
+    const [dustKey, setDustKey] = useState(0);
+
+    const onEnter = (id: string) => { setHovered(id); setDustKey(k => k + 1); };
+    const onLeave = () => setHovered(null);
+
+    const Check = ({ bright = false }: { bright?: boolean }) => (
+        <svg className={`h-3.5 w-3.5 shrink-0 mt-[1px] ${bright ? "text-amber-400" : "text-stone-600"}`} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+        </svg>
+    );
+
+    const tiers = [
         {
-            number: "01",
-            title: "Agent Kit",
-            tagline: "Your AI infrastructure, live on day one.",
-            desc: "Deploy specialized AI agents with knowledge bases, multi-provider LLM support, WhatsApp integration, and dynamic behavior — without months of setup.",
-            color: "text-amber-400",
-            bar: "bg-amber-500",
-            visual: <AgentKitVisual />,
+            id: "nomad", name: "Nomad", price: "$15", tagline: "Start shipping today.",
+            img: "/nomad.png", imgW: 140, imgH: 200, overflow: 90,
+            dustColor: "#c4b5a0", dustGlow: "rgba(196,181,160,0.45)", glowBg: "rgba(196,181,160,0.08)",
+            accentClass: "text-stone-400", popular: false,
+            cardW: "lg:w-[250px] xl:w-[272px]", liftMb: 0,
+            tilt: "-rotate-[1.2deg] hover:rotate-0",
+            stars: [
+                { x: -84, y: -110, s: 13, rot: 20 }, { x: 77, y: -80,  s: 9,  rot: -15 },
+                { x: -49, y: -160, s: 7,  rot: 45 }, { x: 42, y: -150, s: 11, rot: -30 },
+            ],
+            features: ["1 workspace", "1–2 AI agents", "Bring your own API key", "Knowledge base (PDFs)", "Public agent URL", "Community support"],
+            cta: "Get Started",
         },
         {
-            number: "02",
-            title: "Claude Code Guidelines",
-            tagline: "From zero to your own agent setup.",
-            desc: "A personal guide walking you through Claude Code prompts and the base CLAUDE.md template — so you can start building your agent from scratch, your way.",
-            color: "text-sky-400",
-            bar: "bg-sky-500",
-            visual: <GuidelinesVisual />,
+            id: "explorer", name: "Explorer", price: "$39", tagline: "Everything you need to grow.",
+            img: "/explorer.png", imgW: 190, imgH: 260, overflow: 130,
+            dustColor: "#f59e0b", dustGlow: "rgba(245,158,11,0.55)", glowBg: "rgba(245,158,11,0.14)",
+            accentClass: "text-amber-400", popular: true,
+            cardW: "flex-1", liftMb: 0, tilt: "",
+            stars: [
+                { x: -105, y: -143, s: 15, rot: 20 }, { x: 96,  y: -104, s: 11, rot: -15 },
+                { x: -66,  y: -208, s: 9,  rot: 45 }, { x: 57,  y: -195, s: 13, rot: -30 },
+            ],
+            features: ["Multiple AI agents", "2,000 messages / month", "WhatsApp integration", "Web widget embed", "CRM lead capture", "Priority support"],
+            cta: "Start Free Trial",
         },
-    ];
+        {
+            id: "traveler", name: "Traveler", price: "$99", tagline: "Unlimited power, no limits.",
+            img: "/traveler.png", imgW: 140, imgH: 200, overflow: 90,
+            dustColor: "#38bdf8", dustGlow: "rgba(56,189,248,0.45)", glowBg: "rgba(56,189,248,0.08)",
+            accentClass: "text-sky-400", popular: false,
+            cardW: "lg:w-[250px] xl:w-[272px]", liftMb: 64,
+            tilt: "rotate-[1.2deg] hover:rotate-0",
+            stars: [
+                { x: -84, y: -110, s: 13, rot: 25 }, { x: 77,  y: -80,  s: 9,  rot: -20 },
+                { x: -49, y: -160, s: 7,  rot: 50 }, { x: 42,  y: -150, s: 11, rot: -35 },
+            ],
+            features: ["Unlimited AI agents", "Advanced workflows", "Analytics & logs", "White-label options", "API access", "Dedicated support"],
+            cta: "Get Started",
+        },
+    ] as const;
 
     return (
         <section className="relative overflow-hidden bg-stone-950">
-            {/* SVG wave transition from white Pillars section */}
-            <svg
-                className="block w-full"
-                viewBox="0 0 1200 90"
-                preserveAspectRatio="none"
-                xmlns="http://www.w3.org/2000/svg"
-                style={{ display: "block" }}
-            >
+            <style>{`
+                @keyframes mkDust {
+                    0%   { opacity: 0; transform: translateY(0px) scale(0) rotate(0deg); }
+                    20%  { opacity: 1; }
+                    60%  { opacity: 0.7; transform: translateY(-40px) scale(1) rotate(120deg); }
+                    100% { opacity: 0; transform: translateY(-90px) scale(0.3) rotate(260deg); }
+                }
+                @keyframes mkIdle {
+                    0%,100% { transform: translateY(0px); filter: drop-shadow(0 24px 32px rgba(0,0,0,0.45)); }
+                    50%     { transform: translateY(-8px); filter: drop-shadow(0 32px 48px rgba(0,0,0,0.30)); }
+                }
+                .mk-char { animation: mkIdle 3.8s ease-in-out infinite; }
+                .mk-char-active { animation: none !important; transform: translateY(-20px) scale(1.10) !important; filter: drop-shadow(0 36px 56px rgba(0,0,0,0.22)) !important; }
+                .mk-card { transition: transform 0.38s cubic-bezier(0.34,1.2,0.64,1); }
+                .mk-card:hover { transform: translateY(-8px); }
+            `}</style>
+
+            {/* Wave */}
+            <svg className="block w-full" viewBox="0 0 1200 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block" }}>
                 <defs>
                     <filter id="kit-wave-sketch" x="-5%" y="-5%" width="110%" height="110%">
                         <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="9" result="noise" />
@@ -635,108 +591,165 @@ function MonetizeKit() {
                     </filter>
                 </defs>
                 <rect x="-20" y="0" width="1240" height="35" fill="#fafaf9" />
-                <path
-                    d="M-20,0 L1220,0 L1220,48 C1000,82 800,22 600,60 C400,98 200,28 -20,65 Z"
-                    fill="#fafaf9"
-                    filter="url(#kit-wave-sketch)"
-                />
+                <path d="M-20,0 L1220,0 L1220,48 C1000,82 800,22 600,60 C400,98 200,28 -20,65 Z" fill="#fafaf9" filter="url(#kit-wave-sketch)" />
             </svg>
 
             {/* Ambient glows */}
             <div className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 h-[700px] w-[900px] rounded-full bg-amber-600/6 blur-[180px]" />
             <div className="pointer-events-none absolute bottom-0 right-0 h-[400px] w-[400px] translate-x-1/3 translate-y-1/3 rounded-full bg-amber-900/10 blur-[120px]" />
-
-            {/* Grain */}
-            <div
-                className="pointer-events-none absolute inset-0 opacity-[0.03]"
-                style={{
-                    backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")",
-                    backgroundSize: "180px",
-                }}
-            />
+            <div className="pointer-events-none absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")", backgroundSize: "180px" }} />
 
             <div className="relative mx-auto max-w-5xl px-6 pb-28 pt-4">
 
-                {/* Section label */}
-                <div className="mb-10 text-center">
+                {/* Header */}
+                <div className="mb-36 text-center">
                     <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-medium text-amber-400">
                         <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-                        The Kit
+                        Agent Kit · Pricing
                     </div>
                     <h2 className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">
                         Monetize your time
                         <br />
                         <span className="text-amber-400">and knowledge.</span>
                     </h2>
-                    <p className="mt-4 text-stone-400 max-w-md mx-auto leading-relaxed text-sm">
-                        One subscription. Three tools that work together from day one.
+                    <p className="mt-4 text-stone-400 max-w-sm mx-auto leading-relaxed text-sm">
+                        Deploy your first AI agent in minutes. Scale when you&apos;re ready.
                     </p>
                 </div>
 
-                {/* ── Pack container ── */}
-                <div className="rounded-3xl border border-stone-700/70 bg-stone-900/60 overflow-hidden shadow-2xl shadow-black/40"
-                    style={{ boxShadow: "0 0 0 1px rgba(245,158,11,0.08), 0 32px 80px rgba(0,0,0,0.5)" }}
-                >
-                    {/* Pack header */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 border-b border-stone-800 px-8 py-6"
-                        style={{ background: "linear-gradient(135deg, rgba(245,158,11,0.06) 0%, transparent 60%)" }}
-                    >
-                        <div>
-                            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 mb-1">Complete pack · 2 items</p>
-                            <p className="font-display text-xl font-bold text-white">Monetize your time and knowledge kit</p>
-                        </div>
-                        <div className="flex items-center gap-4 shrink-0">
-                            <div className="text-right">
-                                <p className="font-display text-3xl font-bold text-white leading-none">$100</p>
-                                <p className="text-[10px] text-stone-500 uppercase tracking-widest mt-0.5">per month</p>
-                            </div>
-                            <a
-                                href={AGENT_APP}
-                                className="inline-flex h-11 items-center gap-2 rounded-xl bg-amber-500 px-5 text-sm font-semibold text-white shadow-lg shadow-amber-500/20 transition-all hover:bg-amber-400 active:scale-95 shrink-0"
+                {/* ── Cards — staggered, bottom-anchored ── */}
+                <div className="flex flex-col lg:flex-row lg:items-end gap-5">
+                    {tiers.map((tier) => {
+                        const isHot = hovered === tier.id;
+                        return (
+                            <div
+                                key={tier.id}
+                                className={`mk-card relative ${tier.cardW} ${tier.tilt}`}
+                                style={{ marginBottom: tier.liftMb }}
+                                onMouseEnter={() => onEnter(tier.id)}
+                                onMouseLeave={onLeave}
                             >
-                                Get the kit <IconArrow className="h-3.5 w-3.5" />
+                                {/* Character overflows above card */}
+                                <div className="absolute inset-x-0 flex justify-center pointer-events-none z-20"
+                                    style={{ top: -tier.overflow }}>
+                                    {/* ground glow */}
+                                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full blur-2xl"
+                                        style={{ width: tier.imgW * 0.75, height: 18, background: tier.glowBg, transform: "translateX(-50%) scaleX(1.3)" }} />
+                                    {/* dust */}
+                                    <div key={`dust-${tier.id}-${dustKey}`} className="absolute inset-0 overflow-visible">
+                                        {isHot && <Dust color={tier.dustColor} glow={tier.dustGlow} />}
+                                    </div>
+                                    {/* star sparkles */}
+                                    {isHot && tier.stars.map((star, si) => (
+                                        <svg key={si} viewBox="0 0 24 24" fill={tier.dustColor} className="absolute pointer-events-none"
+                                            style={{
+                                                width: star.s, height: star.s,
+                                                left: `calc(50% + ${star.x}px)`, top: `calc(50% + ${star.y}px)`,
+                                                filter: `drop-shadow(0 0 4px ${tier.dustColor})`,
+                                                animation: `mkDust ${1.2 + si * 0.15}s ease-out forwards`,
+                                                animationDelay: `${si * 60}ms`,
+                                                transform: `rotate(${star.rot}deg)`, opacity: 0,
+                                            }}>
+                                            <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
+                                        </svg>
+                                    ))}
+                                    <Image src={tier.img} alt={tier.name} width={tier.imgW} height={tier.imgH} priority
+                                        className={`relative z-10 select-none mk-char${isHot ? " mk-char-active" : ""}`}
+                                        style={{ height: tier.imgH, width: "auto", objectFit: "contain" }} />
+                                </div>
+
+                                {/* Card body */}
+                                <div
+                                    className={`relative flex flex-col rounded-2xl transition-all duration-300 ${
+                                        tier.popular
+                                            ? "border-2 border-amber-500/55 shadow-2xl shadow-amber-500/12"
+                                            : "border border-stone-800 hover:border-stone-600"
+                                    }`}
+                                    style={{
+                                        padding: `${tier.overflow + (tier.popular ? 32 : 24)}px ${tier.popular ? 28 : 22}px ${tier.popular ? 28 : 22}px`,
+                                        background: tier.popular
+                                            ? "linear-gradient(160deg, rgba(245,158,11,0.10) 0%, rgba(22,18,14,0.98) 52%)"
+                                            : "rgba(28,25,23,0.75)",
+                                    }}
+                                >
+                                    {tier.popular && (
+                                        <span className="absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-full bg-amber-500 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-md shadow-amber-500/30">
+                                            <span className="h-1 w-1 rounded-full bg-white/80 animate-pulse" /> Most Popular
+                                        </span>
+                                    )}
+                                    <p className={`text-[10px] font-bold uppercase tracking-[0.18em] mb-2 ${tier.accentClass}`}>{tier.name}</p>
+                                    <div className="flex items-end gap-1 mb-1.5">
+                                        <span className={`font-bold tracking-tight leading-none ${tier.popular ? "text-5xl text-white" : "text-4xl text-stone-200"}`}>{tier.price}</span>
+                                        <span className="text-stone-500 text-sm mb-1">/mo</span>
+                                    </div>
+                                    <p className="text-[11px] text-stone-500 leading-relaxed mb-5">{tier.tagline}</p>
+                                    <ul className="space-y-2.5 flex-1 mb-7">
+                                        {tier.features.map((f) => (
+                                            <li key={f} className="flex items-start gap-2 text-sm text-stone-300">
+                                                <Check bright={tier.popular} />{f}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <a href={AGENT_APP}
+                                        className={`w-full inline-flex h-10 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all active:scale-[0.97] ${
+                                            tier.popular
+                                                ? "bg-amber-500 text-white hover:bg-amber-400 shadow-lg shadow-amber-500/25"
+                                                : "border border-stone-700 text-stone-300 hover:border-stone-500 hover:text-white"
+                                        }`}>
+                                        {tier.cta}{tier.popular && <IconArrow className="h-3.5 w-3.5" />}
+                                    </a>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {/* Done-for-you service */}
+                <div className="mt-8 rounded-2xl border border-stone-700/50 p-6 sm:p-8"
+                    style={{ background: "linear-gradient(135deg, rgba(245,158,11,0.05) 0%, rgba(17,14,10,0.7) 70%)" }}>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                        <div className="flex-1 min-w-0">
+                            <span className="inline-flex items-center rounded-full border border-amber-500/20 bg-amber-500/8 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-amber-500/70 mb-3">
+                                One-time service
+                            </span>
+                            <h3 className="text-lg font-bold text-white mb-1.5">Done-for-you AI System</h3>
+                            <p className="text-sm text-stone-400 leading-relaxed max-w-lg">
+                                I handle full setup, deployment, and configuration for your business — custom branding, personalized agents, and training included.
+                            </p>
+                            <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5">
+                                {["Full setup & deployment", "Custom branding", "Personalized configuration", "Training & support"].map((f) => (
+                                    <li key={f} className="flex items-center gap-1.5 text-xs text-stone-400"><Check />{f}</li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className="shrink-0 flex flex-col items-start sm:items-end gap-3">
+                            <div>
+                                <div className="flex items-end gap-1.5">
+                                    <span className="text-3xl font-bold text-white">$500</span>
+                                    <span className="text-stone-500 text-sm mb-0.5">one-time</span>
+                                </div>
+                                <p className="text-[10px] text-stone-600 mt-0.5">Custom scope may vary</p>
+                            </div>
+                            <a href={WHATSAPP} target="_blank" rel="noopener noreferrer"
+                                className="inline-flex h-10 items-center gap-2 rounded-xl bg-[#25D366] px-5 text-sm font-semibold text-white shadow-lg shadow-[#25D366]/15 hover:bg-[#1ebe5d] active:scale-[0.97] transition-all whitespace-nowrap">
+                                <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+                                Talk to me
                             </a>
                         </div>
                     </div>
-
-                    {/* Three cards */}
-                    <div className="divide-y divide-stone-800 lg:divide-y-0 lg:grid lg:grid-cols-2 lg:divide-x lg:divide-stone-800">
-                        {items.map((item) => (
-                            <div key={item.number} className="group relative flex flex-col gap-5 p-7 transition-colors duration-200 hover:bg-stone-800/25">
-                                {/* Top accent bar */}
-                                <div className={`absolute inset-x-0 top-0 h-[2px] ${item.bar} opacity-0 group-hover:opacity-70 transition-opacity duration-300`} />
-
-                                {/* Visual preview */}
-                                {item.visual}
-
-                                {/* Text */}
-                                <div className="flex flex-col gap-3">
-                                    <div className="flex items-baseline gap-2.5">
-                                        <span className="font-display text-3xl font-bold text-stone-800 leading-none select-none">{item.number}</span>
-                                        <h3 className={`font-display text-base font-bold ${item.color}`}>{item.title}</h3>
-                                    </div>
-                                    <p className="text-xs font-semibold italic text-stone-500">{item.tagline}</p>
-                                    <p className="text-sm leading-relaxed text-stone-400">{item.desc}</p>
-                                </div>
-
-                                {/* Included pill */}
-                                <div className="mt-auto pt-1">
-                                    <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-stone-600">
-                                        <svg className="h-3 w-3 text-amber-500" viewBox="0 0 12 12" fill="none">
-                                            <path d="M10 3L5 8.5 2 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                        </svg>
-                                        Included in pack
-                                    </span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
                 </div>
 
-                {/* Bottom note */}
-                <p className="mt-8 text-center text-xs text-stone-600 tracking-wide">
-                    Cancel anytime &nbsp;·&nbsp; No lock-in &nbsp;·&nbsp; Spots limited each month
-                </p>
+                {/* Trust */}
+                <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
+                    {["Cancel anytime", "Bring your own API key", "No hidden LLM costs", "Setup in minutes"].map((item) => (
+                        <span key={item} className="flex items-center gap-1.5 text-xs text-stone-600">
+                            <svg className="h-3.5 w-3.5 text-stone-700 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {item}
+                        </span>
+                    ))}
+                </div>
             </div>
         </section>
     );
