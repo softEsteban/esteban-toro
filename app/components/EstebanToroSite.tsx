@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
 
 const AGENT_APP = "/agent-app";
 const WHATSAPP = "https://wa.me/573045500182?text=Hola%20Esteban%2C%20quiero%20hablar%20sobre%20un%20proyecto";
@@ -40,14 +39,14 @@ const ENV = {
 };
 
 const ENV_PARTICLES = [
-    { x: 12, y: 28, size: 4,  idx: 0, delay: 0   },
-    { x: 35, y: 55, size: 6,  idx: 1, delay: 1.2 },
-    { x: 60, y: 20, size: 3,  idx: 2, delay: 2.1 },
-    { x: 78, y: 65, size: 5,  idx: 3, delay: 0.7 },
-    { x: 88, y: 35, size: 4,  idx: 0, delay: 3.0 },
-    { x: 22, y: 75, size: 3,  idx: 1, delay: 1.8 },
-    { x: 50, y: 82, size: 6,  idx: 2, delay: 0.4 },
-    { x: 70, y: 10, size: 3,  idx: 3, delay: 2.5 },
+    { x: 12, y: 28, size: 4, idx: 0, delay: 0 },
+    { x: 35, y: 55, size: 6, idx: 1, delay: 1.2 },
+    { x: 60, y: 20, size: 3, idx: 2, delay: 2.1 },
+    { x: 78, y: 65, size: 5, idx: 3, delay: 0.7 },
+    { x: 88, y: 35, size: 4, idx: 0, delay: 3.0 },
+    { x: 22, y: 75, size: 3, idx: 1, delay: 1.8 },
+    { x: 50, y: 82, size: 6, idx: 2, delay: 0.4 },
+    { x: 70, y: 10, size: 3, idx: 3, delay: 2.5 },
 ];
 
 // ─── Atoms ─────────────────────────────────────────────────────────────────────
@@ -112,6 +111,16 @@ function NavIconChip() {
     );
 }
 
+function NavIconCanvas() {
+    return (
+        <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={1.75} viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="2" />
+            <path d="M2 8l4 6 4-4 4 5 3-3 4 4" />
+            <circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none" />
+        </svg>
+    );
+}
+
 // ─── Navbar ────────────────────────────────────────────────────────────────────
 
 function Navbar() {
@@ -134,16 +143,9 @@ function Navbar() {
         },
         {
             label: "What I build",
-            href: "#builds",
+            href: "/products",
             icon: <NavIconWrench />,
             hover: "hover:bg-white/10 hover:text-amber-300",
-            mobileHover: "hover:bg-stone-800",
-        },
-        {
-            label: "Products",
-            href: "/products",
-            icon: <NavIconGrid />,
-            hover: "hover:bg-white/10 hover:text-stone-100",
             mobileHover: "hover:bg-stone-800",
         },
         {
@@ -154,19 +156,18 @@ function Navbar() {
             mobileHover: "hover:bg-stone-800",
         },
         {
-            label: "Ancestralis",
-            href: "/ancestralis",
-            icon: <NavIconHome />,
-            hover: "hover:bg-white/10 hover:text-emerald-300",
+            label: "Aesthetics",
+            href: "/aesthetics",
+            icon: <NavIconCanvas />,
+            hover: "hover:bg-white/10 hover:text-violet-300",
             mobileHover: "hover:bg-stone-800",
         },
     ];
 
     return (
         <header
-            className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-                scrolled ? "bg-stone-950/95 backdrop-blur-md border-b border-stone-800/60 shadow-sm" : ""
-            }`}
+            className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled ? "bg-stone-950/95 backdrop-blur-md border-b border-stone-800/60 shadow-sm" : ""
+                }`}
         >
             <nav className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
                 <a href="#" className="font-display text-base font-bold tracking-tight text-white">
@@ -188,24 +189,8 @@ function Navbar() {
                             {l.label}
                         </a>
                     ))}
-                    <a
-                        href={AGENT_APP}
-                        className="ml-1 inline-flex items-center gap-1.5 rounded-lg border border-amber-500/35 bg-amber-500/10 px-3 py-1.5 text-sm font-semibold text-amber-400 transition-all duration-150 hover:bg-amber-500/18 hover:border-amber-500/60 hover:text-amber-300"
-                    >
-                        <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
-                        Agent Kit
-                    </a>
-                </div>
 
-                <div className="hidden md:flex">
-                    <a
-                        href={AGENT_APP}
-                        className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-amber-500 px-3.5 text-xs font-semibold text-white transition-all hover:bg-amber-400 active:scale-95"
-                    >
-                        Get started <IconArrow className="h-3 w-3" />
-                    </a>
                 </div>
-
                 <button onClick={() => setMenuOpen(!menuOpen)} className="flex flex-col gap-1.5 p-1 md:hidden">
                     <span className={`block h-0.5 w-5 bg-stone-300 transition-all ${menuOpen ? "translate-y-2 rotate-45" : ""}`} />
                     <span className={`block h-0.5 w-5 bg-stone-300 transition-all ${menuOpen ? "opacity-0" : ""}`} />
@@ -310,37 +295,30 @@ function Hero() {
                             <span className="font-semibold text-stone-200">strategic execution</span>.
                         </p>
 
-                        <div className="mt-9 flex flex-wrap gap-3">
-                            <a
-                                href={AGENT_APP}
-                                className="inline-flex h-12 items-center gap-2 rounded-xl bg-amber-500 px-6 text-sm font-semibold text-white shadow-lg shadow-amber-500/20 transition-all hover:bg-amber-400 hover:shadow-xl active:scale-95"
-                            >
-                                Get Agent Kit <IconArrow />
-                            </a>
+                        <div className="mt-9 flex flex-col gap-3">
+                            <div className="flex flex-wrap gap-2">
+                                {[
+                                    { icon: "🧭", text: "Find your direction" },
+                                    { icon: "⚙️", text: "Build your system" },
+                                    { icon: "🤖", text: "Automate the rest" },
+                                ].map((p) => (
+                                    <div
+                                        key={p.text}
+                                        className="flex items-center gap-1.5 rounded-full border border-stone-700 bg-stone-800/60 px-3 py-1 text-xs text-stone-400"
+                                    >
+                                        <span>{p.icon}</span>
+                                        {p.text}
+                                    </div>
+                                ))}
+                            </div>
                             <a
                                 href={WHATSAPP}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex h-12 items-center gap-2 rounded-xl border border-stone-700 bg-stone-800 px-6 text-sm font-semibold text-stone-200 transition-all hover:bg-stone-700 hover:border-stone-600 active:scale-95"
+                                className="inline-flex h-12 items-center gap-2 rounded-xl bg-amber-500 px-6 text-sm font-semibold text-white shadow-lg shadow-amber-500/20 transition-all hover:bg-amber-400 hover:shadow-xl active:scale-95 self-start"
                             >
-                                Talk to me
+                                Talk to me <IconArrow />
                             </a>
-                        </div>
-
-                        <div className="mt-12 flex flex-wrap gap-3">
-                            {[
-                                { icon: "🧭", text: "Find your direction" },
-                                { icon: "⚙️", text: "Build your system" },
-                                { icon: "🤖", text: "Automate the rest" },
-                            ].map((p) => (
-                                <div
-                                    key={p.text}
-                                    className="flex items-center gap-2 rounded-full border border-stone-700 bg-stone-800/60 px-4 py-2 text-sm text-stone-400"
-                                >
-                                    <span>{p.icon}</span>
-                                    {p.text}
-                                </div>
-                            ))}
                         </div>
                     </div>
 
@@ -419,7 +397,7 @@ function Pillars() {
     ];
 
     return (
-        <section id="pillars" className="bg-stone-50 px-6 py-24">
+        <section id="pillars" className="relative overflow-hidden bg-stone-50 px-6 pt-24 pb-36">
             <div className="mx-auto max-w-5xl">
                 <div className="mb-14">
                     <p className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.15em] text-stone-400">
@@ -467,22 +445,1091 @@ function Pillars() {
                     ))}
                 </div>
             </div>
+
+            {/* Wave transition into DailiApp */}
+            <div className="pointer-events-none absolute bottom-0 inset-x-0">
+                <svg
+                    viewBox="0 0 1440 96"
+                    xmlns="http://www.w3.org/2000/svg"
+                    preserveAspectRatio="none"
+                    className="w-full block"
+                    style={{ height: 96 }}
+                >
+                    <path
+                        d="M0,96 C240,32 480,80 720,48 C960,16 1200,64 1440,96 Z"
+                        fill="#0c0a09"
+                    />
+                </svg>
+            </div>
         </section>
+    );
+}
+
+// ─── Daili App Mockup ─────────────────────────────────────────────────────────
+
+type DailiWorkspace = "Personal" | "Master plan";
+type DailiPriority = "All" | "High" | "Medium" | "Low" | "None";
+type DailiTaskPriority = "high" | "medium" | "low" | "none";
+
+interface DailiTask {
+    id: string;
+    title: string;
+    priority: DailiTaskPriority;
+    done?: boolean;
+    children?: DailiTask[];
+}
+
+const DAILI_TASKS: Record<DailiWorkspace, DailiTask[]> = {
+    "Master plan": [
+        {
+            id: "daili-app",
+            title: "Daili App",
+            priority: "high",
+            children: [
+                { id: "da-1", title: "Design workspace switcher", priority: "high" },
+                { id: "da-2", title: "Build task list UI", priority: "medium" },
+                { id: "da-3", title: "Add note editor", priority: "none", done: true },
+            ],
+        },
+        {
+            id: "agent-kit",
+            title: "Agent Kit",
+            priority: "high",
+            children: [
+                { id: "ak-1", title: "Create use cases", priority: "high" },
+                { id: "ak-2", title: "Redeploy database and application", priority: "none" },
+                { id: "ak-3", title: "Define Subscription model in website", priority: "none", done: true },
+                { id: "ak-4", title: "Backlog", priority: "none" },
+                { id: "ak-5", title: "Create subscription in Lemon Squeeze", priority: "none" },
+            ],
+        },
+    ],
+    "Personal": [
+        { id: "p-1", title: "Morning routine — journal + cold shower", priority: "high" },
+        { id: "p-2", title: "Read 30 minutes", priority: "medium" },
+        { id: "p-3", title: "Exercise (calisthenics)", priority: "high", done: true },
+        { id: "p-4", title: "Write one thing I'm grateful for", priority: "low" },
+        { id: "p-5", title: "Limit social media to 20 min", priority: "medium" },
+    ]
+};
+
+const DAILI_NOTES: Record<string, string> = {
+    "Today":
+        `Tareas del día
+- Deploy Agent Kit v2
+- Review Daili UI feedback
+- Write 500 words
+
+Ideas que surgieron:
+- Onboarding flow simplificado
+- Push notifications para tareas`,
+    "Videos Ideas":
+        `Ideas de video
+1. "Cómo construyo mis herramientas"
+2. Sistema de productividad real
+3. Daili App — walkthrough
+4. Por qué salí del trabajo corporativo
+5. Vivir en la isla Fuerte`,
+};
+
+const PRIORITY_DOT: Record<DailiTaskPriority, string> = {
+    high: "bg-red-500",
+    medium: "bg-orange-400",
+    low: "bg-blue-400",
+    none: "bg-stone-300",
+};
+
+function DailiCheckbox({ checked, onToggle, checkBorder = "border-stone-300 hover:border-stone-400" }: { checked: boolean; onToggle: () => void; checkBorder?: string }) {
+    return (
+        <button
+            onClick={onToggle}
+            className={`h-3.5 w-3.5 shrink-0 rounded flex items-center justify-center border transition-colors ${checked ? "bg-emerald-500 border-emerald-500" : `${checkBorder} bg-transparent`
+                }`}
+        >
+            {checked && (
+                <svg viewBox="0 0 12 12" fill="none" className="h-2.5 w-2.5">
+                    <path d="M2 6l3 3 5-5" stroke="white" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+            )}
+        </button>
+    );
+}
+
+function DailiAppMockup({ dark }: { dark: boolean }) {
+    const [workspace, setWorkspace] = useState<DailiWorkspace>("Master plan");
+    const [priority, setPriority] = useState<DailiPriority>("All");
+    const [expanded, setExpanded] = useState<Set<string>>(new Set(["agent-kit"]));
+    const [checked, setChecked] = useState<Set<string>>(new Set(["ak-3", "da-3"]));
+    const [activeNote, setActiveNote] = useState("Note 1");
+    const [newTask, setNewTask] = useState("");
+    const [extraTasks, setExtraTasks] = useState<Record<DailiWorkspace, DailiTask[]>>({
+        "Personal": [], "Master plan": []
+    });
+    const [noteContents, setNoteContents] = useState<Record<string, string>>(DAILI_NOTES);
+
+    const tasks = [...DAILI_TASKS[workspace], ...extraTasks[workspace]];
+
+    const filterTask = (t: DailiTask): boolean => {
+        if (priority === "All") return true;
+        const levels: Record<string, DailiTaskPriority> = { High: "high", Medium: "medium", Low: "low", None: "none" };
+        return t.priority === levels[priority];
+    };
+
+    const toggleExpand = (id: string) => {
+        setExpanded(prev => {
+            const next = new Set(prev);
+            next.has(id) ? next.delete(id) : next.add(id);
+            return next;
+        });
+    };
+
+    const toggleCheck = (id: string) => {
+        setChecked(prev => {
+            const next = new Set(prev);
+            next.has(id) ? next.delete(id) : next.add(id);
+            return next;
+        });
+    };
+
+    const handleAddTask = (e: React.KeyboardEvent) => {
+        if (e.key !== "Enter" || !newTask.trim()) return;
+        const id = `user-${Date.now()}`;
+        setExtraTasks(prev => ({
+            ...prev,
+            [workspace]: [...prev[workspace], { id, title: newTask.trim(), priority: "none" }],
+        }));
+        setNewTask("");
+    };
+
+    const d = {
+        bg: dark ? "bg-stone-900" : "bg-white",
+        border: dark ? "border-stone-700/60" : "border-stone-700/40",
+        divider: dark ? "border-stone-800" : "border-stone-100",
+        panelBg: dark ? "bg-stone-900" : "",
+        hoverRow: dark ? "hover:bg-stone-800/60" : "hover:bg-stone-50",
+        searchBg: dark ? "bg-stone-800" : "bg-stone-50",
+        labelText: dark ? "text-stone-500" : "text-stone-400",
+        bodyText: dark ? "text-stone-300" : "text-stone-700",
+        subText: dark ? "text-stone-400" : "text-stone-600",
+        mutedText: dark ? "text-stone-500" : "text-stone-400",
+        activeTab: dark ? "bg-stone-100 text-stone-900" : "bg-stone-900 text-white",
+        inactiveTab: dark ? "text-stone-400 hover:bg-stone-800" : "text-stone-500 hover:bg-stone-100",
+        btnBorder: dark ? "border-stone-700" : "border-stone-200",
+        btnText: dark ? "text-stone-400 hover:bg-stone-800" : "text-stone-500 hover:bg-stone-50",
+        checkBorder: dark ? "border-stone-600 hover:border-stone-400" : "border-stone-300 hover:border-stone-400",
+        noteHeader: dark ? "text-stone-300" : "text-stone-600",
+        noteText: dark ? "text-stone-300" : "text-stone-600",
+    };
+
+    return (
+        <div className={`rounded-xl border ${d.border} ${d.bg} overflow-hidden shadow-2xl shadow-black/50 select-none transition-colors duration-300`} style={{ fontSize: 13 }}>
+            <div className="flex" style={{ height: 380 }}>
+
+                {/* ── Left panel: Tasks ── */}
+                <div className={`flex flex-1 flex-col border-r ${d.divider} min-w-0`}>
+
+                    {/* Workspace tabs */}
+                    <div className={`flex items-center gap-1 border-b ${d.divider} px-3 py-2 overflow-x-auto`}>
+                        <span className={`shrink-0 text-[9px] font-bold tracking-[0.12em] uppercase ${d.labelText} mr-1`}>WORKSPACES</span>
+                        {(["Personal", "Master plan"] as DailiWorkspace[]).map(w => (
+                            <button
+                                key={w}
+                                onClick={() => { setWorkspace(w); setExpanded(new Set()); }}
+                                className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-medium transition-colors ${workspace === w ? d.activeTab : d.inactiveTab
+                                    }`}
+                            >
+                                {w}
+                            </button>
+                        ))}
+                        <button className={`shrink-0 px-1 ${d.mutedText} hover:text-stone-400 leading-none text-base`}>+</button>
+                        <div className="ml-auto flex shrink-0 items-center gap-1">
+                            <button className={`flex items-center gap-1 rounded border ${d.btnBorder} px-2 py-0.5 text-[10px] ${d.btnText} transition-colors`}>
+                                <span className="inline-block h-1.5 w-1.5 rounded-full bg-stone-400" /> Done
+                            </button>
+                            <button className={`rounded border ${d.btnBorder} px-2 py-0.5 text-[10px] ${d.btnText} transition-colors`}>Archive</button>
+                        </div>
+                    </div>
+
+                    {/* Search */}
+                    <div className={`border-b ${d.divider} px-3 py-2`}>
+                        <div className={`flex items-center gap-2 rounded-lg ${d.searchBg} px-2.5 py-1`}>
+                            <svg className={`h-3 w-3 shrink-0 ${d.mutedText}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" strokeLinecap="round" />
+                            </svg>
+                            <span className={`text-[11px] ${d.mutedText}`}>Search todos...</span>
+                        </div>
+                    </div>
+
+                    {/* Priority filter */}
+                    <div className={`flex flex-wrap items-center gap-1 border-b ${d.divider} px-3 py-1.5`}>
+                        <span className={`text-[9px] font-bold tracking-[0.12em] uppercase ${d.labelText} mr-0.5`}>PRIORITY</span>
+                        {(["All", "High", "Medium", "Low", "None"] as DailiPriority[]).map(p => (
+                            <button
+                                key={p}
+                                onClick={() => setPriority(p)}
+                                className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors ${priority === p ? d.activeTab : d.inactiveTab
+                                    }`}
+                            >
+                                {p !== "All" && (
+                                    <span className={`h-1.5 w-1.5 rounded-full ${PRIORITY_DOT[p.toLowerCase() as DailiTaskPriority]}`} />
+                                )}
+                                {p}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* New task input */}
+                    <div className={`border-b ${d.divider} px-3 py-2`}>
+                        <input
+                            type="text"
+                            value={newTask}
+                            onChange={e => setNewTask(e.target.value)}
+                            onKeyDown={handleAddTask}
+                            placeholder="What needs to be done? (Enter)"
+                            className={`w-full bg-transparent text-[11px] ${d.subText} placeholder-stone-400 outline-none`}
+                        />
+                    </div>
+
+                    {/* Task list */}
+                    <div className="flex-1 overflow-y-auto">
+                        {tasks.filter(filterTask).map(task => (
+                            <div key={task.id}>
+                                <div className={`flex items-center gap-1.5 px-3 py-2 ${d.hoverRow} transition-colors`}>
+                                    {task.children ? (
+                                        <button onClick={() => toggleExpand(task.id)} className={`h-3 w-3 shrink-0 ${d.mutedText}`}>
+                                            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.75}>
+                                                {expanded.has(task.id)
+                                                    ? <path d="M2 4l4 4 4-4" strokeLinecap="round" />
+                                                    : <path d="M4 2l4 4-4 4" strokeLinecap="round" />}
+                                            </svg>
+                                        </button>
+                                    ) : (
+                                        <span className="h-3 w-3 shrink-0 flex items-center justify-center">
+                                            <span className="h-1 w-1 rounded-full bg-stone-400" />
+                                        </span>
+                                    )}
+                                    <DailiCheckbox checked={checked.has(task.id)} onToggle={() => toggleCheck(task.id)} checkBorder={d.checkBorder} />
+                                    <span className={`h-2 w-2 shrink-0 rounded-sm ${PRIORITY_DOT[task.priority]}`} />
+                                    <span className={`text-[12px] font-medium truncate ${checked.has(task.id) ? "line-through text-stone-500" : d.bodyText}`}>
+                                        {task.title}
+                                    </span>
+                                </div>
+                                {task.children && expanded.has(task.id) && task.children.map(child => (
+                                    <div key={child.id} className={`flex items-center gap-1.5 px-3 py-1.5 pl-8 ${d.hoverRow} transition-colors`}>
+                                        <span className="h-3 w-3 shrink-0 flex items-center justify-center">
+                                            <span className="h-0.5 w-2 rounded-full bg-stone-500" />
+                                        </span>
+                                        <DailiCheckbox checked={checked.has(child.id)} onToggle={() => toggleCheck(child.id)} checkBorder={d.checkBorder} />
+                                        <span className={`h-1.5 w-1.5 shrink-0 rounded-sm ${PRIORITY_DOT[child.priority]}`} />
+                                        <span className={`text-[11px] truncate ${checked.has(child.id) ? "line-through text-stone-500" : d.subText}`}>
+                                            {child.title}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* ── Right panel: Notes ── */}
+                <div className={`hidden sm:flex w-[220px] shrink-0 flex-col`}>
+                    <div className={`flex items-center gap-2 border-b ${d.divider} px-3 py-2`}>
+                        <svg className={`h-3.5 w-3.5 shrink-0 ${d.labelText}`} fill="none" stroke="currentColor" strokeWidth={1.75} viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                        </svg>
+                        <span className={`text-[10px] font-bold uppercase tracking-wider ${d.noteHeader}`}>IDEAS DUMP</span>
+                    </div>
+
+                    <div className={`flex items-center gap-0.5 overflow-x-auto border-b ${d.divider} px-2 py-1.5`}>
+                        {Object.keys(DAILI_NOTES).map(tab => (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveNote(tab)}
+                                className={`shrink-0 rounded px-2 py-0.5 text-[11px] font-medium whitespace-nowrap transition-colors ${activeNote === tab ? d.activeTab : d.inactiveTab
+                                    }`}
+                            >
+                                {tab}
+                            </button>
+                        ))}
+                        <button className={`shrink-0 px-1 ${d.mutedText} text-base leading-none hover:text-stone-400`}>+</button>
+                    </div>
+
+                    <div className="flex-1 overflow-hidden px-3 py-3">
+                        <textarea
+                            value={noteContents[activeNote]}
+                            onChange={e => setNoteContents(prev => ({ ...prev, [activeNote]: e.target.value }))}
+                            className={`w-full h-full resize-none bg-transparent text-[11px] leading-relaxed ${d.noteText} outline-none font-sans placeholder-stone-500`}
+                            placeholder="Start writing..."
+                        />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    );
+}
+
+// ─── Daili System Section ──────────────────────────────────────────────────────
+
+function DailiSystemSection() {
+    return (
+        <section className="relative bg-stone-950 px-6 pt-24 pb-24 overflow-hidden">
+            <div className="mx-auto max-w-5xl">
+                <div className="flex flex-col lg:flex-row lg:items-center gap-16">
+
+                    {/* ── Left: text + CTA ── */}
+                    <div className="flex flex-col gap-6 lg:w-[38%] shrink-0">
+                        <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.15em] text-stone-400">
+                            <Dot color="bg-indigo-400" /> DailiApp
+                        </p>
+                        <h2 className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl leading-[1.15]">
+                            You&apos;re not busy.
+                            <br />
+                            <span className="text-stone-400">You&apos;re fragmented.</span>
+                        </h2>
+                        <div className="flex flex-col gap-4">
+                            <p className="text-[15px] text-stone-400 leading-[1.9]">
+                                Your habits live in one place.<br />
+                                Your work in another.<br />
+                                Your direction somewhere you don&apos;t revisit.
+                            </p>
+                            <p className="text-sm text-stone-500 leading-[1.85]">
+                                It&apos;s not a discipline problem.<br />
+                                It&apos;s a system problem.
+                            </p>
+                            <p className="text-[15px] text-stone-300 leading-[1.9]">
+                                Everything, in one place.{" "}
+                                <span className="text-white font-medium">Not organized. Integrated.</span>
+                            </p>
+                        </div>
+                        <a
+                            href="https://www.dailiapp.co/signup"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="self-start inline-flex h-12 items-center gap-2 rounded-xl bg-indigo-500 px-7 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition-all hover:bg-indigo-400 hover:shadow-indigo-400/30 active:scale-95"
+                        >
+                            Try Daili App <IconArrow />
+                        </a>
+                    </div>
+
+                    {/* ── Right: interactive slider ── */}
+                    <div className="flex-1 min-w-0">
+                        <DailiSlider />
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+    );
+}
+
+// ─── Daili Habits Mockup ──────────────────────────────────────────────────────
+
+interface DailiHabitItem { id: string; name: string; }
+
+const DAILI_HABIT_LIST: DailiHabitItem[] = [
+    { id: "h1", name: "WAKE UP 5.30" },
+    { id: "h2", name: "DEEP WORK" },
+    { id: "h3", name: "WASH TEETHS" },
+    { id: "h4", name: "DRINK WATER" },
+    { id: "h5", name: "RUN" },
+    { id: "h6", name: "BREAK FAST" },
+    { id: "h7", name: "LUNCH" },
+];
+
+// 15-day window: May 7–21, 2026. Today = index 14 (May 21)
+const HABIT_DAY_LABELS = ["W", "T", "F", "S", "S", "M", "T", "W", "T", "F", "S", "S", "M", "T", "W"];
+const HABIT_DAY_NUMS = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+const HABIT_TODAY_IDX = 14;
+
+const HABIT_SEED: Record<string, number[]> = {
+    h1: [0, 2, 5, 7, 9, 12],
+    h2: [1, 4, 6, 8, 11],
+    h3: [0, 3, 5, 7, 10, 13],
+    h4: [2, 5, 6, 8, 11],
+    h5: [1, 5, 7, 9],
+    h6: [0, 3, 5, 7, 12],
+    h7: [3, 5, 8, 11],
+};
+
+function DailiHabitsMockup({ dark }: { dark: boolean }) {
+    const [habits, setHabits] = useState<DailiHabitItem[]>(DAILI_HABIT_LIST);
+    const [completions, setCompletions] = useState<Record<string, Set<number>>>(() =>
+        Object.fromEntries(DAILI_HABIT_LIST.map(h => [h.id, new Set<number>(HABIT_SEED[h.id] ?? [])]))
+    );
+    const [newHabit, setNewHabit] = useState("");
+
+    const doneToday = habits.filter(h => completions[h.id]?.has(HABIT_TODAY_IDX)).length;
+
+    const longestStreak = (id: string) => {
+        const days = completions[id];
+        let max = 0, cur = 0;
+        HABIT_DAY_NUMS.forEach((_, i) => { days?.has(i) ? (cur++, max = Math.max(max, cur)) : (cur = 0); });
+        return max;
+    };
+    const globalBest = Math.max(0, ...habits.map(h => longestStreak(h.id)));
+
+    const toggleToday = (id: string) => {
+        setCompletions(prev => {
+            const s = new Set(prev[id]);
+            s.has(HABIT_TODAY_IDX) ? s.delete(HABIT_TODAY_IDX) : s.add(HABIT_TODAY_IDX);
+            return { ...prev, [id]: s };
+        });
+    };
+
+    const addHabit = (e: React.KeyboardEvent) => {
+        if (e.key !== "Enter" || !newHabit.trim()) return;
+        const id = `uh-${Date.now()}`;
+        setHabits(prev => [...prev, { id, name: newHabit.trim().toUpperCase() }]);
+        setCompletions(prev => ({ ...prev, [id]: new Set<number>() }));
+        setNewHabit("");
+    };
+
+    const d = {
+        bg: dark ? "bg-stone-900" : "bg-white",
+        border: dark ? "border-stone-700/60" : "border-stone-700/40",
+        divider: dark ? "border-stone-800" : "border-stone-100",
+        hoverRow: dark ? "hover:bg-stone-800/50" : "hover:bg-stone-50",
+        searchBg: dark ? "bg-stone-800" : "bg-stone-50",
+        labelText: dark ? "text-stone-500" : "text-stone-400",
+        bodyText: dark ? "text-stone-100" : "text-stone-800",
+        subText: dark ? "text-stone-300" : "text-stone-600",
+        mutedText: dark ? "text-stone-500" : "text-stone-400",
+        btnBorder: dark ? "border-stone-700" : "border-stone-200",
+        btnText: dark ? "text-stone-400 hover:bg-stone-800" : "text-stone-500 hover:bg-stone-50",
+        trackBg: dark ? "bg-stone-700" : "bg-stone-100",
+        cellEmpty: dark ? "bg-stone-800" : "bg-stone-100",
+    };
+
+    return (
+        <div className={`rounded-xl border ${d.border} ${d.bg} overflow-hidden shadow-2xl shadow-black/50 transition-colors duration-300`} style={{ height: 380, fontSize: 13 }}>
+            <div className="flex h-full">
+
+                {/* ── Left: habit list ── */}
+                <div className={`w-[270px] shrink-0 flex flex-col border-r ${d.divider}`}>
+                    {/* Stats */}
+                    <div className={`flex gap-2 px-3 py-2 border-b ${d.divider}`}>
+                        {[
+                            { val: `${doneToday}/${habits.length}`, label: "Done today" },
+                            { val: globalBest || "—", label: "Best streak" },
+                            { val: habits.length, label: "Total habits" },
+                        ].map(s => (
+                            <div key={s.label} className={`flex-1 rounded-lg border ${d.btnBorder} px-2 py-1.5 text-center`}>
+                                <p className={`text-sm font-bold ${d.bodyText}`}>{s.val}</p>
+                                <p className={`text-[9px] ${d.mutedText} mt-0.5`}>{s.label}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Header */}
+                    <div className={`flex items-center justify-between px-3 py-2 border-b ${d.divider}`}>
+                        <span className={`text-[12px] font-bold ${d.bodyText}`}>Habits</span>
+                        <div className="flex items-center gap-1.5">
+                            <button className="flex items-center gap-1 rounded-lg bg-stone-900 text-white px-2.5 py-1 text-[11px] font-semibold">
+                                + New
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Habit rows */}
+                    <div className="flex-1 overflow-y-auto">
+                        {habits.map(h => {
+                            const todayDone = completions[h.id]?.has(HABIT_TODAY_IDX) ?? false;
+                            const pct = Math.round(((completions[h.id]?.size ?? 0) / HABIT_DAY_NUMS.length) * 100);
+                            return (
+                                <div key={h.id} className={`flex items-center gap-2 pl-0 pr-3 py-2.5 border-b border-l-2 border-l-indigo-500 ${d.divider} ${d.hoverRow} transition-colors`}>
+                                    <span className={`px-2 text-[10px] ${d.mutedText} cursor-grab select-none`}>⠿</span>
+                                    <div className="h-7 w-7 shrink-0 rounded-full bg-indigo-100 flex items-center justify-center">
+                                        <svg viewBox="0 0 12 12" fill="none" className="h-3.5 w-3.5">
+                                            <path d="M2 6l3 3 5-5" stroke="#6366f1" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className={`text-[11px] font-bold tracking-wide truncate ${d.bodyText}`}>{h.name}</p>
+                                        <div className="flex items-center gap-1.5 mt-1">
+                                            <div className={`h-0.5 flex-1 rounded-full ${d.trackBg}`}>
+                                                <div className="h-full rounded-full bg-indigo-500 transition-all" style={{ width: `${Math.max(pct, 2)}%` }} />
+                                            </div>
+                                            <span className={`text-[9px] shrink-0 ${d.mutedText}`}>{pct}%</span>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => toggleToday(h.id)}
+                                        className={`h-7 w-7 shrink-0 rounded-full border-2 flex items-center justify-center transition-colors ${todayDone ? "bg-indigo-500 border-indigo-500" : `${dark ? "border-stone-600 hover:border-indigo-400" : "border-stone-200 hover:border-indigo-300"}`
+                                            }`}
+                                    >
+                                        {todayDone && (
+                                            <svg viewBox="0 0 12 12" fill="none" className="h-3 w-3">
+                                                <path d="M2 6l3 3 5-5" stroke="white" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
+                                        )}
+                                    </button>
+                                </div>
+                            );
+                        })}
+                        <div className={`px-3 py-2 border-l-2 border-l-stone-300`}>
+                            <input
+                                type="text"
+                                value={newHabit}
+                                onChange={e => setNewHabit(e.target.value)}
+                                onKeyDown={addHabit}
+                                placeholder="Add habit... (Enter)"
+                                className={`w-full bg-transparent text-[11px] ${d.subText} placeholder-stone-400 outline-none`}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* ── Right: history grid ── */}
+                <div className="flex-1 flex flex-col min-w-0">
+                    <div className={`flex items-center justify-between px-4 py-2.5 border-b ${d.divider}`}>
+                        <div>
+                            <p className={`text-[12px] font-bold ${d.bodyText}`}>History</p>
+                            <p className={`text-[10px] ${d.mutedText}`}>May 2026</p>
+                        </div>
+                        <div className="flex gap-1">
+                            {["←", "→"].map(dir => (
+                                <button key={dir} className={`h-6 w-6 rounded flex items-center justify-center text-[11px] border ${d.btnBorder} ${d.btnText} transition-colors`}>{dir}</button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="flex-1 overflow-auto px-4 py-3">
+                        {/* Day header */}
+                        <div className="flex items-end mb-2" style={{ minWidth: 400 }}>
+                            <div className={`w-24 shrink-0 text-[9px] font-bold uppercase tracking-wider ${d.labelText}`}>HABIT</div>
+                            {HABIT_DAY_LABELS.map((lbl, i) => (
+                                <div key={i} className="flex-1 text-center">
+                                    <p className={`text-[9px] font-medium ${i === HABIT_TODAY_IDX ? "text-indigo-500" : d.mutedText}`}>{lbl}</p>
+                                    <p className={`text-[9px] ${i === HABIT_TODAY_IDX ? "text-indigo-500 font-bold" : d.mutedText}`}>{HABIT_DAY_NUMS[i]}</p>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Habit rows */}
+                        {habits.map(h => (
+                            <div key={h.id} className="flex items-center mb-1.5" style={{ minWidth: 400 }}>
+                                <div className={`w-24 shrink-0 flex items-center gap-1`}>
+                                    <svg viewBox="0 0 12 12" fill="none" className="h-2.5 w-2.5 shrink-0">
+                                        <path d="M2 6l3 3 5-5" stroke="#6366f1" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                    <span className={`text-[9px] font-medium truncate ${d.subText}`}>{h.name}</span>
+                                </div>
+                                {HABIT_DAY_NUMS.map((_, i) => {
+                                    const done = completions[h.id]?.has(i) ?? false;
+                                    return (
+                                        <div key={i} className="flex-1 flex justify-center">
+                                            <div className={`h-4 w-4 rounded transition-colors ${done ? (i === HABIT_TODAY_IDX ? "bg-blue-500" : "bg-indigo-400") : d.cellEmpty}`} />
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    );
+}
+
+// ─── Daili Coming Soon ─────────────────────────────────────────────────────────
+
+function DailiComingSoon({ title, desc }: { title: string; desc: string }) {
+    return (
+        <div className="rounded-xl border border-stone-700/40 bg-stone-900/40 overflow-hidden flex items-center justify-center" style={{ height: 380 }}>
+            <div className="text-center px-8">
+                <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-[10px] font-medium text-indigo-400">
+                    <span className="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-pulse" /> Coming soon
+                </div>
+                <h3 className="font-display text-2xl font-bold text-white mb-2">{title}</h3>
+                <p className="text-sm text-stone-500 max-w-xs leading-relaxed">{desc}</p>
+            </div>
+        </div>
+    );
+}
+
+// ─── Daili Calendar Mockup ────────────────────────────────────────────────────
+
+interface CalEvent { id: string; day: number; title: string; }
+
+const CAL_WEEKS: (number | null)[][] = [
+    [null, null, null, null, 1, 2, 3],
+    [4, 5, 6, 7, 8, 9, 10],
+    [11, 12, 13, 14, 15, 16, 17],
+    [18, 19, 20, 21, 22, 23, 24],
+    [25, 26, 27, 28, 29, 30, 31],
+];
+const CAL_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const CAL_TODAY = 21;
+
+const CALENDAR_EVENTS: CalEvent[] = [
+    { id: "ce1", day: 1, title: "Slush" },
+    { id: "ce2", day: 4, title: "Trading Plan Meet" },
+    { id: "ce3", day: 5, title: "Slush" },
+    { id: "ce4", day: 8, title: "Slush" },
+    { id: "ce5", day: 12, title: "Despliegue Agent Kit - Semille..." },
+    { id: "ce6", day: 12, title: "Slush" },
+    { id: "ce7", day: 12, title: "Team sync" },
+    { id: "ce8", day: 14, title: "PeerSpot Product Reviews wit..." },
+    { id: "ce9", day: 15, title: "Slush" },
+    { id: "ce10", day: 18, title: "Trading Plan Meet" },
+    { id: "ce11", day: 19, title: "Slush" },
+    { id: "ce12", day: 22, title: "Slush" },
+    { id: "ce13", day: 25, title: "Trading Plan Meet" },
+    { id: "ce14", day: 26, title: "Slush" },
+    { id: "ce15", day: 29, title: "Slush" },
+];
+
+function DailiCalendarMockup({ dark }: { dark: boolean }) {
+    const [events, setEvents] = useState<CalEvent[]>(CALENDAR_EVENTS);
+    const [addingDay, setAddingDay] = useState<number | null>(null);
+    const [newEventTitle, setNewEventTitle] = useState("");
+
+    const d = {
+        bg: dark ? "bg-stone-900" : "bg-white",
+        border: dark ? "border-stone-700/60" : "border-stone-700/40",
+        divider: dark ? "border-stone-800" : "border-stone-100",
+        bodyText: dark ? "text-stone-100" : "text-stone-800",
+        subText: dark ? "text-stone-300" : "text-stone-500",
+        mutedText: dark ? "text-stone-500" : "text-stone-400",
+        btnBorder: dark ? "border-stone-700" : "border-stone-200",
+        btnText: dark ? "text-stone-400 hover:bg-stone-800" : "text-stone-500 hover:bg-stone-50",
+        hoverCell: dark ? "hover:bg-stone-800/40" : "hover:bg-stone-50/80",
+        todayBg: dark ? "bg-indigo-950/60" : "bg-indigo-50/70",
+        pillBg: dark ? "bg-indigo-900/50 text-indigo-300" : "bg-indigo-50 text-indigo-600",
+        inputBg: dark ? "bg-stone-800 border-indigo-500 text-stone-200" : "bg-white border-indigo-300 text-stone-700",
+    };
+
+    const eventsForDay = (day: number) => events.filter(e => e.day === day);
+
+    const commitEvent = (e: React.KeyboardEvent) => {
+        if (e.key === "Escape") { setAddingDay(null); setNewEventTitle(""); return; }
+        if (e.key !== "Enter" || !newEventTitle.trim() || addingDay === null) return;
+        setEvents(prev => [...prev, { id: `ce-${Date.now()}`, day: addingDay, title: newEventTitle.trim() }]);
+        setNewEventTitle("");
+        setAddingDay(null);
+    };
+
+    return (
+        <div
+            className={`rounded-xl border ${d.border} ${d.bg} overflow-hidden shadow-2xl shadow-black/50 transition-colors duration-300 flex flex-col`}
+            style={{ height: 380, fontSize: 13 }}
+        >
+            {/* Header */}
+            <div className={`flex items-center justify-between px-4 py-2 border-b ${d.divider} shrink-0`}>
+                <div className="flex items-center gap-2">
+                    {["‹", "›"].map((ch, i) => (
+                        <button key={ch} className={`h-6 w-6 rounded flex items-center justify-center text-sm ${d.btnText} border ${d.btnBorder} transition-colors`}>{ch}</button>
+                    ))}
+                    <span className={`text-[13px] font-bold ${d.bodyText}`}>May 2026</span>
+                    <button className={`text-[11px] ${d.mutedText} hover:text-stone-300 transition-colors`}>Today</button>
+                </div>
+                <div className="flex items-center gap-2">
+                    <button className={`h-7 w-7 rounded-full border ${d.btnBorder} flex items-center justify-center ${d.btnText} transition-colors`}>
+                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-3.5 w-3.5">
+                            <path d="M13.5 8A5.5 5.5 0 112.9 5M2.5 2v3.5H6" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                    </button>
+                    <button className="flex items-center gap-1.5 rounded-lg bg-stone-900 text-white px-3 py-1 text-[11px] font-semibold">
+                        + Add Event
+                    </button>
+                </div>
+            </div>
+
+            {/* Day column labels */}
+            <div className={`grid grid-cols-7 border-b ${d.divider} shrink-0`}>
+                {CAL_DAYS.map(label => (
+                    <div key={label} className={`py-1.5 text-center text-[10px] font-medium ${d.mutedText}`}>{label}</div>
+                ))}
+            </div>
+
+            {/* Weeks grid */}
+            <div className="flex-1 grid min-h-0" style={{ gridTemplateRows: "repeat(5, 1fr)" }}>
+                {CAL_WEEKS.map((week, wi) => (
+                    <div key={wi} className={`grid grid-cols-7 border-b last:border-b-0 ${d.divider}`}>
+                        {week.map((day, di) => {
+                            if (day === null) {
+                                return <div key={di} className={`border-r last:border-r-0 ${d.divider}`} />;
+                            }
+                            const dayEvents = eventsForDay(day);
+                            const shown = dayEvents.slice(0, 2);
+                            const extra = dayEvents.length - 2;
+                            const isToday = day === CAL_TODAY;
+                            const isAdding = day === addingDay;
+                            return (
+                                <div
+                                    key={di}
+                                    onClick={() => { setAddingDay(day); setNewEventTitle(""); }}
+                                    className={`border-r last:border-r-0 ${d.divider} px-1 pt-1 cursor-pointer overflow-hidden transition-colors ${isToday ? d.todayBg : d.hoverCell}`}
+                                >
+                                    <div className="flex justify-start mb-0.5">
+                                        <span className={`text-[10px] font-medium h-5 w-5 flex items-center justify-center rounded-full ${isToday ? "bg-indigo-500 text-white font-bold" : d.subText
+                                            }`}>
+                                            {day}
+                                        </span>
+                                    </div>
+                                    {shown.map(ev => (
+                                        <div key={ev.id} className={`mb-0.5 rounded px-1 py-px text-[9px] truncate ${d.pillBg}`}>
+                                            {ev.title}
+                                        </div>
+                                    ))}
+                                    {extra > 0 && <p className={`text-[9px] ${d.mutedText}`}>+{extra} more</p>}
+                                    {isAdding && (
+                                        <input
+                                            autoFocus
+                                            type="text"
+                                            value={newEventTitle}
+                                            onChange={e => setNewEventTitle(e.target.value)}
+                                            onKeyDown={commitEvent}
+                                            onBlur={() => { setAddingDay(null); setNewEventTitle(""); }}
+                                            placeholder="Event…"
+                                            onClick={e => e.stopPropagation()}
+                                            className={`mt-0.5 w-full rounded border px-1 py-px text-[9px] outline-none ${d.inputBg}`}
+                                        />
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+// ─── Daili AI Studio Mockup ────────────────────────────────────────────────────
+
+interface AIChatMsg { id: string; role: "user" | "ai"; content: string; }
+
+const AI_STUDIO_SEED: Record<string, AIChatMsg[]> = {
+    "conv-1": [
+        { id: "m1", role: "user", content: "Que es Dailiapp" },
+        { id: "m2", role: "ai", content: "**Dailiapp: Una Herramienta para Mejorar la Productividad**\n\nDailiapp es una aplicación diseñada para ayudar a creativos, traders, creadores, fundadores y nómadas digitales a mantenerse enfocados en su trabajo profundo, mientras que la aplicación se encarga de gestionar la información diaria para tener una claridad de intención y objetivos.\n\n**Funcionalidades de Dailiapp**\n\n• Gestión de tareas y proyectos\n• Organización de la información diaria, como recordatorios y eventos\n• Herramientas de enfoque y concentración, como temporizadores\n• Integración con otras herramientas para una mayor eficiencia\n• Análisis y seguimiento del progreso para establecer metas claras" },
+    ],
+    "conv-2": [
+        { id: "m3", role: "user", content: "Hola" },
+        { id: "m4", role: "ai", content: "¡Hola! ¿En qué puedo ayudarte hoy? Estoy aquí para asistirte con cualquier pregunta sobre Dailiapp o lo que necesites." },
+    ],
+};
+
+const AI_CANNED: string[] = [
+    "Entiendo tu pregunta. Dailiapp integra todos los aspectos de tu productividad en un sistema coherente — tareas, hábitos, calendario y notas — eliminando la fragmentación que te impide avanzar.",
+    "Buena pregunta. El objetivo de Dailiapp es que tengas claridad de intención y dirección, no solo una lista más de cosas por hacer. ¿Quieres que profundice en algún aspecto?",
+    "Exacto. La diferencia entre estar ocupado y estar productivo es el sistema que usas. Dailiapp está diseñada para cerrar esa brecha con un enfoque integrado.",
+    "Con Dailiapp puedes gestionar workspaces, hacer seguimiento de hábitos con un histórico visual, ver tu calendario integrado y chatear con AI Studio — todo en un solo lugar.",
+];
+
+const AI_PROVIDERS: Record<string, string[]> = {
+    "Groq": ["Llama 3.3 70B", "Llama 3.1 8B", "Mixtral 8x7B"],
+    "Anthropic": ["claude-sonnet-4", "claude-opus-4", "claude-haiku-4"],
+    "OpenAI": ["GPT-4o", "GPT-4o mini", "o3"],
+};
+
+function AIMsgContent({ content }: { content: string }) {
+    return (
+        <div className="space-y-1">
+            {content.split("\n").map((line, i) => {
+                if (line === "") return <div key={i} className="h-1" />;
+                if (line.startsWith("**") && line.endsWith("**"))
+                    return <p key={i} className="font-bold text-[12px]">{line.slice(2, -2)}</p>;
+                if (line.startsWith("• "))
+                    return (
+                        <div key={i} className="flex items-start gap-1.5">
+                            <span className="mt-0.5 text-[10px] text-stone-400 shrink-0">•</span>
+                            <p className="text-[11px] leading-relaxed">{line.slice(2)}</p>
+                        </div>
+                    );
+                return <p key={i} className="text-[11px] leading-relaxed">{line}</p>;
+            })}
+        </div>
+    );
+}
+
+function DailiAIStudioMockup({ dark }: { dark: boolean }) {
+    const [activeConvId, setActiveConvId] = useState("conv-1");
+    const [allMessages, setAllMessages] = useState<Record<string, AIChatMsg[]>>(AI_STUDIO_SEED);
+    const [input, setInput] = useState("");
+    const [isTyping, setIsTyping] = useState(false);
+    const [provider, setProvider] = useState("Groq");
+    const [model, setModel] = useState("Llama 3.3 70B");
+    const messagesRef = useRef<HTMLDivElement>(null);
+
+    const messages = allMessages[activeConvId] ?? [];
+    const convTitles: Record<string, string> = { "conv-1": "Que es Dailiapp", "conv-2": "Hola" };
+    const activeTitle = convTitles[activeConvId] ?? "New chat";
+
+    useEffect(() => {
+        if (messagesRef.current) {
+            messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+        }
+    }, [messages, isTyping]);
+
+    const sendMessage = () => {
+        if (!input.trim() || isTyping) return;
+        const userMsg: AIChatMsg = { id: `u-${Date.now()}`, role: "user", content: input.trim() };
+        setAllMessages(prev => ({ ...prev, [activeConvId]: [...(prev[activeConvId] ?? []), userMsg] }));
+        setInput("");
+        setIsTyping(true);
+        setTimeout(() => {
+            const aiMsg: AIChatMsg = { id: `a-${Date.now()}`, role: "ai", content: AI_CANNED[Math.floor(Math.random() * AI_CANNED.length)] };
+            setAllMessages(prev => ({ ...prev, [activeConvId]: [...(prev[activeConvId] ?? []), aiMsg] }));
+            setIsTyping(false);
+        }, 1200);
+    };
+
+    const d = {
+        bg: dark ? "bg-stone-900" : "bg-white",
+        border: dark ? "border-stone-700/60" : "border-stone-700/40",
+        divider: dark ? "border-stone-800" : "border-stone-100",
+        sidebarBg: dark ? "bg-stone-950" : "bg-stone-50",
+        bodyText: dark ? "text-stone-100" : "text-stone-800",
+        subText: dark ? "text-stone-300" : "text-stone-600",
+        mutedText: dark ? "text-stone-500" : "text-stone-400",
+        labelText: dark ? "text-stone-600" : "text-stone-400",
+        btnBorder: dark ? "border-stone-700" : "border-stone-200",
+        btnHover: dark ? "hover:bg-stone-800" : "hover:bg-stone-50",
+        btnText: dark ? "text-stone-400" : "text-stone-500",
+        searchBg: dark ? "bg-stone-800" : "bg-stone-200/60",
+        activeConv: dark ? "bg-stone-700 text-stone-100" : "bg-white text-stone-800 shadow-sm",
+        inactiveConv: dark ? "text-stone-400 hover:bg-stone-800" : "text-stone-500 hover:bg-white",
+        tagBg: dark ? "bg-stone-800 text-stone-400" : "bg-stone-200 text-stone-500",
+        userBubble: dark ? "bg-stone-700 text-stone-100" : "bg-stone-900 text-white",
+        aiBubble: dark ? "bg-stone-800 text-stone-200" : "bg-stone-100 text-stone-700",
+        selectBg: dark ? "bg-stone-800 text-stone-300" : "bg-transparent text-stone-600",
+        userAvatar: dark ? "bg-stone-700 text-stone-200" : "bg-stone-200 text-stone-600",
+    };
+
+    const convList = [{ id: "conv-1", title: "Que es Dailiapp" }, { id: "conv-2", title: "Hola" }];
+
+    return (
+        <div className={`rounded-xl border ${d.border} overflow-hidden shadow-2xl shadow-black/50 transition-colors duration-300 flex`} style={{ height: 380, fontSize: 13 }}>
+
+            {/* ── Sidebar ── */}
+            <div className={`w-[185px] shrink-0 flex flex-col border-r ${d.divider} ${d.sidebarBg}`}>
+                <div className="px-2 pt-2.5 pb-1.5">
+                    <div className={`flex items-center gap-1.5 rounded-lg ${d.searchBg} px-2.5 py-1.5`}>
+                        <svg className={`h-3 w-3 ${d.mutedText} shrink-0`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" strokeLinecap="round" />
+                        </svg>
+                        <span className={`text-[11px] ${d.mutedText}`}>Search...</span>
+                    </div>
+                </div>
+
+                <div className="flex gap-1.5 px-2 pb-2">
+                    <button className="flex-1 flex items-center justify-center gap-1 rounded-lg bg-stone-900 text-white py-1 text-[11px] font-semibold">+ Chat</button>
+                    <button className={`flex-1 flex items-center justify-center gap-1 rounded-lg border ${d.btnBorder} py-1 text-[11px] ${d.btnText} ${d.btnHover} transition-colors`}>Project</button>
+                </div>
+
+                <div className="px-2 mb-2">
+                    <p className={`text-[9px] font-bold uppercase tracking-[0.12em] ${d.labelText} mb-1 px-1`}>UNFILED</p>
+                    <button className={`w-full flex items-center gap-1.5 rounded-lg px-2 py-1 text-[11px] text-left ${d.inactiveConv} transition-colors`}>
+                        <svg className="h-3 w-3 shrink-0" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        New chat
+                    </button>
+                </div>
+
+                <div className="px-2 flex-1 overflow-y-auto">
+                    <div className="flex items-center gap-1.5 mb-1 px-1">
+                        <svg className="h-3.5 w-3.5 text-amber-500 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" /></svg>
+                        <span className={`text-[11px] font-semibold ${d.bodyText}`}>DailiApp</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1 px-1 mb-1.5">
+                        {["marketing", "founder", "webapp"].map(t => (
+                            <span key={t} className={`text-[9px] rounded px-1.5 py-0.5 ${d.tagBg}`}>{t}</span>
+                        ))}
+                    </div>
+                    {convList.map(conv => (
+                        <button key={conv.id} onClick={() => setActiveConvId(conv.id)}
+                            className={`w-full flex items-center gap-1.5 rounded-lg px-2 py-1 text-[11px] text-left mb-0.5 transition-colors ${activeConvId === conv.id ? d.activeConv : d.inactiveConv}`}>
+                            <svg className="h-3 w-3 shrink-0" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                            <span className="truncate">{conv.title}</span>
+                        </button>
+                    ))}
+                </div>
+
+                <div className={`border-t ${d.divider} px-3 py-2`}>
+                    <button className={`flex items-center gap-1.5 text-[10px] ${d.mutedText} hover:text-stone-400 transition-colors`}>
+                        <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" strokeLinecap="round" strokeLinejoin="round" /><circle cx="12" cy="12" r="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        API Keys & Settings
+                    </button>
+                </div>
+            </div>
+
+            {/* ── Main chat ── */}
+            <div className={`flex-1 flex flex-col min-w-0 ${d.bg}`}>
+                {/* Header */}
+                <div className={`flex items-center justify-between px-4 py-2 border-b ${d.divider} shrink-0`}>
+                    <div>
+                        <p className={`text-[12px] font-bold ${d.bodyText}`}>{activeTitle}</p>
+                        <p className={`text-[9px] ${d.mutedText}`}><span className="text-amber-500 font-medium">DailiApp</span> · {provider} · {model}</p>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <button className={`flex items-center gap-1 text-[10px] border ${d.btnBorder} rounded px-2 py-0.5 ${d.btnText} ${d.btnHover} transition-colors`}>
+                            <svg className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                            Save log
+                        </button>
+                        <select value={provider} onChange={e => { setProvider(e.target.value); setModel(AI_PROVIDERS[e.target.value][0]); }}
+                            className={`text-[10px] border ${d.btnBorder} rounded px-1.5 py-0.5 outline-none cursor-pointer ${d.selectBg}`}>
+                            {Object.keys(AI_PROVIDERS).map(p => <option key={p}>{p}</option>)}
+                        </select>
+                        <select value={model} onChange={e => setModel(e.target.value)}
+                            className={`text-[10px] border ${d.btnBorder} rounded px-1.5 py-0.5 outline-none cursor-pointer ${d.selectBg}`}>
+                            {AI_PROVIDERS[provider].map(m => <option key={m}>{m}</option>)}
+                        </select>
+                        <button className={`h-6 w-6 flex items-center justify-center rounded border ${d.btnBorder} ${d.btnText} ${d.btnHover} transition-colors`}>
+                            <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        </button>
+                    </div>
+                </div>
+
+                {/* Messages */}
+                <div ref={messagesRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+                    {messages.map(msg => (
+                        <div key={msg.id} className={`flex items-start gap-2 ${msg.role === "user" ? "justify-end" : ""}`}>
+                            {msg.role === "ai" && (
+                                <div className="h-7 w-7 rounded-full bg-stone-900 flex items-center justify-center shrink-0">
+                                    <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5 text-white" stroke="currentColor" strokeWidth={1.5}>
+                                        <rect x="2" y="4" width="12" height="9" rx="2" /><path d="M8 4V2M5 4V2M11 4V2" strokeLinecap="round" />
+                                    </svg>
+                                </div>
+                            )}
+                            <div className={`max-w-[80%] rounded-2xl px-3 py-2.5 ${msg.role === "user" ? d.userBubble : d.aiBubble}`}>
+                                <AIMsgContent content={msg.content} />
+                            </div>
+                            {msg.role === "user" && (
+                                <div className={`h-7 w-7 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold ${d.userAvatar}`}>U</div>
+                            )}
+                        </div>
+                    ))}
+                    {isTyping && (
+                        <div className="flex items-start gap-2">
+                            <div className="h-7 w-7 rounded-full bg-stone-900 flex items-center justify-center shrink-0">
+                                <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5 text-white" stroke="currentColor" strokeWidth={1.5}>
+                                    <rect x="2" y="4" width="12" height="9" rx="2" /><path d="M8 4V2M5 4V2M11 4V2" strokeLinecap="round" />
+                                </svg>
+                            </div>
+                            <div className={`rounded-2xl px-4 py-3 ${d.aiBubble}`}>
+                                <div className="flex items-center gap-1">
+                                    {[0, 1, 2].map(i => (
+                                        <div key={i} className="h-1.5 w-1.5 rounded-full bg-stone-400 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Input */}
+                <div className={`border-t ${d.divider} px-4 py-2.5 shrink-0`}>
+                    <div className="flex items-end gap-2">
+                        <textarea
+                            value={input}
+                            onChange={e => setInput(e.target.value)}
+                            onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
+                            placeholder="Ask anything..."
+                            rows={1}
+                            className={`flex-1 resize-none bg-transparent text-[12px] ${d.subText} placeholder-stone-400 outline-none`}
+                        />
+                        <button onClick={sendMessage} disabled={!input.trim() || isTyping}
+                            className="h-7 w-7 rounded-lg bg-stone-900 flex items-center justify-center text-white disabled:opacity-30 transition-opacity shrink-0">
+                            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.75} className="h-3 w-3">
+                                <path d="M6 10V2M2 6l4-4 4 4" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                    <p className={`text-[9px] ${d.mutedText} mt-0.5`}>Enter to send · Shift+Enter for newline</p>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// ─── Daili Slider ──────────────────────────────────────────────────────────────
+
+const DAILI_SLIDES = [
+    { id: "todos", label: "Todos" },
+    { id: "habits", label: "Habits" },
+    { id: "calendar", label: "Calendar" },
+    { id: "ai-studio", label: "AI Studio" },
+] as const;
+
+function DailiSlider() {
+    const [active, setActive] = useState(0);
+    const [dark, setDark] = useState(false);
+
+    return (
+        <div>
+            {/* Navigation bar */}
+            <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-1 rounded-full border border-stone-700/60 bg-stone-900/60 p-1">
+                    {DAILI_SLIDES.map((slide, i) => (
+                        <button
+                            key={slide.id}
+                            onClick={() => setActive(i)}
+                            className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-medium transition-all ${active === i
+                                    ? "bg-indigo-500 text-white shadow-sm"
+                                    : "text-stone-400 hover:text-stone-200"
+                                }`}
+                        >
+                            {slide.label}
+                        </button>
+                    ))}
+                </div>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => setDark(v => !v)}
+                        className="h-7 w-7 flex items-center justify-center rounded-full border border-stone-700 text-stone-400 hover:text-white hover:border-stone-500 transition-all text-[13px]"
+                        title="Toggle dark mode"
+                    >
+                        {dark ? "☀️" : "🌙"}
+                    </button>
+                    <div className="flex items-center">
+                        <button
+                            onClick={() => setActive(i => Math.max(0, i - 1))}
+                            disabled={active === 0}
+                            className="h-7 w-7 flex items-center justify-center rounded-l-full border border-stone-700 text-stone-400 hover:text-white hover:border-stone-500 disabled:opacity-25 transition-all"
+                        >
+                            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.75} className="h-3 w-3">
+                                <path d="M8 2L4 6l4 4" strokeLinecap="round" />
+                            </svg>
+                        </button>
+                        <button
+                            onClick={() => setActive(i => Math.min(3, i + 1))}
+                            disabled={active >= 3}
+                            className="h-7 w-7 flex items-center justify-center rounded-r-full border border-l-0 border-stone-700 text-stone-400 hover:text-white hover:border-stone-500 disabled:opacity-25 transition-all"
+                        >
+                            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth={1.75} className="h-3 w-3">
+                                <path d="M4 2l4 4-4 4" strokeLinecap="round" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Slide content */}
+            {active === 0 && <DailiAppMockup dark={dark} />}
+            {active === 1 && <DailiHabitsMockup dark={dark} />}
+            {active === 2 && <DailiCalendarMockup dark={dark} />}
+            {active === 3 && <DailiAIStudioMockup dark={dark} />}
+        </div>
     );
 }
 
 // ─── Monetize Kit ──────────────────────────────────────────────────────────────
 
 const DUST = [
-    { ox: -38, oy: -10, size: 3, delay: 0   },
-    { ox:  22, oy: -20, size: 2, delay: 70  },
-    { ox: -14, oy:  -5, size: 4, delay: 140 },
-    { ox:  40, oy:  -8, size: 2, delay: 40  },
+    { ox: -38, oy: -10, size: 3, delay: 0 },
+    { ox: 22, oy: -20, size: 2, delay: 70 },
+    { ox: -14, oy: -5, size: 4, delay: 140 },
+    { ox: 40, oy: -8, size: 2, delay: 40 },
     { ox: -28, oy: -15, size: 3, delay: 200 },
-    { ox:  10, oy: -25, size: 2, delay: 110 },
-    { ox: -50, oy:  -3, size: 2, delay: 250 },
-    { ox:  50, oy: -12, size: 3, delay: 80  },
-    { ox:   0, oy: -30, size: 2, delay: 170 },
+    { ox: 10, oy: -25, size: 2, delay: 110 },
+    { ox: -50, oy: -3, size: 2, delay: 250 },
+    { ox: 50, oy: -12, size: 3, delay: 80 },
+    { ox: 0, oy: -30, size: 2, delay: 170 },
     { ox: -20, oy: -18, size: 3, delay: 300 },
 ];
 
@@ -506,255 +1553,6 @@ function Dust({ color, glow }: { color: string; glow: string }) {
     );
 }
 
-function MonetizeKit() {
-    const [hovered, setHovered] = useState<string | null>(null);
-    const [dustKey, setDustKey] = useState(0);
-
-    const onEnter = (id: string) => { setHovered(id); setDustKey(k => k + 1); };
-    const onLeave = () => setHovered(null);
-
-    const Check = ({ bright = false }: { bright?: boolean }) => (
-        <svg className={`h-3.5 w-3.5 shrink-0 mt-[1px] ${bright ? "text-amber-400" : "text-stone-600"}`} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-        </svg>
-    );
-
-    const tiers = [
-        {
-            id: "nomad", name: "Nomad", price: "$15", tagline: "Start shipping today.",
-            img: "/nomad.png", imgW: 140, imgH: 200, overflow: 90,
-            dustColor: "#c4b5a0", dustGlow: "rgba(196,181,160,0.45)", glowBg: "rgba(196,181,160,0.08)",
-            accentClass: "text-stone-400", popular: false,
-            cardW: "lg:w-[250px] xl:w-[272px]", liftMb: 0,
-            tilt: "-rotate-[1.2deg] hover:rotate-0",
-            stars: [
-                { x: -84, y: -110, s: 13, rot: 20 }, { x: 77, y: -80,  s: 9,  rot: -15 },
-                { x: -49, y: -160, s: 7,  rot: 45 }, { x: 42, y: -150, s: 11, rot: -30 },
-            ],
-            features: ["1 workspace", "1–2 AI agents", "Bring your own API key", "Knowledge base (PDFs)", "Public agent URL", "Community support"],
-            cta: "Get Started",
-        },
-        {
-            id: "explorer", name: "Explorer", price: "$39", tagline: "Everything you need to grow.",
-            img: "/explorer.png", imgW: 190, imgH: 260, overflow: 130,
-            dustColor: "#f59e0b", dustGlow: "rgba(245,158,11,0.55)", glowBg: "rgba(245,158,11,0.14)",
-            accentClass: "text-amber-400", popular: true,
-            cardW: "flex-1", liftMb: 0, tilt: "",
-            stars: [
-                { x: -105, y: -143, s: 15, rot: 20 }, { x: 96,  y: -104, s: 11, rot: -15 },
-                { x: -66,  y: -208, s: 9,  rot: 45 }, { x: 57,  y: -195, s: 13, rot: -30 },
-            ],
-            features: ["Multiple AI agents", "2,000 messages / month", "WhatsApp integration", "Web widget embed", "CRM lead capture", "Priority support"],
-            cta: "Start Free Trial",
-        },
-        {
-            id: "traveler", name: "Traveler", price: "$99", tagline: "Unlimited power, no limits.",
-            img: "/traveler.png", imgW: 140, imgH: 200, overflow: 90,
-            dustColor: "#38bdf8", dustGlow: "rgba(56,189,248,0.45)", glowBg: "rgba(56,189,248,0.08)",
-            accentClass: "text-sky-400", popular: false,
-            cardW: "lg:w-[250px] xl:w-[272px]", liftMb: 64,
-            tilt: "rotate-[1.2deg] hover:rotate-0",
-            stars: [
-                { x: -84, y: -110, s: 13, rot: 25 }, { x: 77,  y: -80,  s: 9,  rot: -20 },
-                { x: -49, y: -160, s: 7,  rot: 50 }, { x: 42,  y: -150, s: 11, rot: -35 },
-            ],
-            features: ["Unlimited AI agents", "Advanced workflows", "Analytics & logs", "White-label options", "API access", "Dedicated support"],
-            cta: "Get Started",
-        },
-    ] as const;
-
-    return (
-        <section className="relative overflow-hidden bg-stone-950">
-            <style>{`
-                @keyframes mkDust {
-                    0%   { opacity: 0; transform: translateY(0px) scale(0) rotate(0deg); }
-                    20%  { opacity: 1; }
-                    60%  { opacity: 0.7; transform: translateY(-40px) scale(1) rotate(120deg); }
-                    100% { opacity: 0; transform: translateY(-90px) scale(0.3) rotate(260deg); }
-                }
-                @keyframes mkIdle {
-                    0%,100% { transform: translateY(0px); filter: drop-shadow(0 24px 32px rgba(0,0,0,0.45)); }
-                    50%     { transform: translateY(-8px); filter: drop-shadow(0 32px 48px rgba(0,0,0,0.30)); }
-                }
-                .mk-char { animation: mkIdle 3.8s ease-in-out infinite; }
-                .mk-char-active { animation: none !important; transform: translateY(-20px) scale(1.10) !important; filter: drop-shadow(0 36px 56px rgba(0,0,0,0.22)) !important; }
-                .mk-card { transition: transform 0.38s cubic-bezier(0.34,1.2,0.64,1); }
-                .mk-card:hover { transform: translateY(-8px); }
-            `}</style>
-
-            {/* Wave */}
-            <svg className="block w-full" viewBox="0 0 1200 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "block" }}>
-                <defs>
-                    <filter id="kit-wave-sketch" x="-5%" y="-5%" width="110%" height="110%">
-                        <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="9" result="noise" />
-                        <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" />
-                    </filter>
-                </defs>
-                <rect x="-20" y="0" width="1240" height="35" fill="#fafaf9" />
-                <path d="M-20,0 L1220,0 L1220,48 C1000,82 800,22 600,60 C400,98 200,28 -20,65 Z" fill="#fafaf9" filter="url(#kit-wave-sketch)" />
-            </svg>
-
-            {/* Ambient glows */}
-            <div className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 h-[700px] w-[900px] rounded-full bg-amber-600/6 blur-[180px]" />
-            <div className="pointer-events-none absolute bottom-0 right-0 h-[400px] w-[400px] translate-x-1/3 translate-y-1/3 rounded-full bg-amber-900/10 blur-[120px]" />
-            <div className="pointer-events-none absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")", backgroundSize: "180px" }} />
-
-            <div className="relative mx-auto max-w-5xl px-6 pb-28 pt-4">
-
-                {/* Header */}
-                <div className="mb-36 text-center">
-                    <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-medium text-amber-400">
-                        <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-                        Agent Kit · Pricing
-                    </div>
-                    <h2 className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">
-                        Monetize your time
-                        <br />
-                        <span className="text-amber-400">and knowledge.</span>
-                    </h2>
-                    <p className="mt-4 text-stone-400 max-w-sm mx-auto leading-relaxed text-sm">
-                        Deploy your first AI agent in minutes. Scale when you&apos;re ready.
-                    </p>
-                </div>
-
-                {/* ── Cards — staggered, bottom-anchored ── */}
-                <div className="flex flex-col lg:flex-row lg:items-end gap-5">
-                    {tiers.map((tier) => {
-                        const isHot = hovered === tier.id;
-                        return (
-                            <div
-                                key={tier.id}
-                                className={`mk-card relative ${tier.cardW} ${tier.tilt}`}
-                                style={{ marginBottom: tier.liftMb }}
-                                onMouseEnter={() => onEnter(tier.id)}
-                                onMouseLeave={onLeave}
-                            >
-                                {/* Character overflows above card */}
-                                <div className="absolute inset-x-0 flex justify-center pointer-events-none z-20"
-                                    style={{ top: -tier.overflow }}>
-                                    {/* ground glow */}
-                                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full blur-2xl"
-                                        style={{ width: tier.imgW * 0.75, height: 18, background: tier.glowBg, transform: "translateX(-50%) scaleX(1.3)" }} />
-                                    {/* dust */}
-                                    <div key={`dust-${tier.id}-${dustKey}`} className="absolute inset-0 overflow-visible">
-                                        {isHot && <Dust color={tier.dustColor} glow={tier.dustGlow} />}
-                                    </div>
-                                    {/* star sparkles */}
-                                    {isHot && tier.stars.map((star, si) => (
-                                        <svg key={si} viewBox="0 0 24 24" fill={tier.dustColor} className="absolute pointer-events-none"
-                                            style={{
-                                                width: star.s, height: star.s,
-                                                left: `calc(50% + ${star.x}px)`, top: `calc(50% + ${star.y}px)`,
-                                                filter: `drop-shadow(0 0 4px ${tier.dustColor})`,
-                                                animation: `mkDust ${1.2 + si * 0.15}s ease-out forwards`,
-                                                animationDelay: `${si * 60}ms`,
-                                                transform: `rotate(${star.rot}deg)`, opacity: 0,
-                                            }}>
-                                            <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
-                                        </svg>
-                                    ))}
-                                    <Image src={tier.img} alt={tier.name} width={tier.imgW} height={tier.imgH} priority
-                                        className={`relative z-10 select-none mk-char${isHot ? " mk-char-active" : ""}`}
-                                        style={{ height: tier.imgH, width: "auto", objectFit: "contain" }} />
-                                </div>
-
-                                {/* Card body */}
-                                <div
-                                    className={`relative flex flex-col rounded-2xl transition-all duration-300 ${
-                                        tier.popular
-                                            ? "border-2 border-amber-500/55 shadow-2xl shadow-amber-500/12"
-                                            : "border border-stone-800 hover:border-stone-600"
-                                    }`}
-                                    style={{
-                                        padding: `${tier.overflow + (tier.popular ? 32 : 24)}px ${tier.popular ? 28 : 22}px ${tier.popular ? 28 : 22}px`,
-                                        background: tier.popular
-                                            ? "linear-gradient(160deg, rgba(245,158,11,0.10) 0%, rgba(22,18,14,0.98) 52%)"
-                                            : "rgba(28,25,23,0.75)",
-                                    }}
-                                >
-                                    {tier.popular && (
-                                        <span className="absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-full bg-amber-500 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-md shadow-amber-500/30">
-                                            <span className="h-1 w-1 rounded-full bg-white/80 animate-pulse" /> Most Popular
-                                        </span>
-                                    )}
-                                    <p className={`text-[10px] font-bold uppercase tracking-[0.18em] mb-2 ${tier.accentClass}`}>{tier.name}</p>
-                                    <div className="flex items-end gap-1 mb-1.5">
-                                        <span className={`font-bold tracking-tight leading-none ${tier.popular ? "text-5xl text-white" : "text-4xl text-stone-200"}`}>{tier.price}</span>
-                                        <span className="text-stone-500 text-sm mb-1">/mo</span>
-                                    </div>
-                                    <p className="text-[11px] text-stone-500 leading-relaxed mb-5">{tier.tagline}</p>
-                                    <ul className="space-y-2.5 flex-1 mb-7">
-                                        {tier.features.map((f) => (
-                                            <li key={f} className="flex items-start gap-2 text-sm text-stone-300">
-                                                <Check bright={tier.popular} />{f}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                    <a href={AGENT_APP}
-                                        className={`w-full inline-flex h-10 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all active:scale-[0.97] ${
-                                            tier.popular
-                                                ? "bg-amber-500 text-white hover:bg-amber-400 shadow-lg shadow-amber-500/25"
-                                                : "border border-stone-700 text-stone-300 hover:border-stone-500 hover:text-white"
-                                        }`}>
-                                        {tier.cta}{tier.popular && <IconArrow className="h-3.5 w-3.5" />}
-                                    </a>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-
-                {/* Done-for-you service */}
-                <div className="mt-8 rounded-2xl border border-stone-700/50 p-6 sm:p-8"
-                    style={{ background: "linear-gradient(135deg, rgba(245,158,11,0.05) 0%, rgba(17,14,10,0.7) 70%)" }}>
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-                        <div className="flex-1 min-w-0">
-                            <span className="inline-flex items-center rounded-full border border-amber-500/20 bg-amber-500/8 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-amber-500/70 mb-3">
-                                One-time service
-                            </span>
-                            <h3 className="text-lg font-bold text-white mb-1.5">Done-for-you AI System</h3>
-                            <p className="text-sm text-stone-400 leading-relaxed max-w-lg">
-                                I handle full setup, deployment, and configuration for your business — custom branding, personalized agents, and training included.
-                            </p>
-                            <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5">
-                                {["Full setup & deployment", "Custom branding", "Personalized configuration", "Training & support"].map((f) => (
-                                    <li key={f} className="flex items-center gap-1.5 text-xs text-stone-400"><Check />{f}</li>
-                                ))}
-                            </ul>
-                        </div>
-                        <div className="shrink-0 flex flex-col items-start sm:items-end gap-3">
-                            <div>
-                                <div className="flex items-end gap-1.5">
-                                    <span className="text-3xl font-bold text-white">$500</span>
-                                    <span className="text-stone-500 text-sm mb-0.5">one-time</span>
-                                </div>
-                                <p className="text-[10px] text-stone-600 mt-0.5">Custom scope may vary</p>
-                            </div>
-                            <a href={WHATSAPP} target="_blank" rel="noopener noreferrer"
-                                className="inline-flex h-10 items-center gap-2 rounded-xl bg-[#25D366] px-5 text-sm font-semibold text-white shadow-lg shadow-[#25D366]/15 hover:bg-[#1ebe5d] active:scale-[0.97] transition-all whitespace-nowrap">
-                                <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
-                                Talk to me
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Trust */}
-                <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
-                    {["Cancel anytime", "Bring your own API key", "No hidden LLM costs", "Setup in minutes"].map((item) => (
-                        <span key={item} className="flex items-center gap-1.5 text-xs text-stone-600">
-                            <svg className="h-3.5 w-3.5 text-stone-700 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            {item}
-                        </span>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
-}
-
 // ─── Environment Switcher ──────────────────────────────────────────────────────
 
 function EnvironmentSwitcher({
@@ -766,76 +1564,104 @@ function EnvironmentSwitcher({
     const env = ENV[mode];
     return (
         <div
-            className="rounded-2xl p-8 relative overflow-hidden"
+            className="rounded-2xl overflow-hidden"
             style={{
-                background: `linear-gradient(135deg, ${env.grad[0]} 0%, ${env.grad[1]} 50%, ${env.grad[2]} 100%)`,
                 border: `1px solid ${env.accent}28`,
                 transition: "border-color 0.5s ease",
             }}
         >
-            {/* Floating particles */}
-            {ENV_PARTICLES.map((p, i) => (
-                <div
-                    key={i}
-                    className="absolute rounded-full pointer-events-none"
-                    style={{
-                        left: `${p.x}%`,
-                        top: `${p.y}%`,
-                        width: p.size,
-                        height: p.size,
-                        background: env.particles[p.idx],
-                        opacity: 0.35,
-                        animation: `envParticle ${env.speed + p.delay}s ease-in-out ${p.delay}s infinite`,
-                        transition: "background 0.7s ease",
-                        filter: "blur(1px)",
-                    }}
-                />
-            ))}
-
-            {/* Mode buttons */}
-            <div className="relative flex flex-wrap gap-2 mb-6">
-                {(["island", "builder", "reflect"] as const).map(k => (
+            {/* Mode tabs */}
+            <div
+                className="grid grid-cols-3"
+                style={{ borderBottom: `1px solid ${env.accent}20` }}
+            >
+                {(["island", "builder", "reflect"] as const).map((k, i) => (
                     <button
                         key={k}
                         onClick={() => setMode(k)}
-                        className="px-4 py-1.5 rounded-full text-xs font-medium"
+                        className="relative py-5 px-6 text-left transition-all duration-500"
                         style={{
-                            background: mode === k ? env.accent : "rgba(255,255,255,0.4)",
-                            color: mode === k ? "white" : env.text,
-                            border: `1px solid ${mode === k ? "transparent" : env.accent + "30"}`,
-                            transition: "all 0.35s ease",
-                            backdropFilter: "blur(4px)",
+                            background: mode === k
+                                ? `linear-gradient(135deg, ${ENV[k].grad[0]}, ${ENV[k].grad[1]})`
+                                : "transparent",
+                            borderRight: i < 2 ? `1px solid ${env.accent}20` : "none",
                         }}
                     >
-                        {k === "island" ? "🏝️ " : k === "builder" ? "⚡ " : "🌫️ "}
-                        {ENV[k].label}
+                        <span
+                            className="block text-xl mb-1.5 transition-all duration-500"
+                            style={{ opacity: mode === k ? 1 : 0.4 }}
+                        >
+                            {k === "island" ? "🏝️" : k === "builder" ? "⚡" : "🌫️"}
+                        </span>
+                        <span
+                            className="block text-sm font-semibold transition-all duration-500"
+                            style={{
+                                color: env.text,
+                                opacity: mode === k ? 1 : 0.4,
+                            }}
+                        >
+                            {ENV[k].label}
+                        </span>
+                        {mode === k && (
+                            <span
+                                className="absolute bottom-0 inset-x-0 h-[2px]"
+                                style={{ background: ENV[k].accent }}
+                            />
+                        )}
                     </button>
                 ))}
             </div>
 
-            <p
-                className="relative text-sm font-light leading-relaxed max-w-md"
-                style={{ color: env.text, transition: "color 0.5s ease" }}
+            {/* Description area */}
+            <div
+                className="relative overflow-hidden px-10 py-10"
+                style={{
+                    background: `linear-gradient(135deg, ${env.grad[0]} 0%, ${env.grad[1]} 50%, ${env.grad[2]} 100%)`,
+                    transition: "background 0.7s ease",
+                }}
             >
-                {env.desc}
-            </p>
+                {/* Floating particles */}
+                {ENV_PARTICLES.map((p, i) => (
+                    <div
+                        key={i}
+                        className="absolute rounded-full pointer-events-none"
+                        style={{
+                            left: `${p.x}%`,
+                            top: `${p.y}%`,
+                            width: p.size,
+                            height: p.size,
+                            background: env.particles[p.idx],
+                            opacity: 0.35,
+                            animation: `envParticle ${env.speed + p.delay}s ease-in-out ${p.delay}s infinite`,
+                            transition: "background 0.7s ease",
+                            filter: "blur(1px)",
+                        }}
+                    />
+                ))}
 
-            {/* Status */}
-            <div className="relative mt-6 flex items-center gap-2">
-                <div
-                    className="w-1.5 h-1.5 rounded-full"
-                    style={{
-                        background: env.accent,
-                        transition: "background 0.5s ease",
-                        animation: "statusBlink 2.5s ease-in-out infinite",
-                    }}
-                />
-                <span
-                    className="text-xs font-mono"
-                    style={{ color: env.text, opacity: 0.5, transition: "color 0.5s ease" }}
+                <p
+                    className="relative text-lg font-light leading-relaxed max-w-2xl"
+                    style={{ color: env.text, transition: "color 0.5s ease" }}
                 >
-                    mode: {mode}
-                </span>
+                    {env.desc}
+                </p>
+
+                <div className="relative mt-6 flex items-center gap-2">
+                    <div
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{
+                            background: env.accent,
+                            transition: "background 0.5s ease",
+                            animation: "statusBlink 2.5s ease-in-out infinite",
+                        }}
+                    />
+                    <span
+                        className="text-xs font-mono"
+                        style={{ color: env.text, opacity: 0.5, transition: "color 0.5s ease" }}
+                    >
+                        mode: {mode}
+                    </span>
+                </div>
             </div>
         </div>
     );
@@ -849,11 +1675,42 @@ function EnvironmentSection() {
 
     return (
         <section
-            className="relative overflow-hidden py-28 px-6"
+            className="relative overflow-hidden pt-44 pb-40 px-6"
             style={{
                 background: `linear-gradient(160deg, ${env.grad[0]} 0%, ${env.grad[1]} 55%, ${env.grad[2]} 100%)`,
+                transition: "background 0.7s ease",
             }}
         >
+            {/* Wave in from DailiSection (stone-950 → gradient) */}
+            <div className="pointer-events-none absolute top-0 inset-x-0 z-10">
+                <svg viewBox="0 0 1440 110" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: 110 }}>
+                    <path
+                        d="M0,0 L0,72 C180,100 360,55 560,78 C760,101 940,60 1120,80 C1270,96 1380,68 1440,72 L1440,0 Z"
+                        fill="#0c0a09"
+                        fillOpacity="0.35"
+                    />
+                    <path
+                        d="M0,0 L0,60 C200,88 400,44 600,66 C800,88 980,48 1160,68 C1300,83 1390,56 1440,60 L1440,0 Z"
+                        fill="#0c0a09"
+                    />
+                </svg>
+            </div>
+
+            {/* Wave out to SupportTeaser (gradient → stone-950) */}
+            <div className="pointer-events-none absolute bottom-0 inset-x-0 z-10">
+                <svg viewBox="0 0 1440 110" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full block" style={{ height: 110 }}>
+                    <path
+                        d="M0,110 L0,48 C180,20 360,65 560,42 C760,19 940,60 1120,40 C1270,24 1380,52 1440,48 L1440,110 Z"
+                        fill="#0c0a09"
+                        fillOpacity="0.35"
+                    />
+                    <path
+                        d="M0,110 L0,60 C200,32 400,76 600,54 C800,32 980,72 1160,52 C1300,37 1390,64 1440,60 L1440,110 Z"
+                        fill="#0c0a09"
+                    />
+                </svg>
+            </div>
+
             {/* Immersive background particles */}
             {ENV_PARTICLES.map((p, i) => (
                 <div
@@ -872,30 +1729,32 @@ function EnvironmentSection() {
                 />
             ))}
 
-            <div className="relative mx-auto max-w-3xl">
-                <div className="mb-14 text-center">
+            <div className="relative mx-auto max-w-5xl">
+                {/* Centered heading */}
+                <div className="text-center mb-12">
                     <p
                         className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em]"
-                        style={{ color: env.text, opacity: 0.55 }}
+                        style={{ color: env.text, opacity: 0.55, transition: "color 0.7s ease" }}
                     >
                         Environment
                     </p>
                     <h2
-                        className="font-display text-4xl font-bold sm:text-5xl"
-                        style={{ color: env.text }}
+                        className="font-display text-5xl font-bold sm:text-6xl leading-[1.1]"
+                        style={{ color: env.text, transition: "color 0.7s ease" }}
                     >
                         Same person.
                         <br />
                         Different energy.
                     </h2>
                     <p
-                        className="mt-4 text-sm leading-relaxed max-w-sm mx-auto"
-                        style={{ color: env.text, opacity: 0.6 }}
+                        className="mt-5 text-sm leading-relaxed max-w-sm mx-auto"
+                        style={{ color: env.text, opacity: 0.6, transition: "color 0.7s ease" }}
                     >
-                        Context changes everything. Island, terminal, or notebook — each mode unlocks something different.
+                        Same systems, different state. Where I am shapes how I think — and what gets built.
                     </p>
                 </div>
 
+                {/* Full-width switcher */}
                 <EnvironmentSwitcher mode={envMode} setMode={setEnvMode} />
             </div>
         </section>
@@ -1071,356 +1930,6 @@ function AgentKitCTA() {
     );
 }
 
-// ─── Ancestralis Teaser ────────────────────────────────────────────────────────
-
-const JUNGLE_FIREFLIES = [
-    { x: 17, y: 55, dur: 3.2, delay: 0    },
-    { x: 27, y: 42, dur: 4.1, delay: 0.8  },
-    { x: 73, y: 52, dur: 3.7, delay: 1.5  },
-    { x: 81, y: 38, dur: 5.0, delay: 0.3  },
-    { x: 38, y: 68, dur: 4.5, delay: 2.1  },
-    { x: 62, y: 63, dur: 3.3, delay: 1.0  },
-    { x: 47, y: 28, dur: 6.0, delay: 2.8  },
-    { x: 89, y: 66, dur: 4.8, delay: 0.5  },
-    { x: 9,  y: 72, dur: 3.9, delay: 1.7  },
-    { x: 56, y: 48, dur: 5.2, delay: 3.2  },
-    { x: 43, y: 80, dur: 4.0, delay: 0.9  },
-    { x: 66, y: 34, dur: 5.5, delay: 2.4  },
-    { x: 32, y: 76, dur: 3.6, delay: 1.2  },
-    { x: 74, y: 79, dur: 4.4, delay: 3.5  },
-];
-
-const JUNGLE_STARS = [
-    { cx: 118, cy: 38, r: 1.2, d: 0    },
-    { cx: 198, cy: 24, r: 0.8, d: 0.5  },
-    { cx: 318, cy: 58, r: 1.0, d: 1.0  },
-    { cx: 378, cy: 28, r: 0.6, d: 1.5  },
-    { cx: 458, cy: 14, r: 1.1, d: 2.0  },
-    { cx: 528, cy: 43, r: 0.7, d: 0.3  },
-    { cx: 608, cy: 18, r: 1.0, d: 0.8  },
-    { cx: 698, cy: 52, r: 0.8, d: 1.3  },
-    { cx: 758, cy: 28, r: 1.3, d: 1.8  },
-    { cx: 828, cy: 13, r: 0.9, d: 0.6  },
-    { cx: 868, cy: 43, r: 0.6, d: 2.2  },
-    { cx: 52,  cy: 63, r: 0.8, d: 1.1  },
-    { cx: 152, cy: 83, r: 0.7, d: 2.5  },
-    { cx: 238, cy: 68, r: 1.0, d: 0.4  },
-    { cx: 648, cy: 78, r: 0.9, d: 1.9  },
-    { cx: 788, cy: 68, r: 0.7, d: 0.7  },
-    { cx: 420, cy: 35, r: 0.8, d: 2.7  },
-    { cx: 560, cy: 65, r: 0.6, d: 1.4  },
-];
-
-const JUNGLE_GRASS: [number, number, number, number, number][] = [
-    [162, 395, 155, 342, 4], [178, 395, 185, 335, 3  ],
-    [192, 395, 188, 350, 3], [148, 395, 140, 360, 2.5],
-    [720, 395, 726, 345, 4], [736, 395, 730, 338, 3  ],
-    [752, 395, 756, 352, 3], [765, 395, 770, 362, 2.5],
-    [305, 395, 300, 365, 2], [318, 395, 322, 358, 2  ],
-    [580, 395, 576, 368, 2], [595, 395, 599, 360, 2  ],
-];
-
-function AncestralısTeaser() {
-    return (
-        <section
-            className="relative overflow-hidden"
-            style={{ background: "#020805", minHeight: "92vh" }}
-        >
-            <style>{`
-                @keyframes fireflyGlow {
-                    0%, 100% { opacity: 0; transform: scale(0.6); }
-                    40%, 60% { opacity: 1; transform: scale(1.5); }
-                }
-                @keyframes winFlicker {
-                    0%, 100% { opacity: 0.88; }
-                    45%      { opacity: 1; }
-                    50%      { opacity: 0.9; }
-                    55%      { opacity: 1; }
-                }
-                @keyframes jungleStar {
-                    0%, 100% { opacity: 0.35; }
-                    50%      { opacity: 1; }
-                }
-                @keyframes houseBreath {
-                    0%, 100% { opacity: 0.35; }
-                    50%      { opacity: 0.55; }
-                }
-                @keyframes jungleMist {
-                    0%, 100% { opacity: 0.6; transform: translateX(0); }
-                    50%      { opacity: 0.75; transform: translateX(14px); }
-                }
-            `}</style>
-
-            {/* ── Scene SVG ── */}
-            <svg
-                className="absolute inset-0 w-full h-full"
-                viewBox="0 0 900 520"
-                preserveAspectRatio="xMidYMid slice"
-                xmlns="http://www.w3.org/2000/svg"
-            >
-                <defs>
-                    <linearGradient id="jSky" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%"   stopColor="#030e07"/>
-                        <stop offset="100%" stopColor="#010604"/>
-                    </linearGradient>
-                    <radialGradient id="jHouseAura" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%"   stopColor="#f59e0b" stopOpacity="0.55"/>
-                        <stop offset="45%"  stopColor="#92400e" stopOpacity="0.18"/>
-                        <stop offset="100%" stopColor="#000000" stopOpacity="0"/>
-                    </radialGradient>
-                    <radialGradient id="jMoon" cx="38%" cy="35%" r="60%">
-                        <stop offset="0%"   stopColor="#fefce8"/>
-                        <stop offset="100%" stopColor="#fef3c7"/>
-                    </radialGradient>
-                    <filter id="jWinGlow" x="-80%" y="-80%" width="260%" height="260%">
-                        <feGaussianBlur stdDeviation="5" result="blur"/>
-                        <feMerge>
-                            <feMergeNode in="blur"/>
-                            <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                    </filter>
-                    <filter id="jSoftGlow" x="-40%" y="-40%" width="180%" height="180%">
-                        <feGaussianBlur stdDeviation="3" result="blur"/>
-                        <feMerge>
-                            <feMergeNode in="blur"/>
-                            <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                    </filter>
-                </defs>
-
-                {/* Sky */}
-                <rect width="900" height="520" fill="url(#jSky)"/>
-
-                {/* Moon */}
-                <circle cx="738" cy="68" r="25" fill="url(#jMoon)" opacity="0.72"/>
-                <circle cx="738" cy="68" r="46" fill="#fefce8" opacity="0.05"/>
-                <circle cx="738" cy="68" r="72" fill="#fefce8" opacity="0.022"/>
-
-                {/* Stars */}
-                {JUNGLE_STARS.map((s, i) => (
-                    <circle
-                        key={i} cx={s.cx} cy={s.cy} r={s.r} fill="white"
-                        style={{ animation: `jungleStar ${2.6 + i * 0.35}s ease-in-out ${s.d}s infinite` }}
-                    />
-                ))}
-
-                {/* Wide house aura — the glow that fills the scene */}
-                <ellipse
-                    cx="450" cy="312" rx="235" ry="155"
-                    fill="url(#jHouseAura)"
-                    style={{ animation: "houseBreath 5.5s ease-in-out infinite" }}
-                />
-
-                {/* ── Far background tree silhouettes ── */}
-                <path d="M260 442 L262 345 L255 345 L262 312 L269 345 L262 345" fill="#050f07" opacity="0.65"/>
-                <path d="M640 442 L638 355 L631 355 L638 320 L645 355 L638 355" fill="#050f07" opacity="0.65"/>
-                <path d="M356 442 L357 368 L350 368 L357 340 L363 368 L357 368" fill="#060f08" opacity="0.5"/>
-                <path d="M546 442 L545 360 L538 360 L545 332 L552 360 L545 360" fill="#060f08" opacity="0.5"/>
-
-                {/* ════ LEFT PALMS ════ */}
-
-                {/* L-Palm 1 — tallest, anchored far left */}
-                <path d="M 82 522 C 76 418, 72 302, 98 90"
-                    stroke="#0a1d0d" strokeWidth="17" fill="none" strokeLinecap="round"/>
-                <path d="M98 90 C 66 72, 30 58, -4 44"   stroke="#0d2612" strokeWidth="7" fill="none" strokeLinecap="round"/>
-                <path d="M98 90 C 78 76, 50 78, 26 93"   stroke="#0d2612" strokeWidth="6" fill="none" strokeLinecap="round"/>
-                <path d="M98 90 C 120 72, 156 57, 192 43" stroke="#0d2612" strokeWidth="7" fill="none" strokeLinecap="round"/>
-                <path d="M98 90 C 126 76, 156 78, 178 94" stroke="#0d2612" strokeWidth="5" fill="none" strokeLinecap="round"/>
-                <path d="M98 90 C 91 67, 87 44, 84 24"   stroke="#0d2612" strokeWidth="5" fill="none" strokeLinecap="round"/>
-                <path d="M98 90 C 108 70, 118 50, 124 32" stroke="#0d2612" strokeWidth="4" fill="none" strokeLinecap="round"/>
-
-                {/* L-Palm 2 — medium, set back slightly */}
-                <path d="M 205 522 C 196 434, 182 352, 204 162"
-                    stroke="#091b0c" strokeWidth="13" fill="none" strokeLinecap="round"/>
-                <path d="M204 162 C 176 144, 142 134, 108 125" stroke="#0b2010" strokeWidth="6" fill="none" strokeLinecap="round"/>
-                <path d="M204 162 C 186 150, 163 154, 142 168" stroke="#0b2010" strokeWidth="5" fill="none" strokeLinecap="round"/>
-                <path d="M204 162 C 228 142, 262 129, 296 118" stroke="#0b2010" strokeWidth="6" fill="none" strokeLinecap="round"/>
-                <path d="M204 162 C 218 148, 232 142, 246 148" stroke="#0b2010" strokeWidth="4" fill="none" strokeLinecap="round"/>
-                <path d="M204 162 C 196 140, 190 116, 186 98" stroke="#0b2010" strokeWidth="4" fill="none" strokeLinecap="round"/>
-
-                {/* L-Palm 3 — shorter, hugging left edge */}
-                <path d="M 34 522 C 31 456, 36 384, 60 212"
-                    stroke="#091b0c" strokeWidth="11" fill="none" strokeLinecap="round"/>
-                <path d="M60 212 C 38 195, 10 190, -18 188" stroke="#0b2010" strokeWidth="5" fill="none" strokeLinecap="round"/>
-                <path d="M60 212 C 84 193, 110 186, 136 190" stroke="#0b2010" strokeWidth="5" fill="none" strokeLinecap="round"/>
-                <path d="M60 212 C 53 189, 46 166, 42 148"  stroke="#0b2010" strokeWidth="4" fill="none" strokeLinecap="round"/>
-                <path d="M60 212 C 70 190, 78 168, 84 150"  stroke="#0b2010" strokeWidth="4" fill="none" strokeLinecap="round"/>
-
-                {/* ════ RIGHT PALMS (mirror) ════ */}
-
-                {/* R-Palm 1 — tallest */}
-                <path d="M 818 522 C 824 418, 828 302, 802 90"
-                    stroke="#0a1d0d" strokeWidth="17" fill="none" strokeLinecap="round"/>
-                <path d="M802 90 C 834 72, 870 58, 904 44"   stroke="#0d2612" strokeWidth="7" fill="none" strokeLinecap="round"/>
-                <path d="M802 90 C 822 76, 850 78, 874 93"   stroke="#0d2612" strokeWidth="6" fill="none" strokeLinecap="round"/>
-                <path d="M802 90 C 780 72, 744 57, 708 43"   stroke="#0d2612" strokeWidth="7" fill="none" strokeLinecap="round"/>
-                <path d="M802 90 C 774 76, 744 78, 722 94"   stroke="#0d2612" strokeWidth="5" fill="none" strokeLinecap="round"/>
-                <path d="M802 90 C 809 67, 813 44, 816 24"   stroke="#0d2612" strokeWidth="5" fill="none" strokeLinecap="round"/>
-                <path d="M802 90 C 792 70, 782 50, 776 32"   stroke="#0d2612" strokeWidth="4" fill="none" strokeLinecap="round"/>
-
-                {/* R-Palm 2 — medium */}
-                <path d="M 695 522 C 704 434, 718 352, 696 162"
-                    stroke="#091b0c" strokeWidth="13" fill="none" strokeLinecap="round"/>
-                <path d="M696 162 C 724 144, 758 134, 792 125" stroke="#0b2010" strokeWidth="6" fill="none" strokeLinecap="round"/>
-                <path d="M696 162 C 714 150, 737 154, 758 168" stroke="#0b2010" strokeWidth="5" fill="none" strokeLinecap="round"/>
-                <path d="M696 162 C 672 142, 638 129, 604 118" stroke="#0b2010" strokeWidth="6" fill="none" strokeLinecap="round"/>
-                <path d="M696 162 C 682 148, 668 142, 654 148" stroke="#0b2010" strokeWidth="4" fill="none" strokeLinecap="round"/>
-                <path d="M696 162 C 704 140, 710 116, 714 98" stroke="#0b2010" strokeWidth="4" fill="none" strokeLinecap="round"/>
-
-                {/* R-Palm 3 — shorter, right edge */}
-                <path d="M 866 522 C 869 456, 864 384, 840 212"
-                    stroke="#091b0c" strokeWidth="11" fill="none" strokeLinecap="round"/>
-                <path d="M840 212 C 862 195, 890 190, 918 188" stroke="#0b2010" strokeWidth="5" fill="none" strokeLinecap="round"/>
-                <path d="M840 212 C 816 193, 790 186, 764 190" stroke="#0b2010" strokeWidth="5" fill="none" strokeLinecap="round"/>
-                <path d="M840 212 C 847 189, 854 166, 858 148" stroke="#0b2010" strokeWidth="4" fill="none" strokeLinecap="round"/>
-                <path d="M840 212 C 830 190, 822 168, 816 150" stroke="#0b2010" strokeWidth="4" fill="none" strokeLinecap="round"/>
-
-                {/* ════ HOUSE ════ */}
-
-                {/* Ground glow beneath door */}
-                <ellipse cx="450" cy="400" rx="112" ry="17" fill="#f59e0b" opacity="0.07"/>
-
-                {/* Chimney */}
-                <rect x="500" y="220" width="20" height="50" rx="2" fill="#0d2212"/>
-
-                {/* Roof */}
-                <polygon points="362,288 450,214 538,288" fill="#0e2312"/>
-                <line x1="362" y1="288" x2="538" y2="288" stroke="#0a1a09" strokeWidth="2"/>
-
-                {/* House body */}
-                <rect x="374" y="288" width="152" height="112" rx="1" fill="#0c1f10"/>
-
-                {/* Door (warm amber glow) */}
-                <rect x="432" y="338" width="36" height="62" rx="4"
-                    fill="#92400e" opacity="0.65" filter="url(#jSoftGlow)"/>
-                <ellipse cx="450" cy="401" rx="22" ry="8" fill="#f59e0b" opacity="0.13"/>
-
-                {/* Left window */}
-                <rect x="386" y="303" width="34" height="26" rx="3"
-                    fill="#fbbf24"
-                    filter="url(#jWinGlow)"
-                    style={{ animation: "winFlicker 5s ease-in-out infinite" }}
-                />
-                <line x1="403" y1="303" x2="403" y2="329" stroke="#92400e" strokeWidth="1" opacity="0.45"/>
-                <line x1="386" y1="316" x2="420" y2="316" stroke="#92400e" strokeWidth="1" opacity="0.45"/>
-
-                {/* Right window */}
-                <rect x="480" y="303" width="34" height="26" rx="3"
-                    fill="#fbbf24"
-                    filter="url(#jWinGlow)"
-                    style={{ animation: "winFlicker 5s ease-in-out 1.8s infinite" }}
-                />
-                <line x1="497" y1="303" x2="497" y2="329" stroke="#92400e" strokeWidth="1" opacity="0.45"/>
-                <line x1="480" y1="316" x2="514" y2="316" stroke="#92400e" strokeWidth="1" opacity="0.45"/>
-
-                {/* ════ GROUND & FOREGROUND ════ */}
-
-                {/* Ground fill */}
-                <rect x="0" y="400" width="900" height="120" fill="#010604"/>
-
-                {/* Tropical leaf clusters — LEFT */}
-                <path d="M 0 432 C 82 380, 168 394, 204 448 C 142 422, 56 434, 0 432 Z"  fill="#071209" opacity="0.95"/>
-                <path d="M 0 464 C 98 404, 190 418, 230 472 C 158 444, 64 456, 0 464 Z"  fill="#071209" opacity="0.9"/>
-                <path d="M 0 496 C 114 436, 206 450, 256 504 C 170 470, 70 484, 0 496 Z" fill="#060f08" opacity="0.95"/>
-                <path d="M 0 440 C 74 394, 152 404, 190 442" stroke="#0a1d0c" strokeWidth="1.5" fill="none" opacity="0.6"/>
-                <path d="M 0 470 C 90 420, 174 430, 214 466" stroke="#0a1d0c" strokeWidth="1.5" fill="none" opacity="0.6"/>
-
-                {/* Tropical leaf clusters — RIGHT */}
-                <path d="M 900 432 C 818 380, 732 394, 696 448 C 758 422, 844 434, 900 432 Z"  fill="#071209" opacity="0.95"/>
-                <path d="M 900 464 C 802 404, 710 418, 670 472 C 742 444, 836 456, 900 464 Z"  fill="#071209" opacity="0.9"/>
-                <path d="M 900 496 C 786 436, 694 450, 644 504 C 730 470, 830 484, 900 496 Z" fill="#060f08" opacity="0.95"/>
-                <path d="M 900 440 C 826 394, 748 404, 710 442" stroke="#0a1d0c" strokeWidth="1.5" fill="none" opacity="0.6"/>
-                <path d="M 900 470 C 810 420, 726 430, 686 466" stroke="#0a1d0c" strokeWidth="1.5" fill="none" opacity="0.6"/>
-
-                {/* Reed / grass blades */}
-                {JUNGLE_GRASS.map(([x1, y1, x2, y2, w], i) => (
-                    <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
-                        stroke="#0c2010" strokeWidth={w} strokeLinecap="round"/>
-                ))}
-
-                {/* Ground mist layers */}
-                <rect x="0" y="380" width="900" height="58" fill="#030e06" opacity="0.6"
-                    style={{ animation: "jungleMist 9s ease-in-out infinite" }}/>
-                <rect x="0" y="392" width="900" height="36" fill="#020b04" opacity="0.72"
-                    style={{ animation: "jungleMist 13s ease-in-out 3.5s infinite" }}/>
-            </svg>
-
-            {/* ── Fireflies ── */}
-            {JUNGLE_FIREFLIES.map((f, i) => (
-                <div
-                    key={i}
-                    className="absolute rounded-full pointer-events-none"
-                    style={{
-                        left: `${f.x}%`,
-                        top: `${f.y}%`,
-                        width: 5,
-                        height: 5,
-                        background: "#a3e635",
-                        boxShadow: "0 0 8px 3px #84cc16",
-                        animation: `fireflyGlow ${f.dur}s ease-in-out ${f.delay}s infinite`,
-                    }}
-                />
-            ))}
-
-            {/* ── Readability gradient ── */}
-            <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                    background: "linear-gradient(to top, rgba(1,6,3,0.97) 0%, rgba(1,6,3,0.7) 28%, rgba(1,6,3,0.12) 58%, transparent 80%)",
-                }}
-            />
-
-            {/* ── Content ── */}
-            <div className="relative flex flex-col justify-end px-6 pb-16 pt-40" style={{ minHeight: "92vh" }}>
-                <div className="mx-auto max-w-5xl w-full">
-                    <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-400">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        In progress · Isla Fuerte, Colombia
-                    </div>
-
-                    <h2 className="font-display text-5xl font-bold text-white mb-5 leading-tight sm:text-6xl lg:text-7xl">
-                        Ancestralis House
-                    </h2>
-
-                    <p className="text-stone-300 leading-relaxed mb-8 max-w-lg text-base">
-                        A light in the jungle — where builders, thinkers, and wanderers come to rest,
-                        create, and share surrounded by sea, real food, and people who get it.
-                    </p>
-
-                    {/* Activity tags */}
-                    <div className="flex flex-wrap gap-2 mb-10">
-                        {[
-                            { icon: "🌿", label: "rest"  },
-                            { icon: "💻", label: "work"  },
-                            { icon: "✍️", label: "write" },
-                            { icon: "🎵", label: "sing"  },
-                            { icon: "🍳", label: "cook"  },
-                            { icon: "🌊", label: "swim"  },
-                            { icon: "🤝", label: "share" },
-                            { icon: "🍹", label: "drink" },
-                        ].map((tag) => (
-                            <span
-                                key={tag.label}
-                                className="flex items-center gap-1.5 rounded-full border border-emerald-800/50 bg-emerald-950/60 px-3 py-1.5 text-xs font-medium text-emerald-300 backdrop-blur-sm"
-                            >
-                                <span>{tag.icon}</span>
-                                {tag.label}
-                            </span>
-                        ))}
-                    </div>
-
-                    <a
-                        href="/ancestralis"
-                        className="inline-flex h-12 items-center gap-2 rounded-xl bg-emerald-600 px-7 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition-all hover:bg-emerald-500 hover:shadow-emerald-500/30 active:scale-95"
-                    >
-                        Discover Ancestralis <IconArrow />
-                    </a>
-                </div>
-            </div>
-        </section>
-    );
-}
-
 // ─── Support Teaser ────────────────────────────────────────────────────────────
 
 function SupportTeaser() {
@@ -1578,14 +2087,18 @@ export default function EstebanToroSite() {
           0%,100% { opacity: 1; }
           50%      { opacity: .3; }
         }
+
+        @keyframes dailiFloat {
+          0%,100% { transform: translateY(0px); }
+          50%      { transform: translateY(-7px); }
+        }
       `}</style>
 
             <Navbar />
             <Hero />
             <Pillars />
-            <MonetizeKit />
+            <DailiSystemSection />
             <EnvironmentSection />
-            <AncestralısTeaser />
             <SupportTeaser />
             <Footer />
         </main>

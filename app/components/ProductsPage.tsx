@@ -1,12 +1,174 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-const AGENT_APP = "/agent-app";
-const DAILI_APP = "https://daili-app-nu.vercel.app";
-const WHATSAPP = "https://wa.me/573045500182?text=Hola%20Esteban%2C%20quiero%20saber%20m%C3%A1s%20sobre%20los%20productos";
+// ─── Config ────────────────────────────────────────────────────────────────────
 
-// ─── Atoms ─────────────────────────────────────────────────────────────────────
+const WHATSAPP_BASE = "https://wa.me/573045500182";
+const DAILI_URL = "https://www.dailiapp.co";
+const AGENT_KIT_URL = "/agent-app";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type ProductType = "subscription" | "guide" | "service";
+
+interface CartItem {
+    id: string;
+    title: string;
+    price: number;
+}
+
+// ─── Products ─────────────────────────────────────────────────────────────────
+
+const PRODUCTS = [
+    {
+        id: "dailiapp",
+        type: "subscription" as ProductType,
+        badge: "Subscription",
+        title: "DailiApp",
+        tagline: "The Founder Life OS Path",
+        description:
+            "One place for tasks, habits, calendar, notes, and AI — fully integrated so nothing falls through the cracks while you build.",
+        priceLabel: "From $9 / mo",
+        features: [
+            "Tasks + habits + calendar in one workspace",
+            "AI Studio with Groq, Anthropic, OpenAI",
+            "Workspaces for life, work, and side projects",
+            "Notes with idea dump and markdown",
+        ],
+        href: DAILI_URL,
+        external: true,
+        buyable: false,
+        slug: null as string | null,
+        icon: "📅",
+        gradient: "from-indigo-600/20 via-indigo-900/10 to-stone-950",
+        badgeStyle: "border-indigo-500/30 bg-indigo-500/10 text-indigo-400",
+        glowStyle: "bg-indigo-500/20",
+        ctaPrimary: "bg-indigo-500 hover:bg-indigo-400 shadow-indigo-500/20 text-white",
+        ctaSecondary: "border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/10",
+        accentText: "text-indigo-400",
+        image: "/daili_app.png",
+    },
+    {
+        id: "agent-kit",
+        type: "subscription" as ProductType,
+        badge: "Subscription",
+        title: "Agent Kit",
+        tagline: "The Agents OS Platform",
+        description:
+            "Deploy multiple AI agents from one platform — with knowledge bases, multi-provider LLMs, and WhatsApp out of the box. No assembly required.",
+        priceLabel: "From $29 / mo",
+        features: [
+            "Multiple agents from a single dashboard",
+            "Knowledge base trained on your own data",
+            "OpenAI, Anthropic, Groq — swap anytime",
+            "WhatsApp integration built in",
+        ],
+        href: AGENT_KIT_URL,
+        external: false,
+        buyable: false,
+        slug: null as string | null,
+        icon: "🤖",
+        gradient: "from-amber-600/20 via-amber-900/10 to-stone-950",
+        badgeStyle: "border-amber-500/30 bg-amber-500/10 text-amber-400",
+        glowStyle: "bg-amber-500/20",
+        ctaPrimary: "bg-amber-500 hover:bg-amber-400 shadow-amber-500/20 text-white",
+        ctaSecondary: "border-amber-500/30 text-amber-400 hover:bg-amber-500/10",
+        accentText: "text-amber-400",
+        image: null as string | null,
+    },
+    {
+        id: "guide-quit-9-5",
+        type: "guide" as ProductType,
+        badge: "Guide",
+        title: "Quit Your 9-5",
+        tagline: "Prepare yourself to quit your 9-5",
+        description:
+            "A complete exit plan — case studies, income stream frameworks, AI tools, and social playbooks to replace your salary on your terms.",
+        priceLabel: "$29",
+        price: 29,
+        features: [
+            "Step-by-step exit roadmap",
+            "Income stream frameworks with AI",
+            "LinkedIn, X, Instagram playbooks",
+            "Templates and real case studies",
+        ],
+        href: null as string | null,
+        external: false,
+        buyable: true,
+        slug: "guide-quit-9-5",
+        icon: "🏝️",
+        gradient: "from-orange-600/20 via-orange-900/10 to-stone-950",
+        badgeStyle: "border-orange-500/30 bg-orange-500/10 text-orange-400",
+        glowStyle: "bg-orange-500/20",
+        ctaPrimary: "bg-orange-500 hover:bg-orange-400 shadow-orange-500/20 text-white",
+        ctaSecondary: "border-orange-500/30 text-orange-400 hover:bg-orange-500/10",
+        accentText: "text-orange-400",
+        image: null as string | null,
+    },
+    {
+        id: "guide-5-books",
+        type: "guide" as ProductType,
+        badge: "Guide",
+        title: "The 5 Books Cheat Sheet",
+        tagline: "From consumer to producer mindset",
+        description:
+            "The condensed lessons from 5 books that permanently shift your identity — from passive consumer to intentional creator who builds things that matter.",
+        priceLabel: "$19",
+        price: 19,
+        features: [
+            "Core principles distilled per book",
+            "Actionable exercises and prompts",
+            "Mindset shift framework",
+            "Reading + implementation guide",
+        ],
+        href: null as string | null,
+        external: false,
+        buyable: true,
+        slug: "guide-5-books",
+        icon: "📚",
+        gradient: "from-emerald-600/20 via-emerald-900/10 to-stone-950",
+        badgeStyle: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
+        glowStyle: "bg-emerald-500/20",
+        ctaPrimary: "bg-emerald-500 hover:bg-emerald-400 shadow-emerald-500/20 text-white",
+        ctaSecondary: "border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10",
+        accentText: "text-emerald-400",
+        image: null as string | null,
+    },
+    {
+        id: "agent-kit-service",
+        type: "service" as ProductType,
+        badge: "Done for You",
+        title: "Agent Kit — Full Deployment",
+        tagline: "I deploy. I set up. I make it live.",
+        description:
+            "I build and deploy your complete AI agent solution under your brand or domain — connected to your data, integrated with WhatsApp, and live within days.",
+        priceLabel: "Custom",
+        features: [
+            "Custom agent built around your use case",
+            "White-label or own-domain deployment",
+            "Knowledge base setup and training",
+            "WhatsApp + web channel integrations",
+            "30-day post-launch support included",
+        ],
+        href: null as string | null,
+        external: false,
+        buyable: false,
+        slug: "agent-kit-service",
+        icon: "⚡",
+        gradient: "from-violet-600/20 via-violet-900/10 to-stone-950",
+        badgeStyle: "border-violet-500/30 bg-violet-500/10 text-violet-400",
+        glowStyle: "bg-violet-500/20",
+        ctaPrimary: "bg-violet-500 hover:bg-violet-400 shadow-violet-500/20 text-white",
+        ctaSecondary: "border-violet-500/30 text-violet-400 hover:bg-violet-500/10",
+        accentText: "text-violet-400",
+        image: null as string | null,
+    },
+] as const;
+
+type Product = typeof PRODUCTS[number];
+
+// ─── Atoms ────────────────────────────────────────────────────────────────────
 
 function IconArrow({ className = "h-4 w-4" }: { className?: string }) {
     return (
@@ -16,7 +178,7 @@ function IconArrow({ className = "h-4 w-4" }: { className?: string }) {
     );
 }
 
-function IconCheck({ className = "h-4 w-4" }: { className?: string }) {
+function IconCheck({ className = "h-3.5 w-3.5" }: { className?: string }) {
     return (
         <svg className={className} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -24,9 +186,136 @@ function IconCheck({ className = "h-4 w-4" }: { className?: string }) {
     );
 }
 
+function IconX({ className = "h-4 w-4" }: { className?: string }) {
+    return (
+        <svg className={className} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    );
+}
+
+function IconShoppingBag({ className = "h-5 w-5" }: { className?: string }) {
+    return (
+        <svg className={className} fill="none" stroke="currentColor" strokeWidth={1.75} viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <path d="M16 10a4 4 0 01-8 0" />
+        </svg>
+    );
+}
+
+// ─── Cart Drawer ──────────────────────────────────────────────────────────────
+
+function CartDrawer({
+    items,
+    open,
+    onClose,
+    onRemove,
+}: {
+    items: CartItem[];
+    open: boolean;
+    onClose: () => void;
+    onRemove: (id: string) => void;
+}) {
+    const total = items.reduce((s, i) => s + i.price, 0);
+
+    const handleCheckout = () => {
+        if (items.length === 0) return;
+        const list = items.map((i) => `• ${i.title} — $${i.price}`).join("\n");
+        const msg = encodeURIComponent(
+            `Hola Esteban, quiero comprar:\n${list}\n\nTotal: $${total}`
+        );
+        window.open(`${WHATSAPP_BASE}?text=${msg}`, "_blank");
+    };
+
+    return (
+        <>
+            {/* Backdrop */}
+            <div
+                className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+                onClick={onClose}
+            />
+            {/* Drawer */}
+            <div
+                className={`fixed right-0 top-0 z-50 h-full w-full max-w-sm bg-stone-950 border-l border-stone-800 flex flex-col transition-transform duration-300 ease-out ${open ? "translate-x-0" : "translate-x-full"}`}
+            >
+                {/* Header */}
+                <div className="flex items-center justify-between px-6 py-5 border-b border-stone-800">
+                    <div className="flex items-center gap-2.5">
+                        <IconShoppingBag className="h-4.5 w-4.5 text-stone-300" />
+                        <span className="font-semibold text-white text-sm">Cart</span>
+                        {items.length > 0 && (
+                            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-white">
+                                {items.length}
+                            </span>
+                        )}
+                    </div>
+                    <button onClick={onClose} className="rounded-lg p-1.5 text-stone-400 hover:bg-stone-800 hover:text-white transition-colors">
+                        <IconX className="h-4 w-4" />
+                    </button>
+                </div>
+
+                {/* Items */}
+                <div className="flex-1 overflow-y-auto px-6 py-4">
+                    {items.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center h-full text-center gap-3">
+                            <div className="h-16 w-16 rounded-2xl bg-stone-900 border border-stone-800 flex items-center justify-center text-2xl">
+                                🛒
+                            </div>
+                            <p className="text-stone-400 text-sm">Your cart is empty.</p>
+                            <p className="text-stone-600 text-xs">Add a guide to get started.</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-3">
+                            {items.map((item) => (
+                                <div key={item.id} className="flex items-center justify-between rounded-xl border border-stone-800 bg-stone-900/60 px-4 py-3">
+                                    <div>
+                                        <p className="text-sm font-medium text-white">{item.title}</p>
+                                        <p className="text-xs text-stone-500 mt-0.5">${item.price}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => onRemove(item.id)}
+                                        className="text-stone-500 hover:text-red-400 transition-colors p-1 rounded"
+                                    >
+                                        <IconX className="h-3.5 w-3.5" />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Footer */}
+                <div className="border-t border-stone-800 px-6 py-5 space-y-3">
+                    <div className="flex items-center justify-between text-sm">
+                        <span className="text-stone-400">Total</span>
+                        <span className="font-bold text-white">${total}</span>
+                    </div>
+                    <button
+                        onClick={handleCheckout}
+                        disabled={items.length === 0}
+                        className="w-full h-11 rounded-xl bg-amber-500 text-sm font-semibold text-white transition-all hover:bg-amber-400 active:scale-95 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center gap-2"
+                    >
+                        Checkout via WhatsApp <IconArrow className="h-3.5 w-3.5" />
+                    </button>
+                    <p className="text-center text-[10px] text-stone-600">
+                        You'll be redirected to WhatsApp to complete your order.
+                    </p>
+                </div>
+            </div>
+        </>
+    );
+}
+
 // ─── Navbar ────────────────────────────────────────────────────────────────────
 
-function Navbar() {
+function Navbar({
+    cartCount,
+    onOpenCart,
+}: {
+    cartCount: number;
+    onOpenCart: () => void;
+}) {
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -36,95 +325,84 @@ function Navbar() {
         return () => window.removeEventListener("scroll", fn);
     }, []);
 
-    const links = [
-        { label: "Daili App",  href: "#daili"     },
-        { label: "Agent App",  href: "#agent"     },
-        { label: "Guide",      href: "#guide"     },
-        { label: "Templates",  href: "#templates" },
-    ];
-
     return (
-        <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-            scrolled ? "bg-stone-950/95 backdrop-blur-md border-b border-stone-800/60 shadow-sm" : ""
-        }`}>
+        <header className={`fixed inset-x-0 top-0 z-30 transition-all duration-500 ${scrolled ? "bg-stone-950/95 backdrop-blur-md border-b border-stone-800/60 shadow-sm" : ""}`}>
             <nav className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
                 <a href="/" className="font-display text-base font-bold tracking-tight text-white">
                     et<span className="text-amber-500">.</span>
                 </a>
+
                 <div className="hidden items-center gap-1 md:flex">
-                    {links.map((l) => (
-                        <a key={l.href} href={l.href}
-                            className="rounded-lg px-3 py-1.5 text-sm font-medium text-stone-300 transition-all hover:bg-white/10 hover:text-white">
-                            {l.label}
+                    {(["Subscriptions", "Guides", "Services"] as const).map((label) => (
+                        <a
+                            key={label}
+                            href={`#${label.toLowerCase()}`}
+                            className="rounded-lg px-3 py-1.5 text-sm font-medium text-stone-400 transition-all hover:bg-white/8 hover:text-white"
+                        >
+                            {label}
                         </a>
                     ))}
                 </div>
-                <div className="hidden md:flex items-center gap-2">
-                    <a href="/" className="text-sm text-stone-400 hover:text-white transition-colors">← Home</a>
-                    <a href={AGENT_APP}
-                        className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-amber-500 px-3.5 text-xs font-semibold text-white transition-all hover:bg-amber-400 active:scale-95">
-                        Get Agent Kit <IconArrow className="h-3 w-3" />
+
+                <div className="flex items-center gap-3">
+                    <a href="/" className="hidden md:block text-sm text-stone-500 hover:text-white transition-colors">
+                        ← Home
                     </a>
+                    <button
+                        onClick={onOpenCart}
+                        className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-stone-700 text-stone-400 hover:border-stone-500 hover:text-white transition-all"
+                    >
+                        <IconShoppingBag className="h-4 w-4" />
+                        {cartCount > 0 && (
+                            <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[9px] font-bold text-white">
+                                {cartCount}
+                            </span>
+                        )}
+                    </button>
                 </div>
-                <button onClick={() => setMenuOpen(!menuOpen)} className="flex flex-col gap-1.5 p-1 md:hidden">
-                    <span className={`block h-0.5 w-5 bg-stone-300 transition-all ${menuOpen ? "translate-y-2 rotate-45" : ""}`} />
-                    <span className={`block h-0.5 w-5 bg-stone-300 transition-all ${menuOpen ? "opacity-0" : ""}`} />
-                    <span className={`block h-0.5 w-5 bg-stone-300 transition-all ${menuOpen ? "-translate-y-2 -rotate-45" : ""}`} />
-                </button>
             </nav>
-            {menuOpen && (
-                <div className="border-t border-stone-800 bg-stone-950 px-4 pb-4 pt-3 md:hidden">
-                    {links.map((l) => (
-                        <a key={l.href} href={l.href} onClick={() => setMenuOpen(false)}
-                            className="block rounded-lg px-2 py-2.5 text-sm text-stone-300 hover:bg-stone-800 hover:text-white">
-                            {l.label}
-                        </a>
-                    ))}
-                </div>
-            )}
         </header>
     );
 }
 
-// ─── Hero ──────────────────────────────────────────────────────────────────────
+// ─── Hero ─────────────────────────────────────────────────────────────────────
 
 function Hero() {
     return (
-        <section className="relative overflow-hidden bg-stone-950 px-6 pt-32 pb-24">
-            <div className="pointer-events-none absolute right-0 top-0 h-[600px] w-[600px] -translate-y-1/3 translate-x-1/3 rounded-full bg-amber-500/10 blur-[140px]" />
-            <div className="pointer-events-none absolute left-0 bottom-0 h-[400px] w-[400px] translate-y-1/3 -translate-x-1/3 rounded-full bg-amber-900/10 blur-[100px]" />
-            <div className="pointer-events-none absolute inset-0 opacity-[0.03]" style={{
-                backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")",
-                backgroundSize: "180px",
-            }} />
-
-            <div className="relative mx-auto max-w-5xl text-center">
+        <section className="relative overflow-hidden bg-stone-950 px-6 pt-32 pb-20">
+            <div className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] -translate-y-1/3 translate-x-1/3 rounded-full bg-amber-500/8 blur-[140px]" />
+            <div className="pointer-events-none absolute left-0 bottom-0 h-[400px] w-[400px] translate-y-1/3 -translate-x-1/3 rounded-full bg-indigo-500/6 blur-[120px]" />
+            <div
+                className="pointer-events-none absolute inset-0 opacity-[0.025]"
+                style={{
+                    backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px)",
+                    backgroundSize: "32px 32px",
+                }}
+            />
+            <div className="relative mx-auto max-w-5xl">
                 <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-stone-700 bg-stone-800/80 px-3 py-1.5 text-xs font-medium text-stone-400">
                     <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
-                    Products by Esteban Toro
+                    Built by Esteban Toro
                 </div>
-                <h1 className="font-display text-[clamp(2.5rem,6vw,4.5rem)] font-bold leading-tight tracking-tight text-white">
-                    Tools built for people
+                <h1 className="font-display text-[clamp(2.5rem,6vw,4.5rem)] font-bold leading-tight tracking-tight text-white max-w-2xl">
+                    Tools to build the life
                     <br />
-                    <span className="text-stone-500">who mean business.</span>
+                    <span className="text-stone-500">you actually want.</span>
                 </h1>
-                <p className="mt-6 mx-auto max-w-xl text-base leading-relaxed text-stone-400">
-                    Apps, agents, and guides. Each one closes the gap between where you are and what you&apos;re building.
+                <p className="mt-6 max-w-xl text-base leading-relaxed text-stone-400">
+                    Apps, guides, and done-for-you services. Each one closes the gap between where you are and what you&apos;re building.
                 </p>
-
-                <div className="mt-10 flex justify-center gap-3 flex-wrap">
+                <div className="mt-8 flex flex-wrap gap-2">
                     {[
-                        { label: "Daili App",  href: "#daili"     },
-                        { label: "Agent App",  href: "#agent",   amber: true },
-                        { label: "Guide",      href: "#guide"     },
-                        { label: "Templates",  href: "#templates" },
+                        { label: "Subscriptions", href: "#subscriptions", color: "border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/10" },
+                        { label: "Guides", href: "#guides", color: "border-orange-500/30 text-orange-400 hover:bg-orange-500/10" },
+                        { label: "Done for You", href: "#services", color: "border-violet-500/30 text-violet-400 hover:bg-violet-500/10" },
                     ].map((l) => (
-                        <a key={l.href} href={l.href}
-                            className={`inline-flex h-10 items-center gap-2 rounded-xl px-5 text-sm font-semibold transition-all active:scale-95 ${
-                                l.amber
-                                    ? "bg-amber-500 text-white shadow-lg shadow-amber-500/20 hover:bg-amber-400"
-                                    : "border border-stone-700 bg-stone-800 text-stone-300 hover:bg-stone-700 hover:text-white"
-                            }`}>
+                        <a
+                            key={l.label}
+                            href={l.href}
+                            className={`inline-flex h-9 items-center rounded-full border px-4 text-xs font-semibold transition-all ${l.color}`}
+                        >
                             {l.label}
                         </a>
                     ))}
@@ -134,530 +412,253 @@ function Hero() {
     );
 }
 
-// ─── Daili App — interactive demo card ────────────────────────────────────────
+// ─── Section divider ──────────────────────────────────────────────────────────
 
-const INITIAL_TODOS = [
-    { id: 1, text: "Review Q2 strategy doc",          done: true  },
-    { id: 2, text: "Ship agent app landing update",   done: true  },
-    { id: 3, text: "Block focus time for deep work",  done: false },
-    { id: 4, text: "Weekly review — 30 min",          done: false },
-];
-
-function DailiDemoCard() {
-    const [todos, setTodos]         = useState(INITIAL_TODOS);
-    const [focusMode, setFocusMode] = useState(false);
-    const [note, setNote]           = useState("The key is not to prioritize what's on your schedule, but to schedule your priorities...");
-    const [newTodo, setNewTodo]     = useState("");
-
-    function toggleTodo(id: number) {
-        setTodos(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
-    }
-
-    function addTodo(e: React.FormEvent) {
-        e.preventDefault();
-        const text = newTodo.trim();
-        if (!text) return;
-        setTodos(prev => [...prev, { id: Date.now(), text, done: false }]);
-        setNewTodo("");
-    }
-
-    const done = todos.filter(t => t.done).length;
-
+function SectionLabel({ id, label }: { id: string; label: string }) {
     return (
-        <div className="rounded-3xl border border-stone-200 bg-[#faf9f7] p-6 shadow-xl shadow-stone-900/5">
-            <div className="flex items-center gap-2 mb-5">
-                <div className="h-3 w-3 rounded-full bg-red-300" />
-                <div className="h-3 w-3 rounded-full bg-amber-300" />
-                <div className="h-3 w-3 rounded-full bg-emerald-300" />
-                <div className="ml-3 flex-1 rounded-md bg-stone-200/60 h-5 flex items-center px-2">
-                    <span className="text-[10px] text-stone-400">daili.app — Today</span>
-                </div>
-            </div>
-
-            <div className="flex items-center justify-between mb-5 rounded-xl bg-white border border-stone-200 px-4 py-3">
-                <div>
-                    <p className="text-xs font-semibold text-stone-700">Focus mode</p>
-                    <p className="text-[10px] text-stone-400">{focusMode ? "Notifications paused" : "All notifications on"}</p>
-                </div>
-                <button onClick={() => setFocusMode(p => !p)}
-                    className={`relative h-6 w-11 rounded-full transition-colors duration-200 ${focusMode ? "bg-stone-900" : "bg-stone-200"}`}>
-                    <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 ${focusMode ? "translate-x-5" : "translate-x-0"}`} />
-                </button>
-            </div>
-
-            <div className="mb-4">
-                <div className="flex items-center justify-between mb-3">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Today</p>
-                    <p className="text-[10px] text-stone-400">{done}/{todos.length} done</p>
-                </div>
-                <div className="space-y-2">
-                    {todos.map((t) => (
-                        <button key={t.id} onClick={() => toggleTodo(t.id)}
-                            className="flex items-center gap-3 w-full text-left group">
-                            <div className={`h-4 w-4 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${t.done ? "bg-stone-900 border-stone-900" : "border-stone-300 group-hover:border-stone-400"}`}>
-                                {t.done && <IconCheck className="h-2.5 w-2.5 text-white" />}
-                            </div>
-                            <span className={`text-sm transition-colors ${t.done ? "line-through text-stone-400" : "text-stone-700"}`}>{t.text}</span>
-                        </button>
-                    ))}
-                </div>
-                <form onSubmit={addTodo} className="mt-3 flex gap-2">
-                    <input value={newTodo} onChange={e => setNewTodo(e.target.value)}
-                        placeholder="Add a task..."
-                        className="flex-1 rounded-lg border border-stone-200 bg-white px-3 py-1.5 text-xs text-stone-700 placeholder-stone-300 outline-none focus:border-stone-400" />
-                    <button type="submit"
-                        className="rounded-lg bg-stone-900 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-stone-700">+</button>
-                </form>
-            </div>
-
-            <div className="rounded-xl bg-white border border-stone-200 p-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-1.5">Quick note</p>
-                <textarea value={note} onChange={e => setNote(e.target.value)} rows={3}
-                    className="w-full resize-none text-xs text-stone-600 leading-relaxed bg-transparent outline-none placeholder-stone-300"
-                    placeholder="Capture a thought..." />
+        <div id={id} className="mx-auto max-w-5xl px-6 pt-16 pb-4">
+            <div className="flex items-center gap-3">
+                <div className="h-px flex-1 bg-stone-800" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-600">{label}</span>
+                <div className="h-px flex-1 bg-stone-800" />
             </div>
         </div>
     );
 }
 
-// ─── Daili App section — light ─────────────────────────────────────────────────
+// ─── Subscription Card ────────────────────────────────────────────────────────
 
-function DailiAppSection() {
-    const features = [
-        "Sync todos across all your devices instantly",
-        "Calendar integration — see your week at a glance",
-        "Notes with markdown — capture ideas fast",
-        "Workspaces to separate life, work, and projects",
-        "AI-powered summaries of your daily output",
-        "Built for focus, not feature bloat",
-    ];
-
+function SubscriptionCard({ product }: { product: Product }) {
+    const p = product as typeof PRODUCTS[0];
     return (
-        <section id="daili" className="bg-white px-6 py-24">
-            <div className="mx-auto max-w-5xl">
-                <div className="grid lg:grid-cols-2 gap-16 items-center">
-                    <div>
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-blue-700">
-                            Subscription
-                        </span>
-                        <h2 className="font-display mt-5 text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl leading-tight">
-                            Daili App
-                        </h2>
-                        <p className="mt-2 text-lg text-stone-400 font-medium">Your daily operating system</p>
-                        <p className="mt-5 text-base leading-relaxed text-stone-500">
-                            One place for everything you need to run your day. Todos that actually sync,
-                            a calendar that makes sense, and notes that don&apos;t get lost. No friction, no clutter.
-                        </p>
+        <div className={`group relative flex flex-col overflow-hidden rounded-3xl border border-stone-800 bg-gradient-to-br ${p.gradient} transition-all duration-300 hover:-translate-y-1 hover:border-stone-700 hover:shadow-2xl hover:shadow-black/40`}>
+            {/* Glow */}
+            <div className={`pointer-events-none absolute top-0 right-0 h-48 w-48 translate-x-1/3 -translate-y-1/3 rounded-full blur-[60px] ${p.glowStyle} opacity-50 group-hover:opacity-80 transition-opacity`} />
 
-                        <ul className="mt-8 space-y-3">
-                            {features.map((f) => (
-                                <li key={f} className="flex items-start gap-3 text-sm text-stone-600">
-                                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-                                        <IconCheck className="h-3 w-3" />
-                                    </span>
-                                    {f}
-                                </li>
-                            ))}
-                        </ul>
-
-                        <div className="mt-10 flex flex-wrap gap-3">
-                            <a href={DAILI_APP} target="_blank" rel="noopener noreferrer"
-                                className="inline-flex h-12 items-center gap-2 rounded-xl bg-stone-900 px-6 text-sm font-semibold text-white shadow-md transition-all hover:bg-stone-700 active:scale-95">
-                                Start with Daili <IconArrow />
-                            </a>
-                            <a href={WHATSAPP} target="_blank" rel="noopener noreferrer"
-                                className="inline-flex h-12 items-center gap-2 rounded-xl border border-stone-200 px-6 text-sm font-semibold text-stone-600 transition-all hover:bg-stone-50 active:scale-95">
-                                Ask a question
-                            </a>
-                        </div>
+            {/* Image / visual header */}
+            <div className="relative h-48 overflow-hidden">
+                {p.image ? (
+                    <img src={p.image} alt={p.title} className="w-full h-full object-cover object-top opacity-50 group-hover:opacity-65 transition-opacity duration-300" />
+                ) : (
+                    <div className="flex h-full items-center justify-center text-7xl opacity-20 group-hover:opacity-30 transition-opacity duration-300">
+                        {p.icon}
                     </div>
-
-                    <div className="relative">
-                        <DailiDemoCard />
-                        <div className="absolute -top-3 -right-3 rounded-2xl border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-700 shadow-md">
-                            Try it live ↓
-                        </div>
-                    </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/20 to-transparent" />
+                <div className="absolute bottom-4 left-5">
+                    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold ${p.badgeStyle}`}>
+                        {p.badge}
+                    </span>
                 </div>
             </div>
-        </section>
-    );
-}
 
-// ─── Agent App section — dark ──────────────────────────────────────────────────
+            {/* Content */}
+            <div className="flex flex-1 flex-col p-6 pt-4">
+                <h2 className="font-display text-2xl font-bold text-white">{p.title}</h2>
+                <p className={`mt-0.5 text-sm font-medium ${p.accentText}`}>{p.tagline}</p>
+                <p className="mt-3 text-sm leading-relaxed text-stone-400 flex-1">{p.description}</p>
 
-function AgentAppSection() {
-    const features = [
-        "Start from a curated template built for your goal",
-        "Customize every step with LLMs in plain language",
-        "Your agent learns your context over time",
-        "Automate repetitive decisions and recurring tasks",
-        "Connect to your tools, notes, and workflows",
-        "Ship your own AI-powered system in minutes",
-    ];
-
-    const steps = [
-        { num: "1", label: "Pick a template",  desc: "Choose from purpose, strategy, habits, and more" },
-        { num: "2", label: "Build with AI",    desc: "Describe what you want — the LLM handles the logic" },
-        { num: "3", label: "Run your agent",   desc: "It works in the background while you focus on what matters" },
-    ];
-
-    return (
-        <section id="agent" className="relative overflow-hidden bg-stone-950 px-6 py-24">
-            <div className="pointer-events-none absolute top-0 right-0 h-[500px] w-[500px] translate-x-1/3 -translate-y-1/4 rounded-full bg-amber-500/8 blur-[140px]" />
-            <div className="pointer-events-none absolute inset-0 opacity-[0.025]" style={{
-                backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px)",
-                backgroundSize: "32px 32px",
-            }} />
-
-            <div className="relative mx-auto max-w-5xl">
-                <div className="grid lg:grid-cols-2 gap-16 items-center">
-                    {/* Left — visual card */}
-                    <div className="relative order-2 lg:order-1">
-                        <div className="rounded-3xl border border-stone-700/60 bg-stone-900/80 p-6 shadow-2xl shadow-black/40">
-                            <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center gap-2">
-                                    <div className="h-8 w-8 rounded-xl bg-amber-500 flex items-center justify-center text-white text-sm font-bold">A</div>
-                                    <div>
-                                        <p className="text-xs font-semibold text-white">My Agent</p>
-                                        <p className="text-[10px] text-stone-500">Purpose · Strategy</p>
-                                    </div>
-                                </div>
-                                <span className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-[10px] font-semibold text-emerald-400">
-                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                    Running
-                                </span>
-                            </div>
-
-                            <div className="space-y-3 mb-5">
-                                <div className="rounded-xl rounded-tl-sm bg-stone-800 px-4 py-3 text-xs text-stone-300 max-w-[85%]">
-                                    What&apos;s your top priority this week?
-                                </div>
-                                <div className="ml-auto rounded-xl rounded-tr-sm bg-amber-500 px-4 py-3 text-xs text-white max-w-[85%]">
-                                    Finishing the agent app onboarding flow.
-                                </div>
-                                <div className="rounded-xl rounded-tl-sm bg-stone-800 px-4 py-3 text-xs text-stone-300 max-w-[85%]">
-                                    Got it. I&apos;ve blocked 3 focus sessions and moved low-priority tasks to Friday. Want me to draft the checklist?
-                                </div>
-                            </div>
-
-                            <div className="border-t border-stone-800 pt-4 space-y-2.5">
-                                {steps.map((s) => (
-                                    <div key={s.num} className="flex items-start gap-3">
-                                        <div className="h-5 w-5 rounded-full bg-amber-500/20 flex items-center justify-center text-[10px] font-bold text-amber-400 shrink-0 mt-0.5">
-                                            {s.num}
-                                        </div>
-                                        <div>
-                                            <p className="text-xs font-semibold text-stone-300">{s.label}</p>
-                                            <p className="text-[10px] text-stone-500">{s.desc}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="absolute -bottom-3 -left-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-xs font-semibold text-amber-400 shadow-md">
-                            Built with your templates
-                        </div>
-                    </div>
-
-                    {/* Right */}
-                    <div className="order-1 lg:order-2">
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-amber-400">
-                            Subscription
-                        </span>
-                        <h2 className="font-display mt-5 text-4xl font-bold tracking-tight text-white sm:text-5xl leading-tight">
-                            Agent App
-                        </h2>
-                        <p className="mt-2 text-lg text-stone-500 font-medium">Your personal AI system</p>
-                        <p className="mt-5 text-base leading-relaxed text-stone-400">
-                            Start from a battle-tested template and let LLMs do the heavy lifting. No coding required —
-                            just describe what you need and your agent builds it, runs it, and improves it over time.
-                        </p>
-
-                        <ul className="mt-8 space-y-3">
-                            {features.map((f) => (
-                                <li key={f} className="flex items-start gap-3 text-sm text-stone-400">
-                                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-500/15 text-amber-500">
-                                        <IconCheck className="h-3 w-3" />
-                                    </span>
-                                    {f}
-                                </li>
-                            ))}
-                        </ul>
-
-                        <div className="mt-10 flex flex-wrap gap-3">
-                            <a href={AGENT_APP}
-                                className="inline-flex h-12 items-center gap-2 rounded-xl bg-amber-500 px-6 text-sm font-semibold text-white shadow-lg shadow-amber-500/20 transition-all hover:bg-amber-400 active:scale-95">
-                                Get the Agent App <IconArrow />
-                            </a>
-                            <a href={WHATSAPP} target="_blank" rel="noopener noreferrer"
-                                className="inline-flex h-12 items-center gap-2 rounded-xl border border-stone-700 px-6 text-sm font-semibold text-stone-400 transition-all hover:border-stone-500 hover:text-white active:scale-95">
-                                Ask a question
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
-}
-
-// ─── Guide Section — warm light ────────────────────────────────────────────────
-
-function GuideSection() {
-    const contents = [
-        { icon: "📖", label: "Case studies",      desc: "Real people who made the jump" },
-        { icon: "🗺️", label: "Exit roadmap",      desc: "Step-by-step planning guides"  },
-        { icon: "📄", label: "Templates",          desc: "Offers, pages, outreach scripts" },
-        { icon: "🤖", label: "AI frameworks",      desc: "Build income streams with AI"  },
-        { icon: "📣", label: "Social playbooks",   desc: "Grow on LinkedIn, X, Instagram" },
-        { icon: "💰", label: "Income models",      desc: "Multiple monetization paths"   },
-    ];
-
-    const journey = [
-        { stage: "Now",        label: "Trading time for money",    note: "Fixed salary, someone else's rules",     icon: "⏰" },
-        { stage: "Month 1–2",  label: "Clarity & positioning",     note: "Define your niche and knowledge offer",  icon: "🧭" },
-        { stage: "Month 3–4",  label: "First income streams",      note: "Content + AI tools + first paid offers", icon: "⚡" },
-        { stage: "Month 5–6",  label: "Scale & replace",           note: "Replace your salary, exit on your terms",icon: "🏝️" },
-    ];
-
-    return (
-        <section id="guide" className="relative overflow-hidden bg-[#fdf8f0] px-6 py-24">
-            <div className="pointer-events-none absolute right-0 top-0 h-[600px] w-[600px] translate-x-1/3 -translate-y-1/4 rounded-full bg-amber-200/50 blur-[140px]" />
-            <div className="pointer-events-none absolute left-0 bottom-0 h-[400px] w-[400px] -translate-x-1/3 translate-y-1/3 rounded-full bg-orange-100/60 blur-[100px]" />
-
-            <div className="relative mx-auto max-w-5xl">
-                <div className="grid lg:grid-cols-2 gap-16 items-start">
-                    {/* Left */}
-                    <div>
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-orange-700">
-                            Guide · One-time
-                        </span>
-                        <h2 className="font-display mt-5 text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl leading-tight">
-                            Free yourself
-                            <br />
-                            <span className="text-amber-600">from the 9-5.</span>
-                        </h2>
-                        <p className="mt-2 text-lg text-stone-500 font-medium">Monetize your knowledge with AI &amp; Social Media</p>
-                        <p className="mt-5 text-base leading-relaxed text-stone-600">
-                            A complete guide to plan your exit from employment — packed with case studies,
-                            frameworks, and templates to start monetizing your skills and knowledge starting today.
-                        </p>
-
-                        <div className="mt-8 grid grid-cols-2 gap-2.5">
-                            {contents.map((c) => (
-                                <div key={c.label} className="flex items-start gap-3 rounded-2xl bg-white border border-amber-100 p-3.5 shadow-sm">
-                                    <span className="text-lg shrink-0">{c.icon}</span>
-                                    <div>
-                                        <p className="text-sm font-semibold text-stone-800">{c.label}</p>
-                                        <p className="text-[11px] text-stone-500">{c.desc}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="mt-10 flex flex-wrap gap-3">
-                            <a href={WHATSAPP} target="_blank" rel="noopener noreferrer"
-                                className="inline-flex h-12 items-center gap-2 rounded-xl bg-amber-500 px-6 text-sm font-semibold text-white shadow-lg shadow-amber-500/20 transition-all hover:bg-amber-400 active:scale-95">
-                                Get the guide <IconArrow />
-                            </a>
-                        </div>
-                    </div>
-
-                    {/* Right — journey card */}
-                    <div className="relative lg:sticky lg:top-24">
-                        <div className="rounded-3xl border border-amber-200/60 bg-white p-7 shadow-xl shadow-amber-900/6">
-                            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-400 mb-6">The journey</p>
-
-                            <div className="relative">
-                                {/* Vertical connector line */}
-                                <div className="absolute left-4 top-4 bottom-4 w-px bg-amber-100" />
-
-                                <div className="space-y-6">
-                                    {journey.map((step, i) => (
-                                        <div key={i} className="flex items-start gap-4 relative">
-                                            <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-sm z-10 ${
-                                                i === 0
-                                                    ? "bg-stone-100 border border-stone-200"
-                                                    : "bg-amber-50 border border-amber-200"
-                                            }`}>
-                                                {step.icon}
-                                            </div>
-                                            <div className="flex-1 pt-0.5">
-                                                <span className={`text-[10px] font-bold uppercase tracking-widest ${i === 0 ? "text-stone-400" : "text-amber-500"}`}>
-                                                    {step.stage}
-                                                </span>
-                                                <p className={`text-sm font-semibold mt-0.5 ${i === 0 ? "text-stone-500" : "text-stone-800"}`}>
-                                                    {step.label}
-                                                </p>
-                                                <p className="text-xs text-stone-400 mt-0.5">{step.note}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="mt-7 rounded-2xl bg-amber-50 border border-amber-100 px-4 py-3 flex items-center gap-3">
-                                <span className="text-xl">🎁</span>
-                                <p className="text-xs text-stone-600 leading-relaxed">
-                                    Includes <span className="font-semibold text-stone-800">templates, case studies, and playbooks</span> ready to use from day one.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="absolute -bottom-3 -right-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-2 text-xs font-semibold text-amber-700 shadow-md">
-                            AI + Social Media focused
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
-}
-
-// ─── Templates — dark ──────────────────────────────────────────────────────────
-
-function TemplatesSection() {
-    const templates = [
-        {
-            emoji: "💰",
-            name: "Finance Tracker",
-            tagline: "Know exactly where your money goes",
-            desc: "A complete system to track income, expenses, savings goals, and investments. Built around clarity, not complexity.",
-            features: ["Monthly budget planner", "Expense categories with targets", "Savings goal tracker", "Net worth snapshot", "Weekly review prompts"],
-            accent: "border-emerald-500/25 bg-emerald-500/6",
-            check: "bg-emerald-500/20 text-emerald-400",
-            cta: "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-600/20",
-            tag: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
-        },
-        {
-            emoji: "🧭",
-            name: "Main Purpose",
-            tagline: "Find direction, build conviction",
-            desc: "A guided framework to identify what matters most, define your north star, and turn abstract purpose into daily action.",
-            features: ["Values clarification exercise", "Life areas audit", "10-year vision builder", "Monthly intention setting", "Weekly alignment check"],
-            accent: "border-amber-500/25 bg-amber-500/6",
-            check: "bg-amber-500/20 text-amber-400",
-            cta: "bg-amber-500 hover:bg-amber-400 shadow-amber-500/20",
-            tag: "border-amber-500/30 bg-amber-500/10 text-amber-400",
-        },
-        {
-            emoji: "📈",
-            name: "Habits Tracker",
-            tagline: "Make consistency your superpower",
-            desc: "A habit system that actually sticks — with streaks, context stacking, and weekly reviews that reinforce the behaviors you&apos;re building.",
-            features: ["Daily habit dashboard", "Streak tracking and recovery", "Context stacking planner", "Progress heatmap view", "Monthly habits review"],
-            accent: "border-sky-500/25 bg-sky-500/6",
-            check: "bg-sky-500/20 text-sky-400",
-            cta: "bg-sky-600 hover:bg-sky-500 shadow-sky-600/20",
-            tag: "border-sky-500/30 bg-sky-500/10 text-sky-400",
-        },
-    ];
-
-    return (
-        <section id="templates" className="relative overflow-hidden bg-stone-950 px-6 py-24">
-            <div className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 h-[600px] w-[400px] -translate-x-1/2 rounded-full bg-amber-900/10 blur-[120px]" />
-            <div className="pointer-events-none absolute inset-0 opacity-[0.025]" style={{
-                backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px)",
-                backgroundSize: "32px 32px",
-            }} />
-
-            <div className="relative mx-auto max-w-5xl">
-                <div className="mb-14 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
-                    <div>
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-600 bg-stone-800 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-stone-400">
-                            One-time payment
-                        </span>
-                        <h2 className="font-display mt-5 text-4xl font-bold tracking-tight text-white sm:text-5xl leading-tight">
-                            Templates
-                        </h2>
-                        <p className="mt-3 max-w-lg text-base leading-relaxed text-stone-400">
-                            Pre-built systems for the areas that matter most. Buy once, use forever — plug straight into the Agent App.
-                        </p>
-                    </div>
-                    <div className="shrink-0 rounded-2xl border border-amber-500/20 bg-amber-500/8 px-5 py-4 text-center">
-                        <p className="text-xs text-stone-500 font-medium mb-1">Works with</p>
-                        <p className="text-sm font-bold text-amber-400">Agent App</p>
-                        <p className="text-[10px] text-stone-500 mt-0.5">Import in one click</p>
-                    </div>
-                </div>
-
-                <div className="grid gap-5 lg:grid-cols-3">
-                    {templates.map((t) => (
-                        <div key={t.name}
-                            className={`group relative flex flex-col rounded-3xl border p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/40 ${t.accent}`}>
-                            <span className="mb-4 block text-4xl">{t.emoji}</span>
-                            <h3 className="font-display text-xl font-bold text-white">{t.name}</h3>
-                            <p className="mt-1 text-sm font-medium text-stone-500">{t.tagline}</p>
-                            <p className="mt-3 text-sm leading-relaxed text-stone-400">{t.desc}</p>
-
-                            <ul className="mt-5 space-y-2 flex-1">
-                                {t.features.map((f) => (
-                                    <li key={f} className="flex items-center gap-2.5 text-xs text-stone-400">
-                                        <span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${t.check}`}>
-                                            <IconCheck className="h-2.5 w-2.5" />
-                                        </span>
-                                        {f}
-                                    </li>
-                                ))}
-                            </ul>
-
-                            <a href={WHATSAPP} target="_blank" rel="noopener noreferrer"
-                                className={`mt-7 inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold text-white shadow-lg transition-all active:scale-95 ${t.cta}`}>
-                                Get this template <IconArrow className="h-3.5 w-3.5" />
-                            </a>
-                        </div>
+                <ul className="mt-5 space-y-2">
+                    {p.features.map((f) => (
+                        <li key={f} className="flex items-start gap-2.5 text-xs text-stone-400">
+                            <span className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${p.glowStyle}`}>
+                                <IconCheck className="h-2.5 w-2.5 text-white" />
+                            </span>
+                            {f}
+                        </li>
                     ))}
+                </ul>
+
+                <div className="mt-6 flex items-center justify-between">
+                    <span className="text-xs text-stone-500">{p.priceLabel}</span>
                 </div>
 
-                <div className="mt-8 rounded-2xl border border-stone-700/60 bg-stone-900/60 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div>
-                        <p className="font-display font-bold text-white">Want all three?</p>
-                        <p className="text-sm text-stone-400 mt-0.5">Get the full bundle and save — plus direct import into the Agent App.</p>
-                    </div>
-                    <a href={WHATSAPP} target="_blank" rel="noopener noreferrer"
-                        className="shrink-0 inline-flex h-10 items-center gap-2 rounded-xl bg-stone-700 px-5 text-sm font-semibold text-white transition-all hover:bg-stone-600 active:scale-95">
-                        Get the bundle <IconArrow className="h-3.5 w-3.5" />
-                    </a>
-                </div>
+                <a
+                    href={p.href ?? "#"}
+                    target={p.external ? "_blank" : undefined}
+                    rel={p.external ? "noopener noreferrer" : undefined}
+                    className={`mt-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold shadow-lg transition-all active:scale-95 ${p.ctaPrimary}`}
+                >
+                    Go to {p.title} <IconArrow className="h-3.5 w-3.5" />
+                </a>
             </div>
-        </section>
+        </div>
     );
 }
 
-// ─── Final CTA — light ─────────────────────────────────────────────────────────
+// ─── Guide Card ───────────────────────────────────────────────────────────────
 
-function FinalCTA() {
+function GuideCard({
+    product,
+    onAddToCart,
+    inCart,
+}: {
+    product: Product;
+    onAddToCart: () => void;
+    inCart: boolean;
+}) {
+    const p = product as typeof PRODUCTS[2];
+    const [added, setAdded] = useState(false);
+
+    const handleAdd = () => {
+        onAddToCart();
+        setAdded(true);
+        setTimeout(() => setAdded(false), 1800);
+    };
+
     return (
-        <section className="bg-white px-6 py-20 relative overflow-hidden">
-            <div className="pointer-events-none absolute right-0 top-0 h-[400px] w-[400px] translate-x-1/3 -translate-y-1/3 rounded-full bg-amber-100/80 blur-[100px]" />
-            <div className="relative mx-auto max-w-5xl text-center">
-                <h2 className="font-display text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-                    Not sure where to start?
-                </h2>
-                <p className="mt-5 text-stone-500 max-w-lg mx-auto leading-relaxed">
-                    If you have a goal but not a system, start with the Agent App. If you want clarity first, grab a template or the guide.
-                </p>
-                <div className="mt-8 flex flex-wrap gap-3 justify-center">
-                    <a href={AGENT_APP}
-                        className="inline-flex h-12 items-center gap-2 rounded-xl bg-amber-500 px-6 text-sm font-semibold text-white shadow-lg shadow-amber-500/20 transition-all hover:bg-amber-400 active:scale-95">
-                        Start with the Agent <IconArrow />
-                    </a>
-                    <a href="#guide"
-                        className="inline-flex h-12 items-center gap-2 rounded-xl border border-stone-200 px-6 text-sm font-semibold text-stone-700 transition-all hover:bg-stone-50 active:scale-95">
-                        See the guide
-                    </a>
-                    <a href={WHATSAPP} target="_blank" rel="noopener noreferrer"
-                        className="inline-flex h-12 items-center gap-2 rounded-xl border border-stone-200 px-6 text-sm font-semibold text-stone-500 transition-all hover:bg-stone-50 active:scale-95">
-                        Talk to me first
-                    </a>
+        <div className={`group relative flex flex-col overflow-hidden rounded-3xl border border-stone-800 bg-gradient-to-br ${p.gradient} transition-all duration-300 hover:-translate-y-1 hover:border-stone-700 hover:shadow-2xl hover:shadow-black/40`}>
+            {/* Glow */}
+            <div className={`pointer-events-none absolute top-0 right-0 h-40 w-40 translate-x-1/3 -translate-y-1/3 rounded-full blur-[50px] ${p.glowStyle} opacity-40 group-hover:opacity-70 transition-opacity`} />
+
+            {/* Visual header */}
+            <div className="relative flex h-40 items-center justify-center overflow-hidden">
+                <div className="text-8xl opacity-15 group-hover:opacity-25 transition-opacity duration-300 select-none">{p.icon}</div>
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/30 to-transparent" />
+                <div className="absolute bottom-4 left-5 right-5 flex items-end justify-between">
+                    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold ${p.badgeStyle}`}>
+                        {p.badge}
+                    </span>
+                    <span className={`text-2xl font-bold ${p.accentText}`}>{p.priceLabel}</span>
                 </div>
             </div>
-        </section>
+
+            {/* Content */}
+            <div className="flex flex-1 flex-col p-6 pt-4">
+                <h2 className="font-display text-xl font-bold text-white leading-snug">{p.title}</h2>
+                <p className={`mt-0.5 text-xs font-medium ${p.accentText}`}>{p.tagline}</p>
+                <p className="mt-3 text-sm leading-relaxed text-stone-400 flex-1">{p.description}</p>
+
+                <ul className="mt-4 space-y-1.5">
+                    {p.features.map((f) => (
+                        <li key={f} className="flex items-start gap-2 text-xs text-stone-400">
+                            <span className={`mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full ${p.glowStyle}`}>
+                                <IconCheck className="h-2 w-2 text-white" />
+                            </span>
+                            {f}
+                        </li>
+                    ))}
+                </ul>
+
+                <div className="mt-5 flex gap-2">
+                    <a
+                        href={`/products/${p.slug}`}
+                        className={`flex-1 inline-flex h-10 items-center justify-center rounded-xl border text-xs font-semibold transition-all active:scale-95 ${p.ctaSecondary}`}
+                    >
+                        View details
+                    </a>
+                    <button
+                        onClick={handleAdd}
+                        disabled={inCart}
+                        className={`flex-1 inline-flex h-10 items-center justify-center gap-1.5 rounded-xl text-xs font-semibold shadow-md transition-all active:scale-95 ${inCart || added ? "bg-stone-700 text-stone-400 cursor-default" : p.ctaPrimary}`}
+                    >
+                        {inCart ? (
+                            <>
+                                <IconCheck className="h-3 w-3" /> In cart
+                            </>
+                        ) : added ? (
+                            <>✓ Added</>
+                        ) : (
+                            <>Add to cart</>
+                        )}
+                    </button>
+                </div>
+            </div>
+        </div>
     );
 }
 
-// ─── Footer ────────────────────────────────────────────────────────────────────
+// ─── Service Card ─────────────────────────────────────────────────────────────
+
+function ServiceCard({ product }: { product: Product }) {
+    const p = product as typeof PRODUCTS[4];
+    const whatsapp = `${WHATSAPP_BASE}?text=${encodeURIComponent("Hola Esteban, me interesa el servicio de Agent Kit Full Deployment. ¿Podemos hablar?")}`;
+
+    const process = [
+        { step: "01", label: "Discovery call", desc: "We map your use case, data, and requirements." },
+        { step: "02", label: "Build & integrate", desc: "Agent + knowledge base + channels configured." },
+        { step: "03", label: "Deploy & go live", desc: "Your solution live under your brand in days." },
+        { step: "04", label: "30-day support", desc: "Fixes, tweaks, and guidance post-launch." },
+    ];
+
+    return (
+        <div className={`group relative overflow-hidden rounded-3xl border border-stone-800 bg-gradient-to-br ${p.gradient} transition-all duration-300 hover:border-stone-700 hover:shadow-2xl hover:shadow-black/40`}>
+            <div className={`pointer-events-none absolute top-0 right-0 h-64 w-64 translate-x-1/4 -translate-y-1/4 rounded-full blur-[80px] ${p.glowStyle} opacity-40 group-hover:opacity-70 transition-opacity`} />
+
+            <div className="relative grid lg:grid-cols-[1fr_1fr] gap-0">
+                {/* Left */}
+                <div className="p-8 lg:p-10">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className={`h-10 w-10 rounded-xl ${p.glowStyle} flex items-center justify-center text-lg`}>
+                            {p.icon}
+                        </div>
+                        <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold ${p.badgeStyle}`}>
+                            {p.badge}
+                        </span>
+                    </div>
+                    <h2 className="font-display text-3xl font-bold text-white leading-tight">{p.title}</h2>
+                    <p className={`mt-1 text-sm font-medium ${p.accentText}`}>{p.tagline}</p>
+                    <p className="mt-4 text-sm leading-relaxed text-stone-400 max-w-md">{p.description}</p>
+
+                    <ul className="mt-6 space-y-2">
+                        {p.features.map((f) => (
+                            <li key={f} className="flex items-start gap-2.5 text-sm text-stone-400">
+                                <span className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${p.glowStyle}`}>
+                                    <IconCheck className="h-2.5 w-2.5 text-white" />
+                                </span>
+                                {f}
+                            </li>
+                        ))}
+                    </ul>
+
+                    <div className="mt-8 flex flex-wrap gap-3">
+                        <a
+                            href={whatsapp}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`inline-flex h-12 items-center gap-2 rounded-xl px-6 text-sm font-semibold shadow-lg transition-all active:scale-95 ${p.ctaPrimary}`}
+                        >
+                            Book a call <IconArrow className="h-3.5 w-3.5" />
+                        </a>
+                        <a
+                            href={`/products/${p.slug}`}
+                            className={`inline-flex h-12 items-center gap-2 rounded-xl border px-6 text-sm font-semibold transition-all active:scale-95 ${p.ctaSecondary}`}
+                        >
+                            Learn more
+                        </a>
+                    </div>
+                </div>
+
+                {/* Right — process */}
+                <div className="border-t border-stone-800/60 lg:border-t-0 lg:border-l p-8 lg:p-10">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-600 mb-6">How it works</p>
+                    <div className="space-y-5">
+                        {process.map((s, i) => (
+                            <div key={s.step} className="flex items-start gap-4">
+                                <div className={`h-8 w-8 shrink-0 rounded-xl border border-stone-700 flex items-center justify-center text-[11px] font-bold ${p.accentText}`}>
+                                    {s.step}
+                                </div>
+                                <div>
+                                    <p className="text-sm font-semibold text-stone-200">{s.label}</p>
+                                    <p className="text-xs text-stone-500 mt-0.5">{s.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className={`mt-8 rounded-2xl border border-stone-700/50 ${p.glowStyle} p-4`}>
+                        <p className="text-xs font-semibold text-stone-300 mb-1">Pricing</p>
+                        <p className="text-sm text-stone-400 leading-relaxed">
+                            Custom scoped per project. Starts with a free 30-min call — no commitment, no pressure.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// ─── Footer ───────────────────────────────────────────────────────────────────
 
 function Footer() {
     return (
@@ -666,51 +667,103 @@ function Footer() {
                 <a href="/" className="font-display text-sm font-bold text-white">
                     et<span className="text-amber-500">.</span>
                 </a>
-                <p className="text-xs text-stone-500">© {new Date().getFullYear()} Esteban Toro</p>
+                <p className="text-xs text-stone-600">© {new Date().getFullYear()} Esteban Toro</p>
                 <div className="flex gap-4 text-xs text-stone-500">
                     <a href="/" className="hover:text-white transition-colors">Home</a>
-                    <a href={AGENT_APP} className="hover:text-white transition-colors font-medium text-amber-500">Agent App</a>
-                    <a href={WHATSAPP} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">WhatsApp</a>
+                    <a href={DAILI_URL} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors font-medium text-indigo-400">DailiApp</a>
+                    <a href={AGENT_KIT_URL} className="hover:text-white transition-colors font-medium text-amber-500">Agent Kit</a>
                 </div>
             </div>
         </footer>
     );
 }
 
-// ─── Page ──────────────────────────────────────────────────────────────────────
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function ProductsPage() {
+    const [cart, setCart] = useState<CartItem[]>([]);
+    const [cartOpen, setCartOpen] = useState(false);
+
+    const addToCart = (product: Product) => {
+        const p = product as typeof PRODUCTS[2];
+        if (cart.find((i) => i.id === p.id)) return;
+        setCart((prev) => [...prev, { id: p.id, title: p.title, price: (p as any).price ?? 0 }]);
+        setCartOpen(true);
+    };
+
+    const removeFromCart = (id: string) => {
+        setCart((prev) => prev.filter((i) => i.id !== id));
+    };
+
+    const subscriptions = PRODUCTS.filter((p) => p.type === "subscription");
+    const guides = PRODUCTS.filter((p) => p.type === "guide");
+    const services = PRODUCTS.filter((p) => p.type === "service");
+
     return (
-        <main className="min-h-screen antialiased">
+        <main className="min-h-screen antialiased bg-stone-950">
             <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400&family=DM+Sans:wght@400;500;600&display=swap');
+                @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400&family=DM+Sans:wght@400;500;600&display=swap');
+                *, *::before, *::after { box-sizing: border-box; }
+                body { font-family: 'DM Sans', system-ui, sans-serif; background-color: #0c0a09; }
+                .font-display { font-family: 'Fraunces', Georgia, serif; }
+                h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; }
+                html { scroll-behavior: smooth; }
+                @keyframes fadeUp {
+                    from { opacity: 0; transform: translateY(16px); }
+                    to   { opacity: 1; transform: translateY(0); }
+                }
+                .fade-up { animation: fadeUp 0.5s ease both; }
+            `}</style>
 
-        *, *::before, *::after { box-sizing: border-box; }
-
-        body { font-family: 'DM Sans', system-ui, sans-serif; background-color: #0c0a09; }
-
-        .font-display { font-family: 'Fraunces', Georgia, serif; }
-
-        h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; }
-
-        html { scroll-behavior: smooth; }
-
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-
-        section { animation: fadeUp 0.6s ease both; }
-      `}</style>
-
-            <Navbar />
+            <Navbar cartCount={cart.length} onOpenCart={() => setCartOpen(true)} />
             <Hero />
-            <DailiAppSection />
-            <AgentAppSection />
-            <GuideSection />
-            <TemplatesSection />
-            <FinalCTA />
+
+            {/* Subscriptions */}
+            <SectionLabel id="subscriptions" label="Subscriptions" />
+            <div className="mx-auto max-w-5xl px-6 pb-6">
+                <div className="grid sm:grid-cols-2 gap-5">
+                    {subscriptions.map((p) => (
+                        <div key={p.id} className="fade-up">
+                            <SubscriptionCard product={p} />
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Guides */}
+            <SectionLabel id="guides" label="Guides" />
+            <div className="mx-auto max-w-5xl px-6 pb-6">
+                <div className="grid sm:grid-cols-2 gap-5">
+                    {guides.map((p) => (
+                        <div key={p.id} className="fade-up">
+                            <GuideCard
+                                product={p}
+                                onAddToCart={() => addToCart(p)}
+                                inCart={!!cart.find((i) => i.id === p.id)}
+                            />
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Services */}
+            <SectionLabel id="services" label="Done for You" />
+            <div className="mx-auto max-w-5xl px-6 pb-24">
+                {services.map((p) => (
+                    <div key={p.id} className="fade-up">
+                        <ServiceCard product={p} />
+                    </div>
+                ))}
+            </div>
+
             <Footer />
+
+            <CartDrawer
+                items={cart}
+                open={cartOpen}
+                onClose={() => setCartOpen(false)}
+                onRemove={removeFromCart}
+            />
         </main>
     );
 }
