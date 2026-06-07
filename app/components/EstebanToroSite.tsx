@@ -1930,6 +1930,190 @@ function AgentKitCTA() {
     );
 }
 
+// ─── Nomad Game Teaser ─────────────────────────────────────────────────────────
+
+const PREVIEW_MAP = [
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  [1,1,1,1,1,1,0,7,7,7,7,1,1,1],
+  [1,0,0,0,0,0,0,7,7,7,7,1,1,1],
+  [1,0,8,8,0,4,4,4,4,0,0,0,0,1],
+  [1,0,0,0,0,4,0,0,4,0,6,6,0,1],
+  [1,1,0,0,4,4,4,4,4,0,6,6,0,1],
+  [1,1,0,0,4,0,0,0,0,5,5,5,0,1],
+  [1,1,1,0,0,0,0,0,0,5,5,5,0,1],
+  [1,1,1,0,4,4,4,4,4,4,4,4,0,1],
+  [1,1,1,2,2,2,2,2,2,2,2,2,2,1],
+  [1,1,2,2,2,2,2,2,2,2,2,2,2,1],
+  [3,3,3,2,2,2,2,2,2,2,2,3,3,3],
+];
+
+const PREVIEW_COLORS: Record<number, string> = {
+  0: "#3d7a4f", 1: "#2d5a27", 2: "#d4aa6a",
+  3: "#2e6fad", 4: "#8b7355", 5: "#a0522d",
+  6: "#708090", 7: "#1a1a2e", 8: "#4a8ab8",
+};
+
+function NomadGameTeaser() {
+  return (
+    <section className="relative bg-stone-950 px-6 py-24 overflow-hidden">
+      <style>{`
+        @keyframes scanMove { 0%{transform:translateY(-100%)} 100%{transform:translateY(200%)} }
+        @keyframes pixelPulse { 0%,100%{opacity:.7} 50%{opacity:1} }
+        @keyframes nomadBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+        .nomad-bob { animation: nomadBob 1.2s ease-in-out infinite; display:inline-block; }
+        .pixel-btn {
+          position: relative;
+          image-rendering: pixelated;
+          transition: all 0.1s;
+        }
+        .pixel-btn:hover { transform: translateY(-2px); }
+        .pixel-btn:active { transform: translateY(1px); }
+      `}</style>
+
+      {/* Scanline overlay */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-[0.025]">
+        <div className="absolute inset-x-0 h-1 bg-white" style={{ animation: "scanMove 3s linear infinite" }} />
+      </div>
+
+      {/* Pixel grid bg */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.035]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
+      />
+
+      {/* Ambient glow */}
+      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-amber-500/6 blur-[140px]" />
+
+      <div className="relative mx-auto max-w-5xl">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-14">
+
+          {/* ── Left: text ── */}
+          <div className="flex-1">
+            <div className="mb-5 inline-flex items-center gap-2 border border-amber-500/30 bg-amber-500/5 px-3 py-1.5">
+              <span className="h-2 w-2 bg-amber-400 animate-pulse" />
+              <span
+                className="text-[9px] font-bold tracking-[0.2em] uppercase text-amber-400"
+                style={{ fontFamily: "'Press Start 2P', monospace" }}
+              >
+                Mini Game
+              </span>
+            </div>
+
+            <h2
+              className="text-4xl font-bold text-white leading-tight mb-6 sm:text-5xl"
+              style={{ fontFamily: "'Press Start 2P', monospace", letterSpacing: "0.04em", lineHeight: 1.4 }}
+            >
+              <span className="text-amber-400">NOMAD</span>
+              <br />
+              <span className="text-stone-300 text-3xl sm:text-4xl">WORLD</span>
+            </h2>
+
+            <div className="mb-8 space-y-2 text-stone-400" style={{ fontFamily: "'Courier New', monospace", fontSize: 13 }}>
+              <p><span className="text-amber-500">▶</span> Move your nomad with arrow keys</p>
+              <p><span className="text-amber-500">▶</span> Explore 5 locations on the island</p>
+              <p className="text-stone-500 pl-4 text-xs">
+                Water Collection · Solar System ·<br />
+                Ancestral House · Workshop · Beach
+              </p>
+              <p><span className="text-amber-500">▶</span> Collect all 15 Carb Claws <span className="text-lg">🦀</span></p>
+            </div>
+
+            <a
+              href="/nomad-game"
+              className="pixel-btn inline-flex items-center gap-3 bg-amber-500 px-6 py-3 text-stone-900 font-bold"
+              style={{
+                fontFamily: "'Press Start 2P', monospace",
+                fontSize: 10,
+                boxShadow: "4px 4px 0px #8a6800, inset 0 1px 0 rgba(255,255,255,0.3)",
+              }}
+            >
+              <span className="text-base">▶</span>
+              PLAY NOW
+            </a>
+          </div>
+
+          {/* ── Right: pixel art map preview ── */}
+          <div className="flex-1 flex justify-center lg:justify-end">
+            <div className="relative">
+              {/* Pixel border frame */}
+              <div
+                className="relative overflow-hidden"
+                style={{
+                  border: "4px solid #ffd700",
+                  boxShadow: "0 0 0 4px #8a6800, 0 0 24px rgba(255,210,0,0.3), inset 0 0 30px rgba(0,0,0,0.5)",
+                  imageRendering: "pixelated",
+                }}
+              >
+                {/* Mini map grid */}
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: `repeat(14, 20px)`,
+                    gridTemplateRows: `repeat(12, 20px)`,
+                    gap: 0,
+                    imageRendering: "pixelated",
+                  }}
+                >
+                  {PREVIEW_MAP.map((row, ri) =>
+                    row.map((cell, ci) => (
+                      <div
+                        key={`${ri}-${ci}`}
+                        style={{
+                          width: 20,
+                          height: 20,
+                          background: PREVIEW_COLORS[cell] ?? "#3d7a4f",
+                          outline: "1px solid rgba(0,0,0,0.12)",
+                        }}
+                      />
+                    ))
+                  )}
+                </div>
+
+                {/* Animated nomad character on map */}
+                <div
+                  className="absolute pointer-events-none"
+                  style={{ left: 100, top: 95 }}
+                >
+                  <div className="nomad-bob text-lg leading-none">🧑‍🌾</div>
+                </div>
+
+                {/* CRT scanline effect */}
+                <div
+                  className="absolute inset-0 pointer-events-none opacity-[0.06]"
+                  style={{
+                    backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.8) 2px, rgba(0,0,0,0.8) 4px)",
+                  }}
+                />
+              </div>
+
+              {/* Legend below map */}
+              <div className="mt-3 flex flex-wrap gap-2 justify-center" style={{ fontFamily: "'Courier New', monospace", fontSize: 10 }}>
+                {[
+                  { color: "#4a8ab8", label: "💧 Water" },
+                  { color: "#1a1a2e", label: "☀️ Solar" },
+                  { color: "#a0522d", label: "🏠 House" },
+                  { color: "#708090", label: "⚙️ Workshop" },
+                  { color: "#d4aa6a", label: "🏖️ Beach" },
+                ].map(({ color, label }) => (
+                  <div key={label} className="flex items-center gap-1">
+                    <div className="h-3 w-3 shrink-0" style={{ background: color, outline: "1px solid rgba(255,255,255,0.15)" }} />
+                    <span className="text-stone-500">{label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── Support Teaser ────────────────────────────────────────────────────────────
 
 function SupportTeaser() {
@@ -2048,7 +2232,7 @@ export default function EstebanToroSite() {
     return (
         <main className="min-h-screen antialiased">
             <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400&family=DM+Sans:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400&family=DM+Sans:wght@400;500;600&family=Press+Start+2P&display=swap');
 
         *, *::before, *::after { box-sizing: border-box; }
 
@@ -2099,6 +2283,7 @@ export default function EstebanToroSite() {
             <Pillars />
             <DailiSystemSection />
             <EnvironmentSection />
+            <NomadGameTeaser />
             <SupportTeaser />
             <Footer />
         </main>
