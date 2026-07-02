@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Check, Loader2 } from "lucide-react";
 import { Button } from "./ui/Button";
@@ -61,6 +62,7 @@ export function EmailForm({
   buttonLabel?: string;
 }) {
   const { form, product } = useT();
+  const router = useRouter();
   const [email, setEmail] = React.useState("");
   const [status, setStatus] = React.useState<Status>("idle");
   const [errorMsg, setErrorMsg] = React.useState("");
@@ -86,6 +88,7 @@ export function EmailForm({
     try {
       await subscribe(email);
       setStatus("success");
+      router.push("/content-engine-guide");
     } catch {
       setErrorMsg(form.errorGeneric);
       setStatus("error");
